@@ -1599,14 +1599,7 @@
             myWidget.open();
         });
 
-        myWidget.on('uploading', function(data) {
-            if (data && data.progress) {
-                const percent = Math.round(data.progress.percent);
-                document.getElementById('uploadProgress').style.display = 'block';
-                document.getElementById('progressBar').style.width = percent + '%';
-                document.getElementById('progressText').textContent = `上傳中 ${percent}%`;
-            }
-        });
+
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // 区域 8: 初始化

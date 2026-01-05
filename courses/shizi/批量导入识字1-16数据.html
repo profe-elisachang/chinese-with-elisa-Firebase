@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量导入识字1-16数据到Firebase</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .file-upload {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .log {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .log.active {
+            display: block;
+        }
+        
+        .log-item {
+            padding: 4px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .log-item:last-child {
+            border-bottom: none;
+        }
+        
+        .success {
+            color: #28a745;
+        }
+        
+        .error {
+            color: #dc3545;
+        }
+        
+        .info {
+            color: #667eea;
+        }
+        
+        .warning {
+            color: #ffc107;
+        }
+        
+        .progress {
+            margin-top: 20px;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 批量导入识字1-16数据</h1>
+        <p class="subtitle">将CSV数据一次性导入到Firebase Firestore</p>
+        
+        <div class="file-upload">
+            <label for="targetFile">📝 目标字 CSV (lesson1-16_target_characters.csv)</label>
+            <input type="file" id="targetFile" accept=".csv">
+        </div>
+        
+        <div class="file-upload">
+            <label for="componentFile">🧩 部件 CSV (lesson1-16_components.csv)</label>
+            <input type="file" id="componentFile" accept=".csv">
+        </div>
+        
+        <button class="btn" id="importBtn" disabled>开始导入</button>
+        
+        <div class="progress" id="progress">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase 配置
+        const firebaseConfig = {
+    apiKey: "AIzaSyDMDTDwDP0mEXwgJdwsXVMB2IFi9Q5zfyU",
+    authDomain: "shizi-with-elisa.firebaseapp.com",
+    projectId: "shizi-with-elisa",
+    storageBucket: "shizi-with-elisa.firebasestorage.app",
+    messagingSenderId: "46368268308",
+    appId: "1:46368268308:web:5847aeb7b239b16d624701"
+};
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let targetData = null;
+        let componentData = null;
+
+        // 监听文件选择
+        document.getElementById('targetFile').addEventListener('change', (e) => {
+            readCSV(e.target.files[0], 'target');
+        });
+
+        document.getElementById('componentFile').addEventListener('change', (e) => {
+            readCSV(e.target.files[0], 'component');
+        });
+
+        // 读取 CSV 文件
+        function readCSV(file, type) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const data = parseCSV(text);
+                
+                if (type === 'target') {
+                    targetData = data;
+                    log(`✅ 目标字CSV读取成功：${data.length} 条记录`, 'success');
+                } else {
+                    componentData = data;
+                    log(`✅ 部件CSV读取成功：${data.length} 条记录`, 'success');
+                }
+                
+                // 检查是否两个文件都已加载
+                if (targetData && componentData) {
+                    document.getElementById('importBtn').disabled = false;
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 解析 CSV
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length === headers.length) {
+                    const obj = {};
+                    headers.forEach((header, index) => {
+                        obj[header] = values[index].trim().replace(/^"|"$/g, '');
+                    });
+                    data.push(obj);
+                }
+            }
+            
+            return data;
+        }
+
+        // 解析 CSV 行（处理引号内的逗号）
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            
+            return result;
+        }
+
+        // 日志函数
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('active');
+            
+            const item = document.createElement('div');
+            item.className = `log-item ${type}`;
+            item.textContent = message;
+            logDiv.appendChild(item);
+            
+            // 自动滚动到底部
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // 更新进度条
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            const progressDiv = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            
+            progressDiv.classList.add('active');
+            progressBar.style.width = percent + '%';
+            progressBar.textContent = percent + '%';
+        }
+
+        // 开始导入
+        document.getElementById('importBtn').addEventListener('click', async () => {
+            document.getElementById('importBtn').disabled = true;
+            document.getElementById('log').innerHTML = '';
+            
+            log('🚀 开始批量导入...', 'info');
+            
+            try {
+                // 1. 组织数据：按课程分组
+                const lessonMap = {};
+                
+                // 处理目标字
+                targetData.forEach(item => {
+                    const lessonId = item.lesson_id; // lesson1, lesson2, ...
+                    if (!lessonMap[lessonId]) {
+                        lessonMap[lessonId] = {
+                            target_characters: [],
+                            components: []
+                        };
+                    }
+                    lessonMap[lessonId].target_characters.push({
+                        character: item.character,
+                        pinyin: item.pinyin,
+                        meaning: item.meaning
+                    });
+                });
+                
+                // 处理部件
+                componentData.forEach(item => {
+                    const lessonId = item.lesson_id; // components-lesson1, components-lesson2, ...
+                    // 提取课程编号
+                    const match = lessonId.match(/lesson(\d+)/);
+                    if (match) {
+                        const actualLessonId = 'lesson' + match[1];
+                        if (!lessonMap[actualLessonId]) {
+                            lessonMap[actualLessonId] = {
+                                target_characters: [],
+                                components: []
+                            };
+                        }
+                        lessonMap[actualLessonId].components.push({
+                            character: item.character,
+                            pinyin: item.pinyin,
+                            meaning: item.meaning
+                        });
+                    }
+                });
+                
+                log(`📊 数据整理完成，共 ${Object.keys(lessonMap).length} 个课程`, 'success');
+                
+                // 2. 批量写入 Firebase
+                const lessons = Object.keys(lessonMap).sort((a, b) => {
+                    const numA = parseInt(a.replace('lesson', ''));
+                    const numB = parseInt(b.replace('lesson', ''));
+                    return numA - numB;
+                });
+                
+                let completed = 0;
+                const total = lessons.length;
+                
+                for (const lessonId of lessons) {
+                    const data = lessonMap[lessonId];
+                    
+                    try {
+                        // 读取现有数据
+                        const docRef = db.collection('lessons').doc(lessonId);
+                        const docSnap = await docRef.get();
+                        
+                        let updateData = {};
+                        
+                       if (docSnap.exists) { 
+                            // 合并模式：保留现有数据
+                            const existingData = docSnap.data();
+                            updateData = {
+                                ...existingData,
+                                target_characters: data.target_characters,
+                                components: data.components
+                            };
+                            log(`📝 更新 ${lessonId}：${data.target_characters.length} 个目标字，${data.components.length} 个部件`, 'info');
+                        } else {
+                            // 新建
+                            updateData = {
+                                target_characters: data.target_characters,
+                                components: data.components,
+                                meta: {
+                                    created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                                    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+                                }
+                            };
+                            log(`✨ 创建 ${lessonId}：${data.target_characters.length} 个目标字，${data.components.length} 个部件`, 'info');
+                        }
+                        
+                        await docRef.set(updateData, { merge: true });
+                        
+                        completed++;
+                        updateProgress(completed, total);
+                        
+                        log(`✅ ${lessonId} 导入成功`, 'success');
+                        
+                    } catch (error) {
+                        log(`❌ ${lessonId} 导入失败：${error.message}`, 'error');
+                    }
+                    
+                    // 延迟避免速率限制
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+                
+                log('', 'info');
+                log('🎉 所有数据导入完成！', 'success');
+                log(`📊 成功导入 ${completed}/${total} 个课程`, 'success');
+                
+            } catch (error) {
+                log(`❌ 导入过程出错：${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                document.getElementById('importBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

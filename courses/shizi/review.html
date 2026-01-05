@@ -347,7 +347,50 @@
     .back-character { font-size: 80px; color: var(--primary-dark); }
     .pinyin { font-size: 30px; color: var(--primary); margin: 10px 0; font-weight: bold; }
     .meaning { font-size: 22px; color: var(--text-primary); line-height: 1.5; }
-
+        .meaning {
+            font-size: 20px;
+            color: var(--secondary-color);
+            line-height: 1.4;
+            margin: 8px 0;
+        }
+        
+        .card-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        
+        .card-content {
+            text-align: left;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        
+        .content-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+        
+        .speak-btn {
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 8px 0;
+            transition: all 0.3s;
+        }
+        
+        .speak-btn:hover {
+            background: var(--success);
+        }
     .review-buttons {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -1102,12 +1145,19 @@ document.getElementById('manualHeader').addEventListener('click', function() {
         
         // ==================== Text-to-Speech ====================
         function speakPinyin(event) {
-            event.stopPropagation();
-            const pinyin = document.getElementById('pinyin').textContent;
-            const utterance = new SpeechSynthesisUtterance(pinyin);
-            utterance.lang = 'zh-CN';
-            speechSynthesis.speak(utterance);
-        }
+    event.stopPropagation();
+    const character = document.getElementById('backCharacter').textContent;
+    const utterance = new SpeechSynthesisUtterance(character);
+    
+    // 强制使用中文声音
+    const voices = speechSynthesis.getVoices();
+    const chineseVoice = voices.find(v => v.lang.includes('zh'));
+    if (chineseVoice) utterance.voice = chineseVoice;
+    
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.8;
+    speechSynthesis.speak(utterance);
+}
         
         // ==================== User Progress (Firebase) ====================
         async function loadUserProgress() {
