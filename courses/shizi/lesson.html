@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>识字课程</title>
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            /* 主色调 */
+            --primary-color: #0891b2;
+            --primary-light: #06b6d4;
+            --primary-dark: #0e7490;
+            
+            /* 辅助色 */
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            /* 中性色 */
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            /* 背景色 */
+            --bg-page: #f9fafb;
+            --bg-card: #ffffff;
+            --bg-hover: #f3f4f6;
+            --bg-light: #e5e7eb;
+            
+            /* 边框色 */
+            --border-light: #e5e7eb;
+            --border-medium: #d1d5db;
+            --border-dark: #9ca3af;
+            
+            /* 特殊用途 */
+            --pinyin-color: #dc2626;
+            --character-color: #1f2937;
+            --meaning-color: #059669;
+            
+            /* 双语颜色 */
+            --english-color: #0891b2;
+            --spanish-color: #f59e0b;
+            
+            /* 字体 */
+            --font-primary: 'Microsoft JhengHei', 'Noto Sans TC', 'PingFang TC', sans-serif;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+            --char-size-medium: 2rem;
+            --char-size-large: 3rem;
+            
+            /* 间距 */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* 圆角 */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            /* 阴影 */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+            
+            /* 字重 */
+            --font-normal: 400;
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+        }
+        
+        /* ==================== Global Styles ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            background: var(--bg-page);
+            line-height: 1.6;
+        }
+        
+        /* ==================== Header ==================== */
+        .header {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .header h1 {
+            font-size: var(--text-3xl);
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            font-weight: var(--font-bold);
+        }
+        
+        .header .subtitle {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+        }
+        
+        /* ==================== Container ==================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+        
+        /* ==================== Tabs Navigation ==================== */
+        .tabs-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            border-bottom: 2px solid var(--border-light);
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+        
+        .tab-button {
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tab-button:hover {
+            color: var(--primary-color);
+            background: var(--bg-hover);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        /* ==================== Tab Content ==================== */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ==================== Section Header ==================== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .section-title h2 {
+            font-size: var(--text-2xl);
+            color: var(--primary-color);
+            font-weight: var(--font-bold);
+        }
+        
+        .count-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+        }
+        
+        /* ==================== Vocabulary Table ==================== */
+        .vocabulary-table {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .vocabulary-table thead {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .vocabulary-table th {
+            padding: var(--spacing-lg);
+            text-align: left;
+            font-weight: var(--font-bold);
+            font-size: var(--text-lg);
+        }
+        
+        .vocabulary-table td {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .vocabulary-table tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        .vocabulary-table .char {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--character-color);
+        }
+        
+        .vocabulary-table .pinyin {
+            color: var(--pinyin-color);
+            font-size: var(--text-lg);
+        }
+        
+        .vocabulary-table .meaning-en {
+            color: var(--english-color);
+        }
+        
+        .vocabulary-table .meaning-es {
+            color: var(--spanish-color);
+        }
+        
+        .vocabulary-table .notes {
+            color: var(--text-secondary);
+            font-size: var(--text-base);
+            font-style: italic;
+        }
+        
+        /* ==================== Character Grid ==================== */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        /* ==================== Character Card ==================== */
+        .character-card {
+            background: var(--bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border-light);
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .character-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+        
+        .character-card .character {
+            font-size: var(--char-size-large);
+            font-weight: var(--font-bold);
+            color: var(--character-color);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .character-card .pinyin {
+            font-size: var(--text-xl);
+            color: var(--pinyin-color);
+            margin-bottom: var(--spacing-xs);
+            font-weight: var(--font-medium);
+        }
+        
+        .character-card .meaning {
+            font-size: var(--text-base);
+            color: var(--meaning-color);
+            margin-bottom: var(--spacing-md);
+            font-weight: var(--font-medium);
+        }
+        
+        .character-card .breakdown {
+            font-size: var(--text-base);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+        }
+        
+        .character-card .image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) auto;
+            display: block;
+        }
+        
+        .character-card .content-section {
+            text-align: left;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .character-card .content-label {
+            font-size: var(--text-base);
+            font-weight: var(--font-bold);
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        /* ==================== Phrase Card ==================== */
+        .phrase-card {
+            background: var(--bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border-light);
+            margin-bottom: var(--spacing-md);
+            transition: all 0.3s ease;
+        }
+        
+        .phrase-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .phrase-card .chinese {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--character-color);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .phrase-card .translations {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+        
+        .phrase-card .translation-en {
+            color: var(--english-color);
+            font-size: var(--text-lg);
+            font-weight: var(--font-medium);
+        }
+        
+        .phrase-card .translation-es {
+            color: var(--spanish-color);
+            font-size: var(--text-lg);
+            font-weight: var(--font-medium);
+        }
+        
+        .phrase-card .notes {
+            margin-top: var(--spacing-sm);
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* ==================== Dialogue Box ==================== */
+        .dialogue-box {
+            background: var(--bg-light);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .dialogue-title {
+            color: var(--primary-color);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .dialogue-line {
+            font-size: var(--text-lg);
+            margin: var(--spacing-sm) 0;
+            padding: var(--spacing-sm);
+        }
+        
+        /* ==================== Grammar Point ==================== */
+        .grammar-point {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .grammar-header {
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .grammar-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+        }
+        
+        .grammar-content {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .grammar-content .spanish {
+            color: var(--spanish-color);
+            font-size: var(--text-lg);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .grammar-content .english {
+            color: var(--english-color);
+            font-size: var(--text-lg);
+            line-height: 1.8;
+        }
+        
+        .grammar-examples {
+            background: var(--bg-light);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .grammar-example {
+            font-size: var(--text-lg);
+            margin: var(--spacing-sm) 0;
+            padding-left: var(--spacing-md);
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        /* ==================== Exercise Styles ==================== */
+        .exercise-item {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .exercise-header {
+            font-weight: var(--font-bold);
+            color: var(--primary-color);
+            font-size: var(--text-xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .exercise-question {
+            font-size: var(--text-xl);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+        
+        .blank-position {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            margin: 0 var(--spacing-xs);
+            border: 2px dashed var(--border-medium);
+            border-radius: var(--radius-sm);
+            min-width: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+        }
+        
+        .blank-position:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .blank-position.selected {
+            background: var(--primary-color);
+            color: white;
+            border-style: solid;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .option-btn {
+            padding: var(--spacing-lg);
+            background: white;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: var(--text-lg);
+        }
+        
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .btn {
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .result-box {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-weight: var(--font-bold);
+            font-size: var(--text-lg);
+        }
+        
+        .result-box.correct {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .result-box.incorrect {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .result-box.warning {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        /* ==================== Card ==================== */
+        .card {
+            background: var(--bg-card);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-xl);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: var(--spacing-md);
+        }
+        
+        /* ==================== Placeholder ==================== */
+        .placeholder {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .placeholder h3 {
+            font-size: var(--text-2xl);
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .placeholder p {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+        }
+        
+        /* ==================== Loading ==================== */
+        .loader {
+            display: none;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: var(--spacing-2xl) auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: #fee;
+            border: 2px solid var(--danger-color);
+            border-radius: var(--radius-lg);
+            color: var(--danger-color);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        /* ==================== Markdown Content ==================== */
+        .markdown-content {
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        .markdown-content strong {
+            color: var(--primary-color);
+            font-weight: var(--font-bold);
+        }
+        
+        .markdown-content em {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .markdown-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .markdown-content img.small {
+            max-width: 120px;
+        }
+        
+        .markdown-content img.large {
+            max-width: 800px;
+        }
+        
+        /* ==================== Responsive Design ==================== */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: var(--text-2xl);
+            }
+            
+            .tabs-nav {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .tab-button {
+                font-size: var(--text-base);
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+            
+            .character-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+            
+            .vocabulary-table {
+                font-size: var(--text-base);
+            }
+            
+            .vocabulary-table th,
+            .vocabulary-table td {
+                padding: var(--spacing-sm);
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+  /* 侧边栏样式 */
+    .course-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 250px;
+        background: var(--bg-card);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+    
+    .course-sidebar.hidden {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar-header {
+        padding: var(--spacing-xl);
+        background: var(--primary-color);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .sidebar-header h3 {
+        font-size: var(--text-lg);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .lesson-list {
+        padding: var(--spacing-md);
+    }
+    
+    .lesson-item {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .lesson-item:hover {
+        background: var(--bg-hover);
+    }
+    
+    .lesson-item.active {
+        background: var(--primary-color);
+        color: white;
+        font-weight: var(--font-bold);
+    }
+    
+    .lesson-icon {
+        font-size: 1.2em;
+    }
+    
+    /* 切换按钮 */
+    .toggle-sidebar-btn {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        z-index: 999;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        display: none; /* 默认隐藏，侧边栏收起时显示 */
+    }
+    
+    .course-sidebar.hidden + .toggle-sidebar-btn {
+        display: block;
+    }
+    
+    /* 主内容区左移 */
+    body.has-sidebar .container {
+        margin-left: 400px;
+    }
+    
+    /* 手机版 */
+    @media (max-width: 768px) {
+        .course-sidebar {
+            width: 100%;
+        }
+        
+        body.has-sidebar .container {
+            margin-left: 0;
+
+        }
+    }
+
+    </style>
+</head>
+
+
+
+
+
+<body>
+
+ <!-- 侧边栏 HTML -->
+<aside class="course-sidebar" id="courseSidebar">
+    <div class="sidebar-header">
+        <h3>📚 识字课程</h3>
+        <small>Chinese Literacy</small>
+    </div>
+    
+    <div class="lesson-list" id="lessonList">
+        <!-- JavaScript 动态生成 -->
+    </div>
+</aside>
+
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+    ☰ 课程列表
+</button>   
+    <!-- Header -->
+    <header class="header">
+        <h1 id="lessonTitle">加载中...Loading…</h1>
+        <p class="subtitle" id="lessonSubtitle">Chinese Learning Platform</p>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Loading Indicator -->
+        <div class="loader" id="loader"></div>
+        
+        <!-- Error Message -->
+        <div id="errorMessage" style="display: none;"></div>
+        
+        <!-- Tabs Navigation -->
+        <div class="tabs-nav" id="tabsNav" style="display: none;">
+            <button class="tab-button active" data-tab="components">🧩 部件</button>
+            <button class="tab-button" data-tab="targets">🎯 目标字</button>
+            <button class="tab-button" data-tab="vocabulary">📚 生词表</button>
+            <button class="tab-button" data-tab="phrases">📖 词组</button>
+            <button class="tab-button" data-tab="grammar">📝 语法</button>
+            <button class="tab-button" data-tab="exercises">✏️ 练习</button>
+            <button class="tab-button" data-tab="reading" id="readingTab" style="display: none;">📄 阅读短文</button>
+        </div>
+        
+        <!-- Tab Content: Components -->
+        <div id="tab-components" class="tab-content active">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>🧩 部件</h2>
+                    <span class="count-badge" id="componentCount">0</span>
+                </div>
+                 <button class="btn btn-primary" onclick="enterTeachingMode('components')">
+                    🎯 教学模式
+                </button>           
+            </div>
+            <div class="character-grid" id="componentsGrid"></div>
+        </div>
+        
+        <!-- Tab Content: Target Characters -->
+        <div id="tab-targets" class="tab-content">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>🎯 目标字</h2>
+                    <span class="count-badge" id="targetCount">0</span>
+                </div>
+                <button class="btn btn-primary" onclick="enterTeachingMode('targets')">
+                    🎯 教学模式
+                </button>
+            </div>
+            <div class="character-grid" id="targetsGrid"></div>
+        </div>
+        
+        <!-- Tab Content: Vocabulary -->
+        <div id="tab-vocabulary" class="tab-content">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>📚 生词表</h2>
+                    <span class="count-badge" id="vocabularyCount">0</span>
+                </div>
+            </div>
+            <div id="vocabularyContainer"></div>
+        </div>
+        
+        <!-- Tab Content: Phrases -->
+        <div id="tab-phrases" class="tab-content">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>📖 词组</h2>
+                    <span class="count-badge" id="phrasesCount">0</span>
+                </div>
+            </div>
+            <div id="phrasesContainer"></div>
+        </div>
+        
+        <!-- Tab Content: Grammar -->
+        <div id="tab-grammar" class="tab-content">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>📝 语法</h2>
+                    <span class="count-badge" id="grammarCount">0</span>
+                </div>
+            </div>
+            <div id="grammarContainer"></div>
+        </div>
+        
+        <!-- Tab Content: Exercises -->
+        <div id="tab-exercises" class="tab-content">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>✏️ 练习</h2>
+                    <span class="count-badge" id="exercisesCount">0</span>
+                </div>
+            </div>
+            <div id="exercisesContainer"></div>
+        </div>
+        
+        <!-- Tab Content: Reading Text -->
+        <div id="tab-reading" class="tab-content">
+            <div class="card" style="max-width: 900px; margin: 0 auto;">
+                <h2>📄 阅读短文</h2>
+                <div id="readingContent" class="markdown-content" style="font-size: 1.2em; line-height: 1.8;">
+                    <!-- 短文内容会动态插入这里 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== Firebase Configuration ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMDTDwDP0mEXwgJdwsXVMB2IFi9Q5zfyU",
+            authDomain: "shizi-with-elisa.firebaseapp.com",
+            projectId: "shizi-with-elisa",
+            storageBucket: "shizi-with-elisa.firebasestorage.app",
+            messagingSenderId: "46368268308",
+            appId: "1:46368268308:web:5847aeb7b239b16d624701"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // ==================== Global Variables ====================
+        let currentLessonData = null;
+        
+        // ==================== Tab Switching ====================
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                button.classList.add('active');
+                const tabId = 'tab-' + button.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // ==================== Get Lesson ID from URL ====================
+        function getLessonId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || 'lesson7';
+        }
+        
+        // ==================== Load Lesson Data ====================
+        async function loadLesson() {
+            const lessonId = getLessonId();
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('errorMessage');
+            const tabsNav = document.getElementById('tabsNav');
+            
+            loader.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            try {
+                const doc = await db.collection('lessons').doc(lessonId).get();
+                
+                if (!doc.exists) {
+                    throw new Error('课程不存在/Course not found');
+                }
+                
+                currentLessonData = doc.data();
+                
+                // Update header
+                if (currentLessonData.meta) {
+                    document.getElementById('lessonTitle').textContent = currentLessonData.meta.title || lessonId;
+                    document.getElementById('lessonSubtitle').textContent = 
+                        currentLessonData.meta.title_en || 'Chinese Learning Platform';
+                }
+                
+                // Render all content
+                renderComponents(currentLessonData.components || []);
+                renderTargets(currentLessonData.target_characters || []);
+                renderVocabulary(currentLessonData.vocabulary || []);
+                renderPhrases(currentLessonData.phrases || []);
+                renderGrammar(currentLessonData.grammar || []);
+                renderExercises(currentLessonData.exercises || []);
+                
+                // Check if reading text exists
+                if (currentLessonData.reading_text && currentLessonData.reading_text.trim()) {
+                    document.getElementById('readingTab').style.display = 'block';
+                    renderReading(currentLessonData.reading_text);
+                }
+                
+                // Show tabs
+                tabsNav.style.display = 'flex';
+                
+            } catch (error) {
+                errorMessage.textContent = '加载失败/Failed to load：' + error.message;
+                errorMessage.style.display = 'block';
+                errorMessage.className = 'error-message';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        
+        // ==================== Render Components ====================
+        function renderComponents(components) {
+            const grid = document.getElementById('componentsGrid');
+            const countBadge = document.getElementById('componentCount');
+            
+            countBadge.textContent = components.length;
+            
+            if (components.length === 0) {
+                grid.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            grid.innerHTML = components.map(char => createCharacterCard(char)).join('');
+        }
+        
+        // ==================== Render Targets ====================
+        function renderTargets(targets) {
+            const grid = document.getElementById('targetsGrid');
+            const countBadge = document.getElementById('targetCount');
+            
+            countBadge.textContent = targets.length;
+            
+            if (targets.length === 0) {
+                grid.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            grid.innerHTML = targets.map(char => createCharacterCard(char)).join('');
+        }
+        
+        // ==================== Render Vocabulary ====================
+        function renderVocabulary(vocabulary) {
+            const container = document.getElementById('vocabularyContainer');
+            const countBadge = document.getElementById('vocabularyCount');
+            
+            countBadge.textContent = vocabulary.length;
+            
+            if (vocabulary.length === 0) {
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            // Parse vocabulary data
+            const vocabItems = vocabulary.map(item => {
+                const parts = item.content.split('|').map(s => s.trim());
+                return {
+                    character: parts[0] || '',
+                    pinyin: parts[1] || '',
+                    meaning_en: parts[2] || '',
+                    meaning_es: '', // Will be added later when CSV includes translations
+                    notes: item.notes || ''
+                };
+            });
+            
+            let html = `
+                <table class="vocabulary-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>字</th>
+                            <th>拼音</th>
+                            <th>English</th>
+                            <th>例句</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+           vocabItems.forEach((item, index) => {
+                html += `
+                    <tr>
+                         <td style="text-align:center;font-weight:bold;">${index + 1}</td>
+                         <td class="char">${item.character}</td>
+                        <td class="pinyin">${item.pinyin}</td>
+                        <td class="meaning-en">${item.meaning_en}</td>
+                        <td class="notes">${item.notes}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            if (currentLessonData.literacy_sentence) {
+    html += `
+        <div style="margin-top: var(--spacing-xl); padding: var(--spacing-xl); background: var(--bg-light); border-radius: var(--radius-lg); border-left: 4px solid var(--accent-color);">
+            <h3 style="color: var(--accent-color); margin-bottom: var(--spacing-md);">📖 识字句</h3>
+            <p style="font-size: var(--text-lg); line-height: 1.8; color: var(--text-primary);">
+                ${currentLessonData.literacy_sentence}
+            </p>
+        </div>
+    `;
+}
+            
+            container.innerHTML = html;
+        }
+        
+        // ==================== Render Phrases ====================
+        function renderPhrases(phrases) {
+            const container = document.getElementById('phrasesContainer');
+            const countBadge = document.getElementById('phrasesCount');
+            
+            countBadge.textContent = phrases.length;
+            
+            if (phrases.length === 0) {
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            const regularPhrases = phrases.filter(p => p.subtype === 'phrase');
+            const dialogues = phrases.filter(p => p.subtype === 'dialogue');
+            
+            let html = '';
+            
+            // Regular phrases
+            if (regularPhrases.length > 0) {
+                html += '<div class="card"><h2>词组</h2>';
+                html += '<div class="character-grid">';
+                regularPhrases.forEach(phrase => {
+                    const parts = phrase.content.split('|').map(s => s.trim());
+                    const chinese = parts[0] || '';
+                    const pinyin = parts[1] || ''; // We have it but won't display
+                    const english = parts[2] || '';
+                    const spanish = ''; // Will be added when CSV includes translations
+                    
+                    html += `
+                        <div class="phrase-card">
+                            <div class="chinese">${chinese}</div>
+                            <div class="translations">
+                                <span class="translation-en">${english}</span>
+                                ${spanish ? `<span class="translation-es">/ ${spanish}</span>` : ''}
+                            </div>
+                            ${phrase.notes ? `<div class="notes">${phrase.notes}</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Dialogues
+            if (dialogues.length > 0) {
+                html += '<div class="card" style="margin-top:30px;"><h2>对话</h2>';
+                dialogues.forEach(dialogue => {
+                    const parts = dialogue.content.split('|').map(s => s.trim());
+                    html += `
+                        <div class="dialogue-box">
+                            ${dialogue.notes ? `<div class="dialogue-title">${dialogue.notes}</div>` : ''}
+                            ${parts.map(part => `<div class="dialogue-line">${part}</div>`).join('')}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // ==================== Render Grammar ====================
+        function renderGrammar(grammar) {
+            const container = document.getElementById('grammarContainer');
+            const countBadge = document.getElementById('grammarCount');
+            
+            countBadge.textContent = grammar.length;
+            
+            if (grammar.length === 0) {
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            let currentRuleIndex = 0;
+            let currentExamples = [];
+            
+        grammar.forEach((item, index) => {
+            if (item.subtype === 'rule') {
+                // 如果有上一个语法点，先关闭它
+                if (currentRuleIndex > 0) {
+                    html += renderGrammarExamples(currentExamples);
+                    html += '</div>'; // 关闭上一个 grammar-point
+                    currentExamples = [];
+                }
+                
+                currentRuleIndex++;
+                
+                // 分割双语内容
+                const parts = item.content.split('|').map(s => s.trim());
+                const spanish = parts[0] || item.content;
+                const english = parts[1] || '';
+                
+                html += `
+                    <div class="grammar-point">
+                        <div class="grammar-header">
+                            <div class="grammar-title">📝 语法点 ${currentRuleIndex}</div>
+                        </div>
+                        <div class="grammar-content">
+                            <div class="spanish">${spanish}</div>
+                            ${english ? `<div class="english">${english}</div>` : ''}
+                        </div>
+                `;
+            } else if (item.subtype === 'example') {
+                currentExamples.push(item.content);
+            }
+        });
+
+        // 关闭最后一个语法点
+        if (currentRuleIndex > 0) {
+            html += renderGrammarExamples(currentExamples);
+            html += '</div>';
+        }
+
+        container.innerHTML = html;
+            
+            // Close the last grammar point
+            if (currentRuleIndex > 0) {
+                html += renderGrammarExamples(currentExamples);
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function renderGrammarExamples(examples) {
+            if (examples.length === 0) return '';
+            
+            let html = '<div class="grammar-examples">';
+            examples.forEach(example => {
+                html += `<div class="grammar-example">💡 ${example}</div>`;
+            });
+            html += '</div>';
+            return html;
+        }
+        
+        // ==================== Render Exercises ====================
+        function renderExercises(exercises) {
+            const container = document.getElementById('exercisesContainer');
+            const countBadge = document.getElementById('exercisesCount');
+            
+            countBadge.textContent = exercises.length;
+            
+            if (exercises.length === 0) {
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            
+            exercises.forEach((exercise, index) => {
+                const qNum = index + 1;
+                
+                if (exercise.subtype === 'fill_blank') {
+                    html += renderFillBlankExercise(exercise, qNum, index);
+                } else if (exercise.subtype === 'multiple_choice') {
+                    html += renderMultipleChoiceExercise(exercise, qNum, index);
+                }
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function renderFillBlankExercise(exercise, qNum, index) {
+            // Parse the question to add clickable blank positions
+            let question = exercise.content;
+            const positions = ['A', 'B', 'C', 'D'];
+            
+            positions.forEach(pos => {
+                const regex = new RegExp(`_${pos}_`, 'g');
+                question = question.replace(regex, 
+                    `<span class="blank-position" data-position="${pos}" onclick="selectBlank(${index}, '${pos}', this)">${pos}</span>`
+                );
+            });
+            
+            return `
+                <div class="exercise-item" id="exercise-${index}">
+                    <div class="exercise-header">${qNum}. 填空题 - 选择正确的位置</div>
+                    <div class="exercise-question">${question}</div>
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <strong>填入：</strong><span style="color: var(--primary-color); font-size: var(--text-xl); margin-left: var(--spacing-sm);">${exercise.options || ''}</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="checkBlankAnswer(${index}, '${exercise.answer}')">
+                        检查答案
+                    </button>
+                    <div id="result-${index}" class="result-box" style="display:none;"></div>
+                    
+                </div>
+            `;
+        }
+        
+        function renderMultipleChoiceExercise(exercise, qNum, index) {
+            const options = exercise.options.split('|').map(o => o.trim());
+            
+            return `
+                <div class="exercise-item" id="exercise-${index}">
+                    <div class="exercise-header">${qNum}. 选择题</div>
+                    <div class="exercise-question">${exercise.content}</div>
+                    <div class="options-grid">
+                        ${options.map((opt, i) => `
+                            <div class="option-btn" onclick="selectOption(${index}, '${String.fromCharCode(65 + i)}', this)">
+                                ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="btn btn-primary" onclick="checkMultipleChoice(${index}, '${exercise.answer}')">
+                        检查答案
+                    </button>
+                    <div id="result-${index}" class="result-box" style="display:none;"></div>
+                    ${exercise.notes ? `<div style="margin-top:var(--spacing-md);color:var(--text-secondary);font-style:italic;">${exercise.notes}</div>` : ''}
+                </div>
+            `;
+        }
+        
+        // ==================== Exercise Interaction ====================
+        const selectedAnswers = {};
+        const selectedBlanks = {};
+        
+        function selectBlank(exerciseIndex, position, element) {
+            selectedBlanks[exerciseIndex] = position;
+            
+            // Clear previous selections
+            const parent = element.parentElement;
+            parent.querySelectorAll('.blank-position').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Mark current selection
+            element.classList.add('selected');
+        }
+        
+        function checkBlankAnswer(exerciseIndex, correctAnswer) {
+            const resultDiv = document.getElementById(`result-${exerciseIndex}`);
+            const selected = selectedBlanks[exerciseIndex];
+            
+            if (!selected) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box warning';
+                resultDiv.textContent = '⚠️ 请先选择一个位置';
+                return;
+            }
+            
+            if (selected === correctAnswer) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box correct';
+                resultDiv.textContent = `✅ 正确！答案是 ${correctAnswer}`;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box incorrect';
+                resultDiv.textContent = `❌ 错误！正确答案是 ${correctAnswer}`;
+            }
+        }
+        
+        function selectOption(exerciseIndex, choice, element) {
+            selectedAnswers[exerciseIndex] = choice;
+            
+            // Clear all selections
+            const parent = element.parentElement;
+            parent.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Mark current selection
+            element.classList.add('selected');
+        }
+        
+        function checkMultipleChoice(exerciseIndex, correctAnswer) {
+            const resultDiv = document.getElementById(`result-${exerciseIndex}`);
+            const selected = selectedAnswers[exerciseIndex];
+            
+            if (!selected) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box warning';
+                resultDiv.textContent = '⚠️ 请先选择一个答案';
+                return;
+            }
+            
+            if (selected === correctAnswer) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box correct';
+                resultDiv.textContent = `✅ 正确！答案是 ${correctAnswer}`;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box incorrect';
+                resultDiv.textContent = `❌ 错误！正确答案是 ${correctAnswer}`;
+            }
+        }
+        
+        // ==================== Render Reading ====================
+        function renderReading(readingText) {
+            const container = document.getElementById('readingContent');
+            
+            if (!readingText) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: var(--spacing-2xl);">本课无阅读短文</p>';
+                return;
+            }
+            
+            container.innerHTML = marked.parse(readingText);
+        }
+        
+        // ==================== Create Character Card ====================
+        function createCharacterCard(char) {
+            let html = `
+                <div class="character-card">
+                    <div class="character">${char.character}</div>
+                    <div class="pinyin">${char.pinyin}</div>
+                    <div class="meaning">${char.meaning}</div>
+            `;
+            
+            if (char.components_breakdown) {
+                html += `<div class="breakdown">${char.components_breakdown}</div>`;
+            }
+            
+            if (char.image) {
+                html += `<img src="${char.image}" class="image" alt="${char.character}" onerror="this.style.display='none'">`;
+            }
+            
+            if (char.book_explanation) {
+                html += `
+                    <div class="content-section">
+                        <div class="content-label">📖 解释</div>
+                        <div class="markdown-content">${marked.parse(char.book_explanation)}</div>
+                    </div>
+                `;
+            }
+            
+            if (char.story) {
+                html += `
+                    <div class="content-section">
+                        <div class="content-label">🧠 记忆故事</div>
+                        <div class="markdown-content">${marked.parse(char.story)}</div>
+                    </div>
+                `;
+            }
+            
+            if (char.pronunciation_cue) {
+                html += `
+                    <div class="content-section">
+                        <div class="content-label">🔊 发音</div>
+                        <div class="markdown-content">${marked.parse(char.pronunciation_cue)}</div>
+                    </div>
+                `;
+            }
+            
+            if (char.phrases) {
+                html += `
+                    <div class="content-section">
+                        <div class="content-label">💬 词组范例</div>
+                        <div class="markdown-content">${marked.parse(char.phrases)}</div>
+                    </div>
+                `;
+            }
+            
+            if (char.example) {
+                html += `
+                    <div class="content-section">
+                        <div class="content-label">💡 例句</div>
+                        <div class="markdown-content">${char.example}</div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+        function enterTeachingMode(tab) {
+    const lessonId = getLessonId();
+    window.location.href = `lesson-presentation.html?id=${lessonId}&tab=${tab}`;
+}
+        // ==================== Initialize ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLesson();
+        });
+
+
+
+
+
+
+ // 生成课程列表
+    function renderLessonList() {
+        const currentLesson = getLessonId();
+        const lessonList = document.getElementById('lessonList');
+        
+        const lessons = [
+            { id: 'lesson1', title: '识字一', subtitle: 'Daily Greetings' },
+            { id: 'lesson2', title: '识字二', subtitle: 'Family & Friends' },
+            { id: 'lesson3', title: '识字三', subtitle: 'Daily Activities' },
+            { id: 'lesson4', title: '识字四', subtitle: 'Time & Date' },
+            { id: 'lesson5', title: '识字五', subtitle: 'Food & Drinks' },
+            { id: 'lesson6', title: '识字六', subtitle: 'Places' },
+            { id: 'lesson7', title: '识字七', subtitle: 'Shopping' },
+            { id: 'lesson8', title: '识字八', subtitle: 'Transportation' },
+            { id: 'lesson9', title: '识字九', subtitle: 'Weather' },
+            // ... 继续到 lesson25
+{ id: 'lesson10', title: '识字十', subtitle: 'Work & Office' },
+            { id: 'lesson11', title: '识字十一', subtitle: 'Hobbies & Interests' },
+            { id: 'lesson12', title: '识字十二', subtitle: 'Body & Health' },
+            { id: 'lesson13', title: '识字十三', subtitle: 'Appearance & Personality' },
+            { id: 'lesson14', title: '识字十四', subtitle: 'House & Furniture' },
+            { id: 'lesson15', title: '识字十五', subtitle: 'Directions & Map' },
+            { id: 'lesson16', title: '识字十六', subtitle: 'Colors & Clothing' },
+            { id: 'lesson17', title: '识字十七', subtitle: 'Animals & Nature' },
+            { id: 'lesson18', title: '识字十八', subtitle: 'School & Education' },
+            { id: 'lesson19', title: '识字十九', subtitle: 'Feelings & Emotions' },
+            { id: 'lesson20', title: '识字二十', subtitle: 'Travel & Vacation' },
+            { id: 'lesson21', title: '识字二十一', subtitle: 'Festivals & Culture' },
+            { id: 'lesson22', title: '识字二十二', subtitle: 'Sports & Games' },
+            { id: 'lesson23', title: '识字二十三', subtitle: 'Technology & Internet' },
+            { id: 'lesson24', title: '识字二十四', subtitle: 'Environment & Society' },
+            { id: 'lesson25', title: '识字二十五', subtitle: 'Future & Dreams' }
+            
+        ];
+        
+        lessonList.innerHTML = lessons.map(lesson => `
+            <div class="lesson-item ${lesson.id === currentLesson ? 'active' : ''}" 
+                 onclick="window.location.href='lesson.html?id=${lesson.id}'">
+                <span class="lesson-icon">${lesson.id === currentLesson ? '→' : '•'}</span>
+                <div>
+                    <div>${lesson.title}</div>
+                    <small style="opacity: 0.7;">${lesson.subtitle}</small>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // 切换侧边栏
+    function toggleSidebar() {
+        document.getElementById('courseSidebar').classList.toggle('hidden');
+    }
+    
+    // 初始化
+    document.body.classList.add('has-sidebar');
+    renderLessonList();
+
+
+
+    </script>
+</body>
+</html>

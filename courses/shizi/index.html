@@ -1,0 +1,153 @@
+<!-- shizi/index.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>识字课程 - Chinese with Elisa</title>
+    <style>
+        :root {
+            --primary-color: #0891b2;
+            --primary-light: #06b6d4;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .welcome-card {
+            background: var(--bg-card);
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .logo { font-size: 3em; margin-bottom: 10px; }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-primary);
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(8,145,178,0.4);
+        }
+
+          .select-section {
+            margin: 40px 0;
+            color: var(--text-primary);
+            isplay: block;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="welcome-card">
+        <div class="logo">🎓</div>
+        <h1>识字课程</h1>
+        <p class="subtitle">Chinese Literacy</p>
+
+        <div class="select-section">Choose a lesson</div>
+          
+        <select id="lessonSelect">
+            <option value="">-- 请选择课程 --</option>
+            <option value="lesson1">Lesson 1 - 识字一</option>
+            <option value="lesson2">Lesson 2 - 识字二</option>
+            <option value="lesson3">Lesson 3 - 识字三</option>
+            <option value="lesson4">Lesson 4 - 识字四</option>
+            <option value="lesson5">Lesson 5 - 识字五</option>
+            <option value="lesson6">Lesson 6 - 识字六</option>
+            <option value="lesson7">Lesson 7 - 识字七</option>
+            <option value="lesson8">Lesson 8 - 识字八</option>
+            <option value="lesson9">Lesson 9 - 识字九</option>
+            <option value="lesson10">Lesson 10 - 识字十</option>
+            <option value="lesson11">Lesson 11 - 识字十一</option>
+            <option value="lesson12">Lesson 12 - 识字十二</option>
+            <option value="lesson13">Lesson 13 - 识字十三</option>
+            <option value="lesson14">Lesson 14 - 识字十四</option>
+            <option value="lesson15">Lesson 15 - 识字十五</option>
+            <option value="lesson16">Lesson 16 - 识字十六</option>
+            <option value="lesson17">Lesson 17 - 识字十七</option>
+            <option value="lesson18">Lesson 18 - 识字十八</option>
+            <option value="lesson19">Lesson 19 - 识字十九</option>
+            <option value="lesson20">Lesson 20 - 识字二十</option>
+            <option value="lesson21">Lesson 21 - 识字二十一</option>
+            <option value="lesson22">Lesson 22 - 识字二十二</option>
+            <option value="lesson23">Lesson 23 - 识字二十三</option>
+            <option value="lesson24">Lesson 24 - 识字二十四</option>
+            <option value="lesson25">Lesson 25 - 识字二十五</option><!-- ... 继续到 lesson25 -->
+        </select>
+        
+        <button class="btn" onclick="startLesson()">开始学习 →</button>
+    </div>
+    
+    <script>
+        function startLesson() {
+            const lessonId = document.getElementById('lessonSelect').value;
+            if (!lessonId) {
+                alert('请先选择课程');
+                return;
+            }
+            window.location.href = `lesson.html?id=${lessonId}`;
+        }
+        
+        // 回车键快捷启动
+        document.getElementById('lessonSelect').addEventListener('change', function(e) {
+            if (e.target.value) {
+                document.querySelector('.btn').focus();
+            }
+        });
+    </script>
+</body>
+</html>

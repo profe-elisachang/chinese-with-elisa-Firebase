@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Character Review System - Cloud Sync</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        :root {
+            /* 主色调 */
+            --primary-color: #0891b2;
+            --primary-light: #06b6d4;
+            --primary-dark: #0e7490;
+            
+            /* 辅助色 */
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            /* 中性色 */
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            /* 背景色 */
+            --bg-page: #f9fafb;
+            --bg-card: #ffffff;
+            --bg-hover: #f3f4f6;
+            --bg-light: #e5e7eb;
+            
+            /* 边框色 */
+            --border-light: #e5e7eb;
+            
+            /* Leitner 盒子颜色 */
+            --forgot-color: #ef4444;
+            --hard-color: #f59e0b;
+            --good-color: #3498db;
+            --easy-color: #2ecc71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--text-primary);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        /* ==================== Header ==================== */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1em;
+        }
+        
+        .device-code-display {
+            margin-top: 15px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .device-code-display strong {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            letter-spacing: 2px;
+        }
+        
+        /* ==================== Tab System ==================== */
+        .tab-system {
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-light);
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .tab-btn {
+            padding: 16px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(59, 151, 151, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            background: white;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        /* ==================== Lesson Selection (Collapsible) ==================== */
+        .lesson-selector {
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .selector-header {
+            padding: 16px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .selector-header:hover {
+            background: var(--primary-dark);
+        }
+        
+        .selector-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        
+        .selector-arrow {
+            transition: transform 0.3s;
+            font-size: 1.2em;
+        }
+        
+        .selector-header.collapsed .selector-arrow {
+            transform: rotate(-90deg);
+        }
+        
+        .selector-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        
+        .selector-content.collapsed {
+            display: none;
+        }
+        
+        .lesson-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lesson-checkbox:hover {
+            background: var(--bg-hover);
+            transform: translateX(5px);
+        }
+        
+        .lesson-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .lesson-checkbox label {
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lesson-info {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        
+        .lesson-count {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .selector-actions {
+            padding: 15px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        /* ==================== Smart Recommendation ==================== */
+        .recommended-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            color: white;
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .recommended-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(8, 145, 178, 0.5);
+        }
+        
+        .recommended-section.collapsed {
+            cursor: default;
+        }
+        
+        .recommended-section.collapsed:hover {
+            transform: none;
+        }
+        
+        .recommended-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .recommended-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .recommended-icon {
+            font-size: 28px;
+        }
+        
+        .recommended-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .collapse-arrow {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
+        
+        .recommended-section.collapsed .collapse-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .recommended-content {
+            transition: all 0.3s;
+        }
+        
+        .recommended-section.collapsed .recommended-content {
+            display: none;
+        }
+        
+        .recommended-subtitle {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .due-info {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .recommended-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .breakdown-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .breakdown-count {
+            display: block;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .breakdown-label {
+            display: block;
+            font-size: 13px;
+            opacity: 0.95;
+        }
+        
+        .amount-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .amount-selector label {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .amount-selector select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            background: white;
+            color: var(--primary-color);
+            cursor: pointer;
+            min-width: 250px;
+        }
+        
+        .recommended-btn {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .recommended-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* ==================== Mastery Boxes ==================== */
+        .mastery-boxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .mastery-box {
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .mastery-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .mastery-box.forgot { background: linear-gradient(135deg, var(--forgot-color), #c0392b); }
+        .mastery-box.hard { background: linear-gradient(135deg, var(--hard-color), #e67e22); }
+        .mastery-box.good { background: linear-gradient(135deg, var(--good-color), #2980b9); }
+        .mastery-box.easy { background: linear-gradient(135deg, var(--easy-color), #27ae60); }
+        
+        .box-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .box-count {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .box-description {
+            font-size: 13px;
+            opacity: 0.95;
+        }
+        
+        /* ==================== Review Area ==================== */
+        .review-area {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .current-session {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin: 12px 0;
+            font-weight: bold;
+        }
+        
+        /* Card */
+        .card {
+            perspective: 1000px;
+            height: 450px;
+            margin: 20px auto;
+            cursor: pointer;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        .card-front {
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-light);
+        }
+        
+        .card-back {
+            background-color: var(--bg-light);
+            border: 2px solid var(--primary-color);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            gap: 12px;
+        }
+        
+        .character {
+            font-size: 120px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .back-character {
+            font-size: 80px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .pinyin {
+            font-size: 28px;
+            color: var(--danger-color);
+            margin: 8px 0;
+            font-weight: 500;
+        }
+        
+        .meaning {
+            font-size: 20px;
+            color: var(--secondary-color);
+            line-height: 1.4;
+            margin: 8px 0;
+        }
+        
+        .card-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        
+        .card-content {
+            text-align: left;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        
+        .content-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+        
+        .speak-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 8px 0;
+            transition: all 0.3s;
+        }
+        
+        .speak-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Review Buttons */
+        .review-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .review-btn {
+            padding: 16px 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .btn-forgot { background-color: var(--forgot-color); }
+        .btn-hard { background-color: var(--hard-color); }
+        .btn-good { background-color: var(--good-color); }
+        .btn-easy { background-color: var(--easy-color); }
+        
+        .review-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Progress */
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 30px;
+            background: var(--bg-light);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transition: width 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--text-primary);
+        }
+        
+        /* Messages */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+        
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #60a5fa;
+        }
+        
+        /* Loading */
+        .loader {
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Data Management */
+        .data-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+        
+        .data-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .data-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .mastery-boxes {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .review-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .character {
+                font-size: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .character {
+                font-size: 100px;
+            }
+            
+            .card {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>📚 识字复习系统</h1>
+            <div class="subtitle">Cloud Sync • Spaced Repetition</div>
+            <div class="device-code-display" id="deviceCodeDisplay">
+                <div style="font-size: 0.9em; margin-bottom: 5px;">设备码 Device Code:</div>
+                <strong id="deviceCode">------</strong>
+                <div style="font-size: 0.8em; margin-top: 5px; color: var(--text-secondary);">
+                    换设备时输入此码同步进度
+                </div>
+            </div>
+        </header>
+        
+        <!-- Loading -->
+        <div id="loadingContainer">
+            <div class="loader"></div>
+            <p style="text-align: center; color: var(--text-secondary);">正在加载...</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Tab System -->
+            <div class="tab-system">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="components">部首部件 Components</button>
+                    <button class="tab-btn" data-tab="characters">识字课程 Characters</button>
+                </div>
+            </div>
+            
+            <!-- Lesson Selection -->
+            <div class="lesson-selector">
+                <div class="selector-header" id="selectorHeader">
+                    <span>📚 选择课程 <span class="selector-count" id="selectedCount">(0/18)</span></span>
+                    <span class="selector-arrow">▼</span>
+                </div>
+                <div class="selector-content" id="selectorContent">
+                    <div id="lessonCheckboxes"></div>
+                </div>
+                <div class="selector-actions">
+                    <button class="btn btn-primary" onclick="selectAllLessons()">全选</button>
+                    <button class="btn btn-secondary" onclick="clearAllLessons()">清空</button>
+                </div>
+            </div>
+            
+            <!-- Smart Recommendation -->
+            <div class="recommended-section" id="recommendedSection">
+                <div class="recommended-header">
+                    <div class="recommended-title-group">
+                        <span class="recommended-icon">🎯</span>
+                        <div class="recommended-title">智能推荐复习</div>
+                    </div>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                
+                <div class="recommended-content">
+                    <div class="recommended-subtitle">
+                        📅 间隔重复算法: Forgotten (每天) • Hard (1天) • Good (3天) • Easy (7天)
+                    </div>
+                    
+                    <div class="due-info" id="dueInfo">
+                        今日待复习: <span id="totalDue">0</span> 个字
+                    </div>
+                    
+                    <div class="amount-selector">
+                        <label>选择复习数量:</label>
+                        <select id="reviewAmount">
+                            <option value="20">20 (快速每日复习)</option>
+                            <option value="30">30 (标准)</option>
+                            <option value="50">50 (加强练习)</option>
+                            <option value="all">全部到期字 (有时间就做!)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="recommended-breakdown" id="recommendedBreakdown"></div>
+                    
+                    <button class="recommended-btn" onclick="startRecommendedReview()">
+                        🧠 开始智能复习
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Manual Selection -->
+            <div style="text-align: center; margin: 20px 0; color: var(--text-secondary);">
+                或按难度复习
+            </div>
+            
+            <div class="mastery-boxes">
+                <div class="mastery-box forgot" onclick="startBoxReview('forgot')">
+                    <div class="box-title">Forgotten 忘记</div>
+                    <div class="box-count" id="count-forgot">0</div>
+                    <div class="box-description">需要频繁复习</div>
+                </div>
+                <div class="mastery-box hard" onclick="startBoxReview('hard')">
+                    <div class="box-title">Hard 困难</div>
+                    <div class="box-count" id="count-hard">0</div>
+                    <div class="box-description">仍有挑战</div>
+                </div>
+                <div class="mastery-box good" onclick="startBoxReview('good')">
+                    <div class="box-title">Good 良好</div>
+                    <div class="box-count" id="count-good">0</div>
+                    <div class="box-description">记得不错</div>
+                </div>
+                <div class="mastery-box easy" onclick="startBoxReview('easy')">
+                    <div class="box-title">Easy 简单</div>
+                    <div class="box-count" id="count-easy">0</div>
+                    <div class="box-description">已掌握</div>
+                </div>
+            </div>
+            
+            <!-- Review Area -->
+            <div class="review-area hidden" id="reviewArea">
+                <div class="current-session" id="currentSession">复习进行中</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+                    </div>
+                    <div class="progress-text" id="progressText">0/0 已复习</div>
+                </div>
+                
+                <div class="card" id="card">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="character" id="character">一</div>
+                            <div style="margin-top: 20px; color: var(--text-secondary);">点击翻转</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="back-character" id="backCharacter">一</div>
+                            <div class="pinyin" id="pinyin">yī</div>
+                            <button class="speak-btn" onclick="speakPinyin(event)">🔊 朗读</button>
+                            <div class="meaning" id="meaning">one</div>
+                            <img id="cardImage" class="card-image hidden">
+                            <div id="cardStory" class="card-content hidden">
+                                <div class="content-label">记忆故事:</div>
+                                <div id="storyContent"></div>
+                            </div>
+                            <div id="cardPhrases" class="card-content hidden">
+                                <div class="content-label">词组范例:</div>
+                                <div id="phrasesContent"></div>
+                            </div>
+                            <div style="margin-top: 12px; color: var(--text-secondary);">点击返回</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="review-buttons">
+                    <button class="review-btn btn-forgot" onclick="handleCardMove('forgot')">
+                        Forgotten<br>忘记
+                    </button>
+                    <button class="review-btn btn-hard" onclick="handleCardMove('hard')">
+                        Hard<br>困难
+                    </button>
+                    <button class="review-btn btn-good" onclick="handleCardMove('good')">
+                        Good<br>良好
+                    </button>
+                    <button class="review-btn btn-easy" onclick="handleCardMove('easy')">
+                        Easy<br>简单
+                    </button>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="endReview()" style="margin-top: 20px;">
+                    结束复习
+                </button>
+            </div>
+            
+            <!-- Completion Message -->
+            <div id="completionMessage" class="message hidden"></div>
+            
+            <!-- Data Management -->
+            <div class="data-section">
+                <h3>📁 数据管理</h3>
+                <div class="data-actions">
+                    <button class="btn btn-primary" onclick="exportProgress()">📥 导出进度</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📤 导入旧数据</button>
+                    <button class="btn btn-secondary" onclick="showDeviceCodeInput()">🔄 同步其他设备</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
+                    💡 数据已自动云端同步，换设备输入设备码即可继续
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== Firebase Configuration ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMDTDwDP0mEXwgJdwsXVMB2IFi9Q5zfyU",
+            authDomain: "shizi-with-elisa.firebaseapp.com",
+            projectId: "shizi-with-elisa",
+            storageBucket: "shizi-with-elisa.firebasestorage.app",
+            messagingSenderId: "46368268308",
+            appId: "1:46368268308:web:5847aeb7b239b16d624701"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // ==================== Global Variables ====================
+        let currentUser = null;
+        let deviceCode = null;
+        let allCharacters = [];
+        let componentCharacters = [];
+        let targetCharacters = [];
+        let userProgress = {};
+        let currentTab = 'components';
+        let reviewQueue = [];
+        let currentReviewIndex = 0;
+        let isCardFlipped = false;
+        
+        // ==================== Initialization ====================
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Anonymous login
+                await auth.signInAnonymously();
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        currentUser = user;
+                        deviceCode = user.uid.substring(0, 6).toUpperCase();
+                        document.getElementById('deviceCode').textContent = deviceCode;
+                        
+                        // Load data
+                        await loadLessonsFromFirebase();
+                        await loadUserProgress();
+                        
+                        // Show main content
+                        document.getElementById('loadingContainer').classList.add('hidden');
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        
+                        updateStats();
+                    }
+                });
+            } catch (error) {
+                showMessage('初始化失败: ' + error.message, 'error');
+            }
+        });
+        
+        // ==================== Load Lessons from Firebase ====================
+        async function loadLessonsFromFirebase() {
+            try {
+                componentCharacters = [];
+                targetCharacters = [];
+                
+                // Load lessons 8-25
+                for (let i = 8; i <= 25; i++) {
+                    try {
+                        const doc = await db.collection('lessons').doc(`lesson${i}`).get();
+                        if (doc.exists) {
+                            const data = doc.data();
+                            
+                            // Components
+                            if (data.components && data.components.length > 0) {
+                                data.components.forEach(comp => {
+                                    componentCharacters.push({
+                                        ...comp,
+                                        lesson: `lesson${i}`,
+                                        type: 'component'
+                                    });
+                                });
+                            }
+                            
+                            // Target characters
+                            if (data.target_characters && data.target_characters.length > 0) {
+                                data.target_characters.forEach(target => {
+                                    targetCharacters.push({
+                                        ...target,
+                                        lesson: `lesson${i}`,
+                                        type: 'target'
+                                    });
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Lesson ${i} not found, skipping...`);
+                    }
+                }
+                
+                console.log(`Loaded ${componentCharacters.length} components, ${targetCharacters.length} targets`);
+                
+                // Render lesson checkboxes
+                renderLessonCheckboxes();
+                
+            } catch (error) {
+                console.error('Error loading lessons:', error);
+                showMessage('加载课程失败: ' + error.message, 'error');
+            }
+        }
+        
+        // ==================== Render Lesson Checkboxes ====================
+        function renderLessonCheckboxes() {
+            const container = document.getElementById('lessonCheckboxes');
+            const lessons = [];
+            
+            for (let i = 8; i <= 25; i++) {
+                const lessonId = `lesson${i}`;
+                const chars = currentTab === 'components' 
+                    ? componentCharacters.filter(c => c.lesson === lessonId)
+                    : targetCharacters.filter(c => c.lesson === lessonId);
+                
+                if (chars.length > 0) {
+                    lessons.push({ id: lessonId, num: i, count: chars.length });
+                }
+            }
+            
+            container.innerHTML = lessons.map(lesson => `
+                <div class="lesson-checkbox">
+                    <input type="checkbox" id="lesson-${lesson.id}" value="${lesson.id}" 
+                           onchange="updateSelectedCount()">
+                    <label for="lesson-${lesson.id}">
+                        <span class="lesson-info">识字 ${lesson.num}</span>
+                        <span class="lesson-count">${lesson.count} 字</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+        
+        // ==================== Tab Switching ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                
+                renderLessonCheckboxes();
+                clearAllLessons();
+                updateStats();
+            });
+        });
+        
+        // ==================== Selector Toggle ====================
+        document.getElementById('selectorHeader').addEventListener('click', function() {
+            this.classList.toggle('collapsed');
+            document.getElementById('selectorContent').classList.toggle('collapsed');
+        });
+        
+        // ==================== Recommendation Section Toggle ====================
+        document.getElementById('recommendedSection').addEventListener('click', function(e) {
+            if (e.target.closest('.recommended-btn')) return;
+            this.classList.toggle('collapsed');
+        });
+        
+        // ==================== Select/Clear All Lessons ====================
+        function selectAllLessons() {
+            document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            updateSelectedCount();
+        }
+        
+        function clearAllLessons() {
+            document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            updateSelectedCount();
+        }
+        
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]:checked').length;
+            const total = document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]').length;
+            document.getElementById('selectedCount').textContent = `(${checked}/${total})`;
+            updateStats();
+        }
+        
+        // ==================== Get Selected Characters ====================
+        function getSelectedCharacters() {
+            const selectedLessons = Array.from(
+                document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]:checked')
+            ).map(cb => cb.value);
+            
+            const sourceChars = currentTab === 'components' ? componentCharacters : targetCharacters;
+            return sourceChars.filter(char => selectedLessons.includes(char.lesson));
+        }
+        
+        // ==================== Update Statistics ====================
+        function updateStats() {
+            const chars = getSelectedCharacters();
+            const boxes = { forgot: 0, hard: 0, good: 0, easy: 0 };
+            
+            chars.forEach(char => {
+                const progress = userProgress[char.character];
+                const box = progress ? progress.box : 'forgot';
+                boxes[box]++;
+            });
+            
+            document.getElementById('count-forgot').textContent = boxes.forgot;
+            document.getElementById('count-hard').textContent = boxes.hard;
+            document.getElementById('count-good').textContent = boxes.good;
+            document.getElementById('count-easy').textContent = boxes.easy;
+            
+            // Update due count
+            const dueChars = getDueCharacters(chars);
+            document.getElementById('totalDue').textContent = dueChars.length;
+            
+            updateRecommendedBreakdown();
+        }
+        
+        // ==================== Get Due Characters ====================
+        function getDueCharacters(characters) {
+            const today = new Date().setHours(0, 0, 0, 0);
+            
+            return characters.filter(char => {
+                const progress = userProgress[char.character];
+                if (!progress) return true; // New character
+                
+                const lastReviewed = progress.lastReviewed ? new Date(progress.lastReviewed).setHours(0, 0, 0, 0) : null;
+                if (!lastReviewed) return true;
+                
+                const daysSince = Math.floor((today - lastReviewed) / (1000 * 60 * 60 * 24));
+                
+                switch (progress.box) {
+                    case 'forgot': return daysSince >= 0; // Daily
+                    case 'hard': return daysSince >= 1;
+                    case 'good': return daysSince >= 3;
+                    case 'easy': return daysSince >= 7;
+                    default: return true;
+                }
+            });
+        }
+        
+        // ==================== Update Recommended Breakdown ====================
+        function updateRecommendedBreakdown() {
+            const chars = getSelectedCharacters();
+            const dueChars = getDueCharacters(chars);
+            const amount = document.getElementById('reviewAmount').value;
+            
+            let selectedChars = dueChars;
+            if (amount !== 'all') {
+                selectedChars = dueChars.slice(0, parseInt(amount));
+            }
+            
+            const breakdown = { forgot: 0, hard: 0, good: 0, easy: 0 };
+            selectedChars.forEach(char => {
+                const progress = userProgress[char.character];
+                const box = progress ? progress.box : 'forgot';
+                breakdown[box]++;
+            });
+            
+            document.getElementById('recommendedBreakdown').innerHTML = `
+                <div class="breakdown-item">
+                    <span class="breakdown-count">${breakdown.forgot}</span>
+                    <span class="breakdown-label">Forgotten</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-count">${breakdown.hard}</span>
+                    <span class="breakdown-label">Hard</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-count">${breakdown.good}</span>
+                    <span class="breakdown-label">Good</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-count">${breakdown.easy}</span>
+                    <span class="breakdown-label">Easy</span>
+                </div>
+            `;
+        }
+        
+        document.getElementById('reviewAmount').addEventListener('change', updateRecommendedBreakdown);
+        
+        // ==================== Start Reviews ====================
+        function startRecommendedReview() {
+            const chars = getSelectedCharacters();
+            const dueChars = getDueCharacters(chars);
+            const amount = document.getElementById('reviewAmount').value;
+            
+            if (dueChars.length === 0) {
+                showMessage('没有到期的字需要复习！', 'info');
+                return;
+            }
+            
+            reviewQueue = amount === 'all' ? dueChars : dueChars.slice(0, parseInt(amount));
+            shuffleArray(reviewQueue);
+            startReview();
+        }
+        
+        function startBoxReview(box) {
+            const chars = getSelectedCharacters();
+            reviewQueue = chars.filter(char => {
+                const progress = userProgress[char.character];
+                return progress ? progress.box === box : box === 'forgot';
+            });
+            
+            if (reviewQueue.length === 0) {
+                showMessage(`没有 ${box} 难度的字！`, 'info');
+                return;
+            }
+            
+            shuffleArray(reviewQueue);
+            startReview();
+        }
+        
+        function startReview() {
+            currentReviewIndex = 0;
+            document.getElementById('reviewArea').classList.remove('hidden');
+            document.querySelector('.mastery-boxes').style.display = 'none';
+            document.querySelector('.recommended-section').style.display = 'none';
+            document.querySelector('.lesson-selector').style.display = 'none';
+            showCard();
+        }
+        
+        function endReview() {
+            document.getElementById('reviewArea').classList.add('hidden');
+            document.querySelector('.mastery-boxes').style.display = 'grid';
+            document.querySelector('.recommended-section').style.display = 'block';
+            document.querySelector('.lesson-selector').style.display = 'block';
+            updateStats();
+        }
+        
+        // ==================== Show Card ====================
+        function showCard() {
+            if (currentReviewIndex >= reviewQueue.length) {
+                showCompletion();
+                return;
+            }
+            
+            const char = reviewQueue[currentReviewIndex];
+            isCardFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+            
+            // Front
+            document.getElementById('character').textContent = char.character;
+            
+            // Back
+            document.getElementById('backCharacter').textContent = char.character;
+            document.getElementById('pinyin').textContent = char.pinyin;
+            document.getElementById('meaning').textContent = char.meaning;
+            
+            // Image
+            const cardImage = document.getElementById('cardImage');
+            if (char.image) {
+                cardImage.src = char.image;
+                cardImage.classList.remove('hidden');
+            } else {
+                cardImage.classList.add('hidden');
+            }
+            
+            // Story
+            const cardStory = document.getElementById('cardStory');
+            if (char.story) {
+                document.getElementById('storyContent').innerHTML = marked.parse(char.story);
+                cardStory.classList.remove('hidden');
+            } else {
+                cardStory.classList.add('hidden');
+            }
+            
+            // Phrases
+            const cardPhrases = document.getElementById('cardPhrases');
+            if (char.phrases) {
+                document.getElementById('phrasesContent').innerHTML = marked.parse(char.phrases);
+                cardPhrases.classList.remove('hidden');
+            } else {
+                cardPhrases.classList.add('hidden');
+            }
+            
+            // Update progress
+            updateProgress();
+        }
+        
+        // ==================== Card Flip ====================
+        document.getElementById('card').addEventListener('click', (e) => {
+            if (e.target.classList.contains('speak-btn')) return;
+            document.getElementById('card').classList.toggle('flipped');
+        });
+        
+        // ==================== Handle Card Move ====================
+        async function handleCardMove(box) {
+            const char = reviewQueue[currentReviewIndex];
+            
+            // Update progress
+            userProgress[char.character] = {
+                character: char.character,
+                lesson: char.lesson,
+                box: box,
+                reviews: (userProgress[char.character]?.reviews || 0) + 1,
+                lastReviewed: new Date().toISOString()
+            };
+            
+            // Save to Firebase
+            await saveUserProgress();
+            
+            // Next card
+            currentReviewIndex++;
+            showCard();
+        }
+        
+        // ==================== Update Progress Bar ====================
+        function updateProgress() {
+            const total = reviewQueue.length;
+            const current = currentReviewIndex;
+            const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+            
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressFill').textContent = percent + '%';
+            document.getElementById('progressText').textContent = `${current}/${total} 已复习`;
+        }
+        
+        // ==================== Show Completion ====================
+        function showCompletion() {
+            document.getElementById('reviewArea').classList.add('hidden');
+            const msg = document.getElementById('completionMessage');
+            msg.textContent = `🎉 太棒了！你完成了 ${reviewQueue.length} 个字的复习！`;
+            msg.className = 'message success';
+            msg.classList.remove('hidden');
+            
+            setTimeout(() => {
+                msg.classList.add('hidden');
+                endReview();
+            }, 3000);
+        }
+        
+        // ==================== Text-to-Speech ====================
+        function speakPinyin(event) {
+            event.stopPropagation();
+            const pinyin = document.getElementById('pinyin').textContent;
+            const utterance = new SpeechSynthesisUtterance(pinyin);
+            utterance.lang = 'zh-CN';
+            speechSynthesis.speak(utterance);
+        }
+        
+        // ==================== User Progress (Firebase) ====================
+        async function loadUserProgress() {
+            try {
+                const doc = await db.collection('user_progress').doc(currentUser.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    userProgress = data.characterProgress || {};
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+            }
+        }
+        
+        async function saveUserProgress() {
+            try {
+                await db.collection('user_progress').doc(currentUser.uid).set({
+                    characterProgress: userProgress,
+                    lastReview: new Date().toISOString(),
+                    deviceCode: deviceCode
+                });
+            } catch (error) {
+                console.error('Error saving progress:', error);
+            }
+        }
+        
+        // ==================== Import/Export ====================
+        function exportProgress() {
+            const data = {
+                characterProgress: userProgress,
+                lastReview: new Date().toISOString(),
+                deviceCode: deviceCode
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `shizi-progress-${deviceCode}-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        document.getElementById('importFile').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                if (data.characterProgress) {
+                    userProgress = data.characterProgress;
+                    await saveUserProgress();
+                    showMessage('导入成功！', 'success');
+                    updateStats();
+                }
+            } catch (error) {
+                showMessage('导入失败: ' + error.message, 'error');
+            }
+        });
+        
+        // ==================== Device Code Sync ====================
+        function showDeviceCodeInput() {
+            const code = prompt('请输入另一台设备的设备码 (6位):');
+            if (!code) return;
+            
+            syncFromDeviceCode(code.toUpperCase());
+        }
+        
+        async function syncFromDeviceCode(code) {
+            try {
+                // Search for user with this device code
+                const snapshot = await db.collection('user_progress')
+                    .where('deviceCode', '==', code)
+                    .limit(1)
+                    .get();
+                
+                if (snapshot.empty) {
+                    showMessage('未找到该设备码！', 'error');
+                    return;
+                }
+                
+                const data = snapshot.docs[0].data();
+                userProgress = data.characterProgress || {};
+                await saveUserProgress();
+                
+                showMessage('同步成功！', 'success');
+                updateStats();
+            } catch (error) {
+                showMessage('同步失败: ' + error.message, 'error');
+            }
+        }
+        
+        // ==================== Utilities ====================
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        function showMessage(text, type = 'info') {
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            document.querySelector('.container').appendChild(msg);
+            
+            setTimeout(() => msg.remove(), 4000);
+        }
+    </script>
+</body>
+</html>
