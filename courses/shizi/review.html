@@ -13,709 +13,420 @@
     <!-- Marked.js for Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
-    <style>
-        :root {
-            /* 主色调 */
-            --primary-color: #0891b2;
-            --primary-light: #06b6d4;
-            --primary-dark: #0e7490;
-            
-            /* 辅助色 */
-            --secondary-color: #10b981;
-            --accent-color: #f59e0b;
-            --danger-color: #ef4444;
-            
-            /* 中性色 */
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --text-muted: #9ca3af;
-            
-            /* 背景色 */
-            --bg-page: #f9fafb;
-            --bg-card: #ffffff;
-            --bg-hover: #f3f4f6;
-            --bg-light: #e5e7eb;
-            
-            /* 边框色 */
-            --border-light: #e5e7eb;
-            
-            /* Leitner 盒子颜色 */
-            --forgot-color: #ff5252;
-            --hard-color: #ffab40;
-            --good-color: #40c4ff;
-            --easy-color: #69f0ae;
-        }
+   <style>
+    
+    :root {
+        /* 主色调：清爽海洋蓝绿（纯色！无渐变） */
+        --primary: #00acc1;      /* 主蓝绿 cyan-600 */
+        --primary-dark: #0589aa; /* 深蓝绿 cyan-900 */
+        --primary-light: #b2ebf2; /* 浅蓝绿 cyan-300（用于浅背景） */
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
-        }
+        /* 辅助色 */
+        --success: #4caf50;
+        --danger: #ef4444;
         
-        body {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
-            min-height: 100vh;
-            padding: 15px;
-            color: var(--text-primary);
-        }
+        /* 中性色 */
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --bg-page: #ffffff;       /* 纯白主背景 */
+        --bg-card: #ffffff;
+        --bg-hover: #f0fdfd;      /* 极浅蓝绿悬停 */
+        --bg-light: #ecfdfd;      /* 浅蓝绿背景块 */
+        --border: #b2ebf2;
+        --shadow: rgba(0, 105, 115, 0.12);
         
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: var(--bg-card);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        
-        /* ==================== Header ==================== */
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            color: var(--primary-color);
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1em;
-        }
-        
-        .device-code-display {
-            margin-top: 15px;
-            padding: 12px;
-            background: var(--bg-light);
-            border-radius: 8px;
-            display: inline-block;
-        }
-        
-        .device-code-display strong {
-            color: var(--primary-color);
-            font-size: 1.4em;
-            letter-spacing: 2px;
-        }
-        
-        /* ==================== Tab System ==================== */
-        .tab-system {
-            margin: 20px 0;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: var(--bg-light);
-            border-bottom: 2px solid var(--border-light);
-        }
-        
-        .tab-btn {
-            padding: 16px 20px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .tab-btn:hover {
-            background: rgba(59, 151, 151, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .tab-btn.active {
-            color: var(--primary-color);
-            background: white;
-        }
-        
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--primary-color);
-            border-radius: 3px 3px 0 0;
-        }
-        
-        /* ==================== Lesson Selection (Collapsible) ==================== */
-        .lesson-selector {
-            margin: 20px 0;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .selector-header {
-            padding: 16px;
-            background: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        
-        .selector-header:hover {
-            background: var(--primary-dark);
-        }
-        
-        .selector-count {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.9em;
-        }
-        
-        .selector-arrow {
-            transition: transform 0.3s;
-            font-size: 1.2em;
-        }
-        
-        .selector-header.collapsed .selector-arrow {
-            transform: rotate(-90deg);
-        }
-        
-        .selector-content {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-        
-        .selector-content.collapsed {
-            display: none;
-        }
-        
-        .lesson-checkbox {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: var(--bg-light);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .lesson-checkbox:hover {
-            background: var(--bg-hover);
-            transform: translateX(5px);
-        }
-        
-        .lesson-checkbox input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            cursor: pointer;
-        }
-        
-        .lesson-checkbox label {
-            cursor: pointer;
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .lesson-info {
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-        
-        .lesson-count {
-            color: var(--text-secondary);
-            font-size: 0.9em;
-        }
-        
-        .selector-actions {
-            padding: 15px;
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        /* ==================== Smart Recommendation ==================== */
-        .recommended-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            border-radius: 16px;
-            padding: 25px;
-            margin: 20px 0;
-            color: white;
-            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .recommended-section:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(8, 145, 178, 0.5);
-        }
-        
-        .recommended-section.collapsed {
-            cursor: default;
-        }
-        
-        .recommended-section.collapsed:hover {
-            transform: none;
-        }
-        
-        .recommended-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .recommended-title-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .recommended-icon {
-            font-size: 28px;
-        }
-        
-        .recommended-title {
-            font-size: 22px;
-            font-weight: 600;
-        }
-        
-        .collapse-arrow {
-            font-size: 1.5em;
-            transition: transform 0.3s;
-        }
-        
-        .recommended-section.collapsed .collapse-arrow {
-            transform: rotate(180deg);
-        }
-        
-        .recommended-content {
-            transition: all 0.3s;
-        }
-        
-        .recommended-section.collapsed .recommended-content {
-            display: none;
-        }
-        
-        .recommended-subtitle {
-            text-align: center;
-            font-size: 14px;
-            opacity: 0.95;
-            margin-bottom: 20px;
-        }
-        
-        .due-info {
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-        }
-        
-        .recommended-breakdown {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
+        /* Leitner 盒子纯色（无渐变） */
+        --forgot: #ff5252;
+        --hard: #ff9800;
+        --good: #40c4ff;
+        --easy: #69f0ae;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; }
+    body { background: var(--bg-page); color: var(--text-primary); min-height: 100vh; padding: 16px; }
+    
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: var(--bg-card);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px var(--shadow);
+        padding: 24px;
+        border: 1px solid #e0f7fa;
+    }
+
+    /* ==================== Header ==================== */
+    header { text-align: center; margin-bottom: 32px; }
+    h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    
+    .device-code-display {
+        margin-top: 20px;
+        padding: 16px 24px;
+        background: var(--bg-light);
+        border-radius: 14px;
+        display: inline-block;
+        border: 1px solid var(--border);
+        min-width: 280px;
+    }
+    .device-code-display strong {
+        color: var(--primary);
+        font-size: 1.8rem;
+        letter-spacing: 4px;
+        font-weight: bold;
+    }
+
+    /* ==================== Loading ==================== */
+    .loader {
+        border: 5px solid #f0f7fa;
+        border-top: 5px solid var(--primary);
+        border-radius: 50%;
+        width: 50px; height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 40px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ==================== Tab System ==================== */
+    .tab-system { margin: 24px 0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); }
+    .tab-buttons { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-light); }
+    .tab-btn {
+        padding: 18px;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+    }
+    .tab-btn:hover { background: rgba(0,172,193,0.15); color: var(--primary); }
+    .tab-btn.active { color: var(--primary); background: white; }
+    .tab-btn.active::after {
+        content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
+        background: var(--primary);
+    }
+
+    /* ==================== Lesson Selection ==================== */
+   /* ==================== Lesson Selection - Modern Card Style (方案 C) ==================== */
+.lesson-selector {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin: 32px 0;
+}
+
+.selector-header {
+    background: var(--primary);
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,172,193,0.28);
+    padding: 20px 28px;
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.selector-header:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.selector-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    padding: 24px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* 自動網格，超大方 */
+    gap: 18px;
+    max-height: 480px;
+    overflow-y: auto;
+    transition: all 0.4s ease;
+}
+
+.selector-content.collapsed {
+    display: none;
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.lesson-checkbox {
+    background: #f8fdff;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.lesson-checkbox:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,172,193,0.18);
+}
+
+.lesson-checkbox input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.lesson-info {
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+.lesson-count {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    background: rgba(0,172,193,0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.selector-actions {
+    padding: 20px 0 0;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    background: transparent;
+    border-top: none;
+}
+    /* ==================== Smart Recommendation ==================== */
+    .recommended-section {
+        background: var(--primary-light);   /* 纯色浅蓝绿 */
+        border-radius: 20px;
+        padding: 32px;
+        margin: 32px 0;
+        box-shadow: 0 10px 35px rgba(0,172,193,0.22);
+        transition: 0.3s;
+        cursor: pointer;
+        border: 1px solid var(--border);
+    }
+    .recommended-section:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,172,193,0.28); }
+    
+    .recommended-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .recommended-title-group { display: flex; align-items: center; gap: 14px; }
+    .recommended-icon { font-size: 36px; }
+    .recommended-title { font-size: 26px; font-weight: 700; color: var(--primary-dark); }
+    .collapse-arrow { font-size: 1.8rem; transition: 0.3s; color: var(--primary-dark); }
+    .recommended-section.collapsed .collapse-arrow { transform: rotate(180deg); }
+    .recommended-section.collapsed .recommended-content { display: none; }
+    
+    .recommended-subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; }
+    .due-info {
+        text-align: center;
+        background: white;
+        padding: 16px;
+        border-radius: 14px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-dark);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .recommended-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin: 28px 0;
+    }
         .breakdown-item {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-        }
-        
-        .breakdown-count {
-            display: block;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        
-        .breakdown-label {
-            display: block;
-            font-size: 13px;
-            opacity: 0.95;
-        }
-        
-        .amount-selector {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .amount-selector label {
-            display: block;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .amount-selector select {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
             background: white;
-            color: var(--primary-color);
-            cursor: pointer;
-            min-width: 250px;
-        }
-        
-        .recommended-btn {
-            background: white;
-            color: var(--primary-color);
-            border: none;
-            padding: 14px 35px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            display: block;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .recommended-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* ==================== Mastery Boxes ==================== */
-        .mastery-boxes {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-        
-        .mastery-box {
-            border-radius: 12px;
-            padding: 20px 15px;
+            padding: 18px;
+            border-radius: 14px;
             text-align: center;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 3px solid var(--border); /* 预设边框 */
         }
-        
-        .mastery-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        }
-        
-        .mastery-box.forgot { background: linear-gradient(135deg, var(--forgot-color), #c0392b); }
-        .mastery-box.hard { background: linear-gradient(135deg, var(--hard-color), #e67e22); }
-        .mastery-box.good { background: linear-gradient(135deg, var(--good-color), #2980b9); }
-        .mastery-box.easy { background: linear-gradient(135deg, var(--easy-color), #27ae60); }
-        
-        .box-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .box-count {
-            font-size: 32px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .box-description {
-            font-size: 13px;
-            opacity: 0.95;
-        }
-        
-        /* ==================== Review Area ==================== */
-        .review-area {
-            text-align: center;
-            margin: 25px 0;
-        }
-        
-        .current-session {
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin: 12px 0;
-            font-weight: bold;
-        }
-        
-        /* Card */
-        .card {
-            perspective: 1000px;
-            height: 450px;
-            margin: 20px auto;
-            cursor: pointer;
-            max-width: 600px;
-            width: 100%;
-        }
-        
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-        }
-        
-        .card-front {
-            background-color: var(--bg-card);
-            border: 2px solid var(--border-light);
-        }
-        
-        .card-back {
-            background-color: var(--bg-light);
-            border: 2px solid var(--primary-color);
-            transform: rotateY(180deg);
-            justify-content: flex-start;
-            gap: 12px;
-        }
-        
-        .character {
-            font-size: 120px;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        .back-character {
-            font-size: 80px;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        .pinyin {
-            font-size: 28px;
-            color: var(--danger-color);
-            margin: 8px 0;
-            font-weight: 500;
-        }
-        
-        .meaning {
-            font-size: 20px;
-            color: var(--secondary-color);
-            line-height: 1.4;
-            margin: 8px 0;
-        }
-        
-        .card-image {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            margin: 12px 0;
-        }
-        
-        .card-content {
-            text-align: left;
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
-            margin-top: 8px;
-        }
-        
-        .content-label {
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 4px;
-        }
-        
-        .speak-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            margin: 8px 0;
-            transition: all 0.3s;
-        }
-        
-        .speak-btn:hover {
-            background: var(--primary-dark);
-        }
-        
-        /* Review Buttons */
-        .review-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .review-btn {
-            padding: 16px 12px;
-            font-size: 16px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .btn-forgot { background-color: var(--forgot-color); }
-        .btn-hard { background-color: var(--hard-color); }
-        .btn-good { background-color: var(--good-color); }
-        .btn-easy { background-color: var(--easy-color); }
-        
-        .review-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Progress */
-        .progress-container {
-            margin: 20px 0;
-        }
-        
-        .progress-bar {
-            height: 30px;
-            background: var(--bg-light);
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            transition: width 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .progress-text {
-            text-align: center;
-            font-weight: bold;
-            color: var(--primary-color);
-            font-size: 16px;
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-        
-        .btn-secondary {
-            background: var(--text-secondary);
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: var(--text-primary);
-        }
-        
-        /* Messages */
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        .message.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #34d399;
-        }
-        
-        .message.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #f87171;
-        }
-        
-        .message.info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #60a5fa;
-        }
-        
-        /* Loading */
-        .loader {
-            border: 4px solid var(--border-light);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        /* Data Management */
+    .breakdown-item.forgot { background: white; color: var(--text-primary); border: 3px solid var(--forgot); }
+    .breakdown-item.hard   { background: white; color: var(--text-primary); border: 3px solid var(--hard); }
+    .breakdown-item.good   { background: white; color: var(--text-primary); border: 3px solid var(--good); }
+    .breakdown-item.easy   { background: white; color: var(--text-primary); border: 3px solid var(--easy); }
+   .breakdown-count { font-size: 36px; font-weight: bold; }
+    .breakdown-label { font-size: 14px; color: var(--text-secondary); }
+    
+    .amount-selector { text-align: center; margin: 28px 0; }
+    .amount-selector label { font-size: 17px; color: var(--text-primary); display: block; margin-bottom: 12px; }
+    .amount-selector select {
+        padding: 14px 20px;
+        font-size: 17px;
+        border: 2px solid var(--primary);
+        border-radius: 14px;
+        background: white;
+        color: var(--primary-dark);
+        min-width: 320px;
+        cursor: pointer;
+    }
+    
+    .recommended-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 18px 48px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+        box-shadow: 0 8px 25px rgba(0,172,193,0.35);
+        transition: 0.3s;
+    }
+    .recommended-btn:hover { background: var(--primary-dark); transform: translateY(-4px); }
+
+    /* ==================== Mastery Boxes ==================== */
+    .mastery-boxes {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin: 32px 0;
+    }
+    @media (min-width: 768px) { .mastery-boxes { grid-template-columns: repeat(4, 1fr); } }
+    
+    .mastery-box {
+        background:transparent;
+        border-radius: 20px;
+        padding: 32px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        border: 3px solid rgba(0,0,0,0.1);;
+    }
+    .mastery-box.forgot { background: var(--forgot); }
+    .mastery-box.hard   { background: var(--hard); }
+    .mastery-box.good   { background: var(--good); }
+    .mastery-box.easy   { background: var(--easy); }
+    
+    .mastery-box:hover { transform: translateY(-8px); box-shadow: 0 14px 30px rgba(0,0,0,0.18); }
+    
+    .box-title { font-size: 18px; font-weight: 600; color: #ffffff; margin-bottom: 8px; }
+    .box-count { font-size: 42px; font-weight: bold; color: #ffffff; margin: 12px 0; }
+    .box-description { font-size: 14px; color:#ffffff; }
+
+    /* ==================== Review Area (你原本的卡片区保持完美) ==================== */
+    .review-area { text-align: center; margin: 30px 0; }
+    .current-session { font-size: 20px; color: var(--text-secondary); font-weight: bold; margin: 20px 0; }
+    
+    .card {
+        perspective: 1000px;
+        height: 460px;
+        margin: 20px auto;
+        cursor: pointer;
+        max-width: 600px;
+        width: 100%;
+    }
+    .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    
+    .card-front, .card-back {
+        position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+        border-radius: 20px; padding: 20px; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; box-shadow: 0 10px 30px var(--shadow);
+        overflow-y: auto;
+    }
+    .card-front { background: white; border: 3px solid var(--border); }
+    .card-back { background: var(--bg-light); border: 3px solid var(--primary); transform: rotateY(180deg); }
+
+    .character { font-size: 140px; color: var(--primary-dark); font-weight: bold; }
+    .back-character { font-size: 80px; color: var(--primary-dark); }
+    .pinyin { font-size: 30px; color: var(--primary); margin: 10px 0; font-weight: bold; }
+    .meaning { font-size: 22px; color: var(--text-primary); line-height: 1.5; }
+
+    .review-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        max-width: 600px;
+        margin: 30px auto;
+    }
+    @media (min-width: 768px) { .review-buttons { grid-template-columns: repeat(4, 1fr); } }
+    
+    .review-btn {
+        padding: 18px;
+        border: none;
+        border-radius: 16px;
+        font-weight: bold;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-forgot { background: var(--forgot); }
+    .btn-hard   { background: var(--hard); }
+    .btn-good   { background: var(--good); }
+    .btn-easy   { background: var(--easy); }
+    .review-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+    /* Progress Bar */
+    .progress-bar {
+        height: 36px;
+        background: var(--bg-light);
+        border-radius: 18px;
+        overflow: hidden;
+        margin: 24px 0;
+        border: 2px solid var(--border);
+    }
+    .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        width: 0%;
+        transition: width 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 12px 28px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: #94a3b8; color: white; }
+
+    /* Messages & Data Section */
+    .message { padding: 18px; border-radius: 14px; margin: 20px 0; text-align: center; font-weight: bold; }
+    .message.success { background: #d1fae5; color: #065f46; border: 1px solid #34d399; }
+    .message.error { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+
+    .data-section {
+        margin: 32px 0 16px;
+        padding: 24px;
+        background: var(--bg-light);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+    }
+    .data-section h3 { color: var(--primary-dark); margin-bottom: 16px; font-size: 1.3rem; }
+    .data-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-start; }
+
+    .hidden { display: none !important; }
+
+
+       /* Data Management */
         .data-section {
             margin: 20px 0;
             padding: 20px;
@@ -758,19 +469,19 @@
                 height: 400px;
             }
         }
-    </style>
+</style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>📚 识字复习系统</h1>
+            <h1>📚 Chinese Character Review System</h1>
             <div class="subtitle">Cloud Sync • Spaced Repetition</div>
             <div class="device-code-display" id="deviceCodeDisplay">
-                <div style="font-size: 0.9em; margin-bottom: 5px;">设备码 Device Code:</div>
+                <div style="font-size: 0.9em; margin-bottom: 5px;">Device Code:</div>
                 <strong id="deviceCode">------</strong>
                 <div style="font-size: 0.8em; margin-top: 5px; color: var(--text-secondary);">
-                    换设备时输入此码同步进度
+                    Enter this code on another device to sync progress
                 </div>
             </div>
         </header>
@@ -778,7 +489,7 @@
         <!-- Loading -->
         <div id="loadingContainer">
             <div class="loader"></div>
-            <p style="text-align: center; color: var(--text-secondary);">正在加载...</p>
+            <p style="text-align: center; color: var(--text-secondary);">Loading...</p>
         </div>
         
         <!-- Main Content -->
@@ -786,112 +497,116 @@
             <!-- Tab System -->
             <div class="tab-system">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="components">部首部件 Components</button>
-                    <button class="tab-btn" data-tab="characters">识字课程 Characters</button>
+                    <button class="tab-btn active" data-tab="components">Radical Components</button>
+                    <button class="tab-btn" data-tab="characters">Character Lessons</button>
                 </div>
             </div>
             
             <!-- Lesson Selection -->
             <div class="lesson-selector">
                 <div class="selector-header" id="selectorHeader">
-                    <span>📚 选择课程 <span class="selector-count" id="selectedCount">(0/18)</span></span>
+                    <span>📚 Select Lessons <span class="selector-count" id="selectedCount">(0/18)</span></span>
                     <span class="selector-arrow">▼</span>
                 </div>
                 <div class="selector-content" id="selectorContent">
                     <div id="lessonCheckboxes"></div>
                 </div>
                 <div class="selector-actions">
-                    <button class="btn btn-primary" onclick="selectAllLessons()">全选</button>
-                    <button class="btn btn-secondary" onclick="clearAllLessons()">清空</button>
+                    <button class="btn btn-primary" onclick="selectAllLessons()">Select All</button>
+                    <button class="btn btn-secondary" onclick="clearAllLessons()">Clear All</button>
                 </div>
             </div>
             
             <!-- Smart Recommendation -->
             <div class="recommended-section" id="recommendedSection">
+
+
                 <div class="recommended-header">
                     <div class="recommended-title-group">
                         <span class="recommended-icon">🎯</span>
-                        <div class="recommended-title">智能推荐复习</div>
-                    </div>
-                    <span class="collapse-arrow">▼</span>
+                        <div class="recommended-title">Smart Review Recommendation</div>
+                    </div>                    
                 </div>
                 
                 <div class="recommended-content">
                     <div class="recommended-subtitle">
-                        📅 间隔重复算法: Forgotten (每天) • Hard (1天) • Good (3天) • Easy (7天)
+                        📅 Spaced Repetition: Forgotten (daily) • Hard (1 day) • Good (3 days) • Easy (7 days)
                     </div>
                     
                     <div class="due-info" id="dueInfo">
-                        今日待复习: <span id="totalDue">0</span> 个字
+                        Due Today: <span id="totalDue">0</span> characters
                     </div>
                     
                     <div class="amount-selector">
-                        <label>选择复习数量:</label>
+                        <label>Select Review Amount:</label>
                         <select id="reviewAmount">
-                            <option value="20">20 (快速每日复习)</option>
-                            <option value="30">30 (标准)</option>
-                            <option value="50">50 (加强练习)</option>
-                            <option value="all">全部到期字 (有时间就做!)</option>
+                            <option value="20">20 (Quick Daily Review)</option>
+                            <option value="30">30 (Standard)</option>
+                            <option value="50">50 (Intensive Practice)</option>
+                            <option value="all">All Due Characters (When you have time!)</option>
                         </select>
                     </div>
                     
                     <div class="recommended-breakdown" id="recommendedBreakdown"></div>
                     
                     <button class="recommended-btn" onclick="startRecommendedReview()">
-                        🧠 开始智能复习
+                        🧠 Start Smart Review
                     </button>
                 </div>
             </div>
             
-            <!-- Manual Selection -->
-            <div style="text-align: center; margin: 20px 0; color: var(--text-secondary);">
-                或按难度复习
+            <!-- Manual Selection Hint -->
+            <div class="manual-selection-header collapsed" id="manualHeader" style="text-align: center; margin: 28px 0; color: var(--text-secondary); font-size: 1.2em; font-weight: 500; cursor: pointer;">
+                <span class="collapse-arrow">▼</span>
+                Or review by difficulty level 
+                <span class="collapse-arrow">▼</span>
             </div>
             
-            <div class="mastery-boxes">
+            <!-- Mastery Boxes -->
+            <div class="mastery-boxes collapsed" id="masteryBoxes" style="display: none;">
                 <div class="mastery-box forgot" onclick="startBoxReview('forgot')">
-                    <div class="box-title">Forgotten 忘记</div>
+                    <div class="box-title">Forgotten</div>
                     <div class="box-count" id="count-forgot">0</div>
-                    <div class="box-description">需要频繁复习</div>
+                    <div class="box-description">Needs frequent review</div>
                 </div>
                 <div class="mastery-box hard" onclick="startBoxReview('hard')">
-                    <div class="box-title">Hard 困难</div>
+                    <div class="box-title">Hard</div>
                     <div class="box-count" id="count-hard">0</div>
-                    <div class="box-description">仍有挑战</div>
+                    <div class="box-description">Still challenging</div>
                 </div>
                 <div class="mastery-box good" onclick="startBoxReview('good')">
-                    <div class="box-title">Good 良好</div>
+                    <div class="box-title">Good</div>
                     <div class="box-count" id="count-good">0</div>
-                    <div class="box-description">记得不错</div>
+                    <div class="box-description">Doing well</div>
                 </div>
                 <div class="mastery-box easy" onclick="startBoxReview('easy')">
-                    <div class="box-title">Easy 简单</div>
+                    <div class="box-title">Easy</div>
                     <div class="box-count" id="count-easy">0</div>
-                    <div class="box-description">已掌握</div>
+                    <div class="box-description">Mastered</div>
                 </div>
             </div>
             
             <!-- Review Area -->
             <div class="review-area hidden" id="reviewArea">
-                <div class="current-session" id="currentSession">复习进行中</div>
+                <div class="current-session" id="currentSession">Review in Progress</div>
                 
                 <div class="progress-container">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
                     </div>
-                    <div class="progress-text" id="progressText">0/0 已复习</div>
+                    <div class="progress-text" id="progressText">0/0 Reviewed</div>
                 </div>
                 
                 <div class="card" id="card">
                     <div class="card-inner">
                         <div class="card-front">
                             <div class="character" id="character">一</div>
-                            <div style="margin-top: 20px; color: var(--text-secondary);">点击翻转</div>
+                            <div style="margin-top: 20px; color: var(--text-secondary);">Click to flip</div>
                         </div>
                         <div class="card-back">
                             <div class="back-character" id="backCharacter">一</div>
                             <div class="pinyin" id="pinyin">yī</div>
-                            <button class="speak-btn" onclick="speakPinyin(event)">🔊 朗读</button>
+                            <button class="speak-btn" onclick="speakPinyin(event)">🔊 Read</button>
                             <div class="meaning" id="meaning">one</div>
                             <img id="cardImage" class="card-image hidden">
                             <div id="cardStory" class="card-content hidden">
@@ -902,7 +617,7 @@
                                 <div class="content-label">词组范例:</div>
                                 <div id="phrasesContent"></div>
                             </div>
-                            <div style="margin-top: 12px; color: var(--text-secondary);">点击返回</div>
+                            <div style="margin-top: 12px; color: var(--text-secondary);">Click to return</div>
                         </div>
                     </div>
                 </div>
@@ -923,7 +638,7 @@
                 </div>
                 
                 <button class="btn btn-secondary" onclick="endReview()" style="margin-top: 20px;">
-                    结束复习
+                    End Review
                 </button>
             </div>
             
@@ -931,18 +646,22 @@
             <div id="completionMessage" class="message hidden"></div>
             
             <!-- Data Management -->
-            <div class="data-section">
-                <h3>📁 数据管理</h3>
+             <div class="data-section">
+                <h3>📁 Data Management</h3>
                 <div class="data-actions">
-                    <button class="btn btn-primary" onclick="exportProgress()">📥 导出进度</button>
-                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📤 导入旧数据</button>
-                    <button class="btn btn-secondary" onclick="showDeviceCodeInput()">🔄 同步其他设备</button>
+                    <button class="btn btn-primary" onclick="exportProgress()">📥 Export Progress</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+                    <button class="btn btn-secondary" onclick="showDeviceCodeInput()">🔄 Sync Another Device</button>
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                 </div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
-                    💡 数据已自动云端同步，换设备输入设备码即可继续
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 14px; line-height: 1.5;">
+                    💡 Your progress is automatically synced to the cloud.<br>
+                    To continue on another device, simply enter the Device Code shown above.
                 </div>
             </div>
+        </div> <!-- end of #mainContent -->
+    </div> <!-- end of .container -->
+
         </div>
     </div>
     
@@ -1068,14 +787,14 @@
             }
             
             container.innerHTML = lessons.map(lesson => `
-                <div class="lesson-checkbox">
-                    <input type="checkbox" id="lesson-${lesson.id}" value="${lesson.id}" 
-                           onchange="updateSelectedCount()">
-                    <label for="lesson-${lesson.id}">
-                        <span class="lesson-info">识字 ${lesson.num}</span>
-                        <span class="lesson-count">${lesson.count} 字</span>
-                    </label>
-                </div>
+<div class="lesson-checkbox">
+    <label for="lesson-${lesson.id}" style="width: 100%; display: flex; align-items: center; margin: 0;">
+        <input type="checkbox" id="lesson-${lesson.id}" value="${lesson.id}" 
+               onchange="updateSelectedCount()">
+        <span class="lesson-info">识字 ${lesson.num}</span>
+        <span class="lesson-count">${lesson.count} 字</span>
+    </label>
+</div>
             `).join('');
         }
         
@@ -1098,12 +817,20 @@
             document.getElementById('selectorContent').classList.toggle('collapsed');
         });
         
-        // ==================== Recommendation Section Toggle ====================
-        document.getElementById('recommendedSection').addEventListener('click', function(e) {
-            if (e.target.closest('.recommended-btn')) return;
-            this.classList.toggle('collapsed');
-        });
-        
+
+        // ==================== Manual Selection Toggle ====================
+document.getElementById('manualHeader').addEventListener('click', function() {
+    this.classList.toggle('collapsed');
+    const boxes = document.getElementById('masteryBoxes');
+    if (boxes.style.display === 'none') {
+        boxes.style.display = 'grid';
+        this.textContent = 'Or review by difficulty level ▲';
+    } else {
+        boxes.style.display = 'none';
+        this.textContent = 'Or review by difficulty level ▼';
+    }
+});
+
         // ==================== Select/Clear All Lessons ====================
         function selectAllLessons() {
             document.querySelectorAll('#lessonCheckboxes input[type="checkbox"]').forEach(cb => {
@@ -1201,19 +928,19 @@
             });
             
             document.getElementById('recommendedBreakdown').innerHTML = `
-                <div class="breakdown-item">
+                <div class="breakdown-item" style="border-color: var(--forgot); color: var(--forgot);">
                     <span class="breakdown-count">${breakdown.forgot}</span>
                     <span class="breakdown-label">Forgotten</span>
                 </div>
-                <div class="breakdown-item">
+                <div class="breakdown-item" style="border-color: var(--hard); color: var(--hard);">
                     <span class="breakdown-count">${breakdown.hard}</span>
                     <span class="breakdown-label">Hard</span>
                 </div>
-                <div class="breakdown-item">
+                <div class="breakdown-item" style="border-color: var(--good); color: var(--good);">
                     <span class="breakdown-count">${breakdown.good}</span>
                     <span class="breakdown-label">Good</span>
                 </div>
-                <div class="breakdown-item">
+                <div class="breakdown-item" style="border-color: var(--easy); color: var(--easy);">
                     <span class="breakdown-count">${breakdown.easy}</span>
                     <span class="breakdown-label">Easy</span>
                 </div>
@@ -1229,7 +956,7 @@
             const amount = document.getElementById('reviewAmount').value;
             
             if (dueChars.length === 0) {
-                showMessage('没有到期的字需要复习！', 'info');
+                showMessage('No characters are due for review!没有到期的字需要复习！', 'info');
                 return;
             }
             
@@ -1363,7 +1090,7 @@
         function showCompletion() {
             document.getElementById('reviewArea').classList.add('hidden');
             const msg = document.getElementById('completionMessage');
-            msg.textContent = `🎉 太棒了！你完成了 ${reviewQueue.length} 个字的复习！`;
+            msg.textContent = `🎉 Great job! You've reviewed ${reviewQueue.length} characters！`;
             msg.className = 'message success';
             msg.classList.remove('hidden');
             
@@ -1444,7 +1171,7 @@
         
         // ==================== Device Code Sync ====================
         function showDeviceCodeInput() {
-            const code = prompt('请输入另一台设备的设备码 (6位):');
+            const code = prompt('Enter device code from another device (6 digits):');
             if (!code) return;
             
             syncFromDeviceCode(code.toUpperCase());
@@ -1459,7 +1186,7 @@
                     .get();
                 
                 if (snapshot.empty) {
-                    showMessage('未找到该设备码！', 'error');
+                    showMessage('Device code not found!', 'error');
                     return;
                 }
                 
