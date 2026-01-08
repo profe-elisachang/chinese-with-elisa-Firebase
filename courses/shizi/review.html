@@ -681,9 +681,7 @@
         .review-area { margin: 20px 0; }
         .current-session { font-size: 1.1rem; margin: 16px 0; }
         .card {
-            height: auto;
-            min-height: 400px;
-            max-height: 50vh;
+            height: 550px;
             margin: 16px auto;
         }
     }
@@ -701,6 +699,7 @@
         .card-front, .card-back {
             padding: 16px 12px;
             justify-content: flex-start;
+            overflow-y: auto;
         }
     }
     .card-front { background: white; border: 3px solid var(--border); }
@@ -925,9 +924,7 @@
             }
 
             .card {
-                height: auto;
-                min-height: 380px;
-                max-height: 45vh;
+                height: 500px;
             }
 
             .card-image {
