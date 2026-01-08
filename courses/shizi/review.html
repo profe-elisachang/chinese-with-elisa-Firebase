@@ -60,6 +60,12 @@
         border-bottom: 1px solid #e5e7eb;
     }
 
+    @media (max-width: 640px) {
+        .top-nav {
+            position: relative;
+        }
+    }
+
     .nav-link {
         font-size: 1rem;
         font-weight: 600;
@@ -234,8 +240,8 @@
     grid-template-columns: repeat(auto-fill, 110px);
     justify-content: center;
     gap: 16px;
-    max-height: 480px;
-    overflow-y: auto;
+    max-height: none;
+    overflow-y: visible;
     overflow-x: hidden;
     transition: all 0.4s ease;
 }
@@ -244,6 +250,7 @@
     .selector-content {
         grid-template-columns: repeat(3, 1fr);
         max-height: 360px;
+        overflow-y: auto;
         padding: 16px 12px;
         gap: 12px;
     }
