@@ -1,214 +1,55 @@
-# Firebase Firestore 資料結構
+# 識字專案教學與數據規格書 (V2.2 - 憲法校對版)
+## 🔒 Project Invariants (專案教學憲法)
+1. Core vs Support 核心二元論：部件即便以圖片顯示，仍屬 Core（核心），因為它是理解字義的結構單位。
+2. 教學情境定錨 (Teaching Contexts)：分為 Admin (管理)、Lesson (學生手機版)、Teaching Presentation (65 吋電視版) 三種情境，渲染器須依情境調整字體與圖片尺寸。
+3. 數據真相來源：Firestore 是唯一真相來源。Admin 是為了方便編寫，不應引入替代邏輯。
+4. 空值隱藏原則：若選填欄位值為 ""，前端渲染器 「絕對不可」 產生該 HTML 容器或顯示標題。
 
-## 總覽
+--------------------------------------------------------------------------------
 
-專案使用 Firebase Firestore 儲存所有課程資料。
+## 📊 Firebase Firestore 資料結構
+1. lessons Collection (課程內容)
+每個 Document（如 lesson11）包含以下區塊：
+A. 核心文字區 (Core)
+• character: 漢字文字。
+• display_image: (字形補丁) 專用於當 character 無法正常顯示時的字體圖。與文字地位相同，套用「字形補丁規範」。
+• pinyin: 拼音（部件不強求發音，目標字必考）。
+• meaning: 英文意義。
+• type: "component" 或 "target"。
+B. 教學支援區 (Support - 支援 Markdown)
+• components_breakdown: 部件拆解字串。
+• book_explanation: 書本解釋。
+• story: 記憶故事。
+• pronunciation_cue: 發音提示。
+• image: (輔助插圖) 專用於故事圖、象形演變圖或聯想圖。套用「通用圖片規範」。
+• example: 記憶例句。
+C. 列表與權變格式 (需用 .split('|') 解析)
+• vocabulary: 字|音|義 (例如：通|tōng|open)。
+• phrases: 詞組|音|義。
+• grammar: 語法規則|英文說明。
 
----
+--------------------------------------------------------------------------------
 
-## Collection: `lessons`
+## 📝 渲染規則與圖片規範
+1. 🖼️ 字形補丁系統 (Character Patch)
+包含 display_image 欄位與 Markdown 中的 ![comp](url)。
+• Teaching Presentation (電視)：固定寬高 120px。
+• Lesson / Admin (行內)：高度設定為 1.8em (約 35px)，使其視覺上與文字對齊。
+2. 🖼️ Markdown 圖片分類 (Alt-based)
+渲染器根據 Alt 文字自動分配 CSS Class：
+• ![comp](url)：套用「字形補丁系統」樣式。
+• ![origin](url)：象形演變圖，適中尺寸並置中。
+• ![story](url)：故事插圖，較大尺寸，視覺重心。
+• 無標註或 ![small/large]：套用 .modal-image-container，max-width: 100% 自適應。
 
-每個課程是一個 Document，ID 格式：`lesson1`, `lesson2`, ... `lesson25`
+--------------------------------------------------------------------------------
 
----
+## 💾 查詢與開發基準
+// 1. 渲染字卡主標題邏輯
+const charDisplay = char.display_image 
+    ? `<img src="${char.display_image}" class="img-comp">` 
+    : char.character;
 
-## Document 結構範例
+// 2. 解析權變格式
+const vocab = data.vocabulary.map(v => v.content.split('|').map(s => s.trim())); [12, 18]
 
-### lesson7 (完整範例)
-```javascript
-{
-  // ━━━ 課程元資訊 ━━━
-  "meta": {
-    "title": "識字七：日常物品與購物",
-    "title_en": "Daily Items and Shopping",
-    "title_es": "Artículos diarios y compras",
-    "order": 7,
-    "component_count": 17,
-    "target_count": 30
-  },
-  
-  // ━━━ 部件區（學生先學形義，不強求發音）━━━
-  "components": [
-    {
-      "character": "夬",
-      "pinyin": "guài",
-      "meaning": "to cut apart / separate decisively",
-      "type": "component",
-      
-      // 部件拆解（選填，獨體字留空）
-      "components_breakdown": "ユ (target) + 人 (person)",
-      
-      // 學習內容（支援 Markdown）
-      "book_explanation": "A kind of hook used in archery...",
-      "story": "A person is aiming at a tiny target...",
-      "pronunciation_cue": "Sounds like **Gwhy**",
-      
-      // 圖片
-      "image": "https://res.cloudinary.com/dxc8rcjuh/image/upload/v1765666631/%E5%A4%AC_qtxolq.png",
-      
-      // 其他
-      "example": "COW needs a TOWEL"
-    }
-    // ... 共 17 個部件
-  ],
-  
-  // ━━━ 目標字區（形音義都要記）━━━
-  "target_characters": [
-    {
-      "character": "刚",
-      "pinyin": "gāng",
-      "meaning": "just / barely",
-      "type": "target",
-      
-      // 部件拆解（選填）
-      "components_breakdown": "冈 (ridge) + 刂 (knife)",
-      
-      // 學習內容（支援 Markdown）
-      "book_explanation": "...",
-      "story": "The spy on the ridge...",
-      "pronunciation_cue": "Sounds like **Gong**",
-      
-      // 圖片
-      "image": "https://...",
-      
-      // 詞組範例（目標字特有）
-      "phrases": "刚才 gāngcái (just now), 刚好 gānghǎo (just right)",
-      
-      // 其他
-      "example": "..."
-    }
-    // ... 共 30 個目標字
-  ]
-}
-```
-
----
-
-## 欄位說明
-
-### 必填欄位
-- `character` - 字
-- `pinyin` - 拼音
-- `meaning` - 意思（英文）
-- `type` - 類型（`"component"` 或 `"target"`）
-
-### 選填欄位
-- `components_breakdown` - 部件拆解（獨體字可留空）
-- `book_explanation` - 書本解釋（支援 Markdown）
-- `story` - 記憶故事（支援 Markdown）
-- `pronunciation_cue` - 發音提示（支援 Markdown）
-- `image` - 圖片網址（Cloudinary）
-- `phrases` - 詞組範例（通常只有目標字需要）
-- `example` - 記憶例句
-
-### Markdown 支援
-在以下欄位可使用 Markdown 格式：
-- `book_explanation`
-- `story`
-- `pronunciation_cue`
-
-支援語法：
-- `**粗體**` → **粗體**
-- `*斜體*` → *斜體*
-- `![](圖片網址)` → 插入圖片
-- `![small](網址)` → 插入小圖（120px）
-- `![large](網址)` → 插入大圖（800px）
-
----
-
-## 圖片規範
-
-### Cloudinary 基礎 URL
-```
-https://res.cloudinary.com/dxc8rcjuh/image/upload/
-```
-
-### 圖片尺寸建議
-- 字的圖片：300px 左右
-- 故事插圖（中）：400px
-- 故事插圖（小）：120px
-- PDF 截圖（大）：800px（最大寬度）
-
----
-
-## 查詢範例
-
-### 讀取單一課程
-```javascript
-db.collection('lessons').doc('lesson7').get()
-  .then(doc => {
-    const data = doc.data();
-    console.log(data.components);  // 17 個部件
-    console.log(data.target_characters);  // 30 個目標字
-  });
-```
-
-### 讀取所有課程
-```javascript
-db.collection('lessons')
-  .orderBy('meta.order')
-  .get()
-  .then(snapshot => {
-    snapshot.forEach(doc => {
-      console.log(doc.id, doc.data().meta.title);
-    });
-  });
-```
-
-### 篩選部件
-```javascript
-// 課程顯示頁面使用
-const components = lessonData.components;
-const targets = lessonData.target_characters;
-
-// 分別渲染到不同區域
-renderComponents(components);
-renderTargets(targets);
-```
-
-### 複習系統使用
-```javascript
-// 部件複習（形義為主）
-const componentCards = lessonData.components.map(c => ({
-  char: c.character,
-  pinyin: c.pinyin,
-  meaning: c.meaning,
-  story: c.story,
-  img: c.image
-}));
-
-// 目標字複習（形音義）
-const targetCards = lessonData.target_characters.map(c => ({
-  char: c.character,
-  pinyin: c.pinyin,
-  meaning: c.meaning,
-  story: c.story,
-  img: c.image
-}));
-```
-
----
-
-## 未來擴展
-
-### 可能新增的欄位
-- `audio` - 發音音檔網址
-- `video` - 教學影片網址
-- `stroke_order` - 筆順動畫
-- `vocabulary` - 生詞表（陣列）
-- `grammar` - 語法點（陣列）
-- `exercises` - 練習題（陣列）
-
-### 可能新增的 Collection
-- `user_progress` - 學生學習記錄
-- `vocabulary` - 獨立的生詞庫
-- `exercises` - 練習題庫
-
----
-
-## 版本記錄
-
-- **v1.0** (2025-12-18): 初始結構設計
-- 區分 components 和 target_characters
-- 支援 Markdown 格式
-- 圖片使用 Cloudinary

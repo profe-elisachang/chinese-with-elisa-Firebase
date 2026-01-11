@@ -733,6 +733,36 @@
             margin: 12px 0;
         }
 
+        /* 三層圖片樣式系統 (Alt-based 分類) - Review 頁面 */
+        .img-comp {
+            height: 1.8em;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 4px;
+            object-fit: contain;
+        }
+        
+        .img-origin {
+            max-height: 30vh;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: 12px auto;
+            border-radius: 8px;
+        }
+        
+        .img-story {
+            max-height: 20vh;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: 8px auto;
+            border-radius: 6px;
+        }
+
         @media (max-width: 640px) {
             .card-image {
                 max-height: 150px;
@@ -1646,6 +1676,28 @@ function startReview() {
             updateStats();
         }
         
+        // ==================== Markdown 圖片處理 ====================
+        function processMarkdownImages(html) {
+            // Parse HTML and add classes based on alt text (Alt-based 分類系統)
+            const div = document.createElement('div');
+            div.innerHTML = html;
+
+            const images = div.querySelectorAll('img');
+            images.forEach(img => {
+                const alt = img.getAttribute('alt') || '';
+
+                if (alt === 'origin') {
+                    img.classList.add('img-origin');
+                } else if (alt === 'story') {
+                    img.classList.add('img-story');
+                } else if (alt === 'comp') {
+                    img.classList.add('img-comp');
+                }
+            });
+
+            return div.innerHTML;
+        }
+
         // ==================== Show Card ====================
         function showCard() {
             if (currentReviewIndex >= reviewQueue.length) {
@@ -1657,13 +1709,30 @@ function startReview() {
             isCardFlipped = false;
             document.getElementById('card').classList.remove('flipped');
             
-            // Front
-            document.getElementById('character').textContent = char.character;
+            // Front: 字形補丁系統（優先檢查 display_image，自動轉化 Fallback）
+            const frontCharEl = document.getElementById('character');
+            let frontDisplay = char.character || '';
+            if (char.display_image && char.display_image.trim()) {
+                frontCharEl.innerHTML = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
+            } else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
+                frontCharEl.innerHTML = `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
+            } else {
+                frontCharEl.textContent = frontDisplay;
+            }
             
-            // Back
-            document.getElementById('backCharacter').textContent = char.character;
-            document.getElementById('pinyin').textContent = char.pinyin;
-            document.getElementById('meaning').textContent = char.meaning;
+            // Back: 同樣處理
+            const backCharEl = document.getElementById('backCharacter');
+            let backDisplay = char.character || '';
+            if (char.display_image && char.display_image.trim()) {
+                backCharEl.innerHTML = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
+            } else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
+                backCharEl.innerHTML = `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
+            } else {
+                backCharEl.textContent = backDisplay;
+            }
+            
+            document.getElementById('pinyin').textContent = char.pinyin || '';
+            document.getElementById('meaning').textContent = char.meaning || '';
             
             // Image
             const cardImage = document.getElementById('cardImage');
@@ -1674,19 +1743,19 @@ function startReview() {
                 cardImage.classList.add('hidden');
             }
             
-            // Story
+            // Story (使用 processMarkdownImages 處理 Alt-based 分類)
             const cardStory = document.getElementById('cardStory');
             if (char.story) {
-                document.getElementById('storyContent').innerHTML = marked.parse(char.story);
+                document.getElementById('storyContent').innerHTML = processMarkdownImages(marked.parse(char.story));
                 cardStory.classList.remove('hidden');
             } else {
                 cardStory.classList.add('hidden');
             }
             
-            // Phrases
+            // Phrases (使用 processMarkdownImages 處理 Alt-based 分類)
             const cardPhrases = document.getElementById('cardPhrases');
             if (char.phrases) {
-                document.getElementById('phrasesContent').innerHTML = marked.parse(char.phrases);
+                document.getElementById('phrasesContent').innerHTML = processMarkdownImages(marked.parse(char.phrases));
                 cardPhrases.classList.remove('hidden');
             } else {
                 cardPhrases.classList.add('hidden');

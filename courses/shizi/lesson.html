@@ -461,6 +461,16 @@
         }
 
         /* ==================== Image Styles (Alt-based) ==================== */
+        /* 字形補丁系統 (Character Patch) - 通用樣式 */
+        .img-comp {
+            height: 1.8em;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 var(--spacing-xs);
+            object-fit: contain;
+        }
+
         .markdown-content img.img-origin {
             max-width: 100%;
             height: 200px;
@@ -482,7 +492,7 @@
         }
 
         .markdown-content img.img-comp {
-            height: 35px;
+            height: 1.8em;
             width: auto;
             display: inline-block;
             vertical-align: middle;
@@ -1134,6 +1144,54 @@
             vertical-align: middle;
             margin: 0 4px;
         }
+
+        /* ==================== Modal Image Container ==================== */
+.modal-image-container {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    border: 1px solid var(--border-light);
+}
+
+.modal-image-container img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+}
+
+/* ==================== Markdown Content 中的圖片（保持原樣）==================== */
+.markdown-content img.img-origin {
+    max-width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    display: block;
+    margin: var(--spacing-md) auto;
+}
+
+.markdown-content img.img-story {
+    max-width: 100%;
+    height: 250px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    display: block;
+    margin: var(--spacing-md) auto;
+}
+
+.markdown-content img.img-comp {
+    height: 35px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 var(--spacing-xs);
+}
     </style>
 </head>
 
@@ -1193,7 +1251,7 @@
             <button class="tab-button" data-tab="reading" id="readingTab" style="display: none;">📄 阅读短文</button>
         </div>
         
- <!-- ==================== Tab Content: Components (重新設計) ==================== -->
+<!-- ==================== Tab Content: Components ==================== -->
 <div id="tab-components" class="tab-content active">
     <div class="section-header">
         <div class="section-title">
@@ -1201,17 +1259,17 @@
             <span class="count-badge" id="componentCount">0</span>
         </div>
         <button class="btn btn-primary" onclick="enterTeachingMode('components')">
-            🎯 Presataion Mode
+            🎯 Presentation Mode
         </button>           
     </div>
     
-    <!-- 新的卡片列表格式 -->
-    <div id="componentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
-        <!-- JavaScript 會動態插入卡片 -->
+    <!-- 簡潔卡片網格 -->
+    <div id="componentsGrid" class="character-grid">
+        <!-- JavaScript 會動態插入簡潔卡片 -->
     </div>
 </div>
 
-<!-- ==================== Tab Content: Target Characters (重新設計) ==================== -->
+<!-- ==================== Tab Content: Target Characters ==================== -->
 <div id="tab-targets" class="tab-content">
     <div class="section-header">
         <div class="section-title">
@@ -1219,13 +1277,13 @@
             <span class="count-badge" id="targetCount">0</span>
         </div>
         <button class="btn btn-primary" onclick="enterTeachingMode('targets')">
-            🎯 Presataion Mode
+            🎯 Presentation Mode
         </button>
     </div>
     
-    <!-- 新的卡片列表格式 -->
-    <div id="targetsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
-        <!-- JavaScript 會動態插入卡片 -->
+    <!-- 簡潔卡片網格 -->
+    <div id="targetsGrid" class="character-grid">
+        <!-- JavaScript 會動態插入簡潔卡片 -->
     </div>
 </div>
         
@@ -1347,28 +1405,15 @@
             try {
                 console.time('Loading ' + lessonId);
 
-                // ========== 檢查本地緩存 ==========
-                const cacheKey = `lesson_cache_${lessonId}`;
-                const cached = localStorage.getItem(cacheKey);
+                // ========== 強制繞過快取：直接從 Firestore 載入 ==========
+                console.log('📡 Loading from Firebase (bypassing cache):', lessonId);
+                const doc = await db.collection('lessons').doc(lessonId).get();
 
-                if (cached) {
-                    console.log('✅ Loaded from cache:', lessonId);
-                    currentLessonData = JSON.parse(cached);
-                } else {
-                    // 從 Firebase 載入
-                    console.log('📡 Loading from Firebase:', lessonId);
-                    const doc = await db.collection('lessons').doc(lessonId).get();
-
-                    if (!doc.exists) {
-                        throw new Error('课程不存在/Course not found');
-                    }
-
-                    currentLessonData = doc.data();
-
-                    // 存入緩存
-                    localStorage.setItem(cacheKey, JSON.stringify(currentLessonData));
-                    console.log('💾 Saved to cache:', lessonId);
+                if (!doc.exists) {
+                    throw new Error('课程不存在/Course not found');
                 }
+
+                currentLessonData = doc.data();
 
                 console.timeEnd('Loading ' + lessonId);
 
@@ -1404,7 +1449,7 @@
             }
         }
         
-        // ==================== Render Components (新版本) ====================
+// ==================== Render Components (新版：簡潔卡片) ====================
 function renderComponents(components) {
     const grid = document.getElementById('componentsGrid');
     const countBadge = document.getElementById('componentCount');
@@ -1413,18 +1458,21 @@ function renderComponents(components) {
 
     if (components.length === 0) {
         grid.innerHTML = `
-            <div class="admin-placeholder" style="grid-column: 1 / -1;">
-                <h3>📦 暫無部件資料</h3>
-                <p>此課程尚未新增部件</p>
+            <div class="placeholder" style="grid-column: 1 / -1;">
+                <h3>📦No Components Yet</h3>
+                <p>This part will grow as you learn</p>
             </div>
         `;
         return;
     }
 
-    grid.innerHTML = components.map((char, index) => createAdminCharacterCard(char, index)).join('');
+    // 使用簡潔卡片
+    grid.innerHTML = components.map((char, index) => 
+        createSimpleCharacterCard(char, `comp-${index}`)
+    ).join('');
 }
 
-// ==================== Render Targets (新版本) ====================
+// ==================== Render Targets (新版：簡潔卡片) ====================
 function renderTargets(targets) {
     const grid = document.getElementById('targetsGrid');
     const countBadge = document.getElementById('targetCount');
@@ -1433,16 +1481,53 @@ function renderTargets(targets) {
 
     if (targets.length === 0) {
         grid.innerHTML = `
-            <div class="admin-placeholder" style="grid-column: 1 / -1;">
-                <h3>🎯 暫無目標字資料</h3>
-                <p>此課程尚未新增目標字</p>
+            <div class="placeholder" style="grid-column: 1 / -1;">
+                <h3>🎯Nothing Here Yet</h3>
+                <p>Target characters will appear here once they are added.</p>
             </div>
         `;
         return;
     }
 
-    const startIndex = 1000; // 避免與部件索引衝突
-    grid.innerHTML = targets.map((char, index) => createAdminCharacterCard(char, startIndex + index)).join('');
+    // 使用簡潔卡片
+    grid.innerHTML = targets.map((char, index) => 
+        createSimpleCharacterCard(char, `target-${index}`)
+    ).join('');
+}
+
+function createSimpleCharacterCard(char, cardId) {
+    const uniqueId = `char-card-${cardId}`;
+    
+    let charDisplay = char.character; // 預設顯示文字
+    
+    // 字形補丁系統：優先檢查 display_image 欄位（V2.2 規格）
+    if (char.display_image && char.display_image.trim()) {
+        charDisplay = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
+    }
+    // Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
+    else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
+        charDisplay = `<img src="${char.character.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
+    }
+
+    const html = `
+        <div class="character-card" id="${uniqueId}">
+            <div class="character" style="font-size: var(--char-size-large); line-height: 1.1;">
+                ${charDisplay}
+            </div>
+            <div class="pinyin">${char.pinyin}</div>
+            <div class="meaning">${char.meaning}</div>
+        </div>
+    `;
+
+    // 延遲綁定點擊事件（保持原樣）
+    setTimeout(() => {
+        const cardElement = document.getElementById(uniqueId);
+        if (cardElement) {
+            cardElement.addEventListener('click', () => openCharacterModal(char));
+        }
+    }, 0);
+
+    return html;
 }
 
 // ==================== 創建管理後台風格的字卡 ====================
@@ -1546,7 +1631,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = vocabulary.length;
             
             if (vocabulary.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
                 return;
             }
             
@@ -1614,7 +1699,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = phrases.length;
             
             if (phrases.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
                 return;
             }
             
@@ -1674,7 +1759,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = grammar.length;
             
             if (grammar.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
                 return;
             }
             
@@ -1749,7 +1834,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = exercises.length;
             
             if (exercises.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
                 return;
             }
             
@@ -1902,136 +1987,134 @@ function createAdminCharacterCard(char, index) {
                 return;
             }
             
-            container.innerHTML = marked.parse(readingText);
+            // 嚴格遵守 Alt-based 分類系統
+            container.innerHTML = processMarkdownImages(marked.parse(readingText));
         }
         
-      // ==================== Create Character Card (Streamlined) ====================
-        function createCharacterCard(char, index) {
-            const cardId = `char-card-${index}`;
-
-            // ✅ ONLY show: 字 (character), 拼音 (pinyin), 意思 (meaning in English)
-            let html = `
-                <div class="character-card" id="${cardId}">
-                    <div class="character">${char.character}</div>
-                    <div class="pinyin">${char.pinyin}</div>
-                    <div class="meaning">${char.meaning}</div>
-                </div>
-            `;
-
-            setTimeout(() => {
-                const cardElement = document.getElementById(cardId);
-                if (cardElement) {
-                    cardElement.addEventListener('click', () => openCharacterModal(char));
-                }
-            }, 0);
-
-            return html;
-        }
-
         // ==================== Open Character Modal ====================
-        function openCharacterModal(charData) {
-            if (!charData) {
-                console.error('No character data provided');
-                return;
-            }
+function openCharacterModal(charData) {
+    if (!charData) {
+        console.error('No character data provided');
+        return;
+    }
 
-            const modal = document.getElementById('characterModal');
-            const modalCharacter = document.getElementById('modalCharacter');
-            const modalBody = document.getElementById('modalBody');
+    const modal = document.getElementById('characterModal');
+    const modalCharacter = document.getElementById('modalCharacter');
+    const modalBody = document.getElementById('modalBody');
 
-            // Set character display
-            modalCharacter.textContent = charData.character;
+// Set character display (優先用 display_image 字形補丁，沒有就顯示文字)
+// 根據 V2.2 規格：display_image 是字形補丁，與文字地位相同
+let displayContent = `<div style="font-size: 4rem; font-weight: bold; line-height: 1;">${charData.character || ''}</div>`;
 
-            // Build modal body content preserving original order
-            let bodyHTML = '';
+// 優先檢查 display_image 欄位（V2.2 規格）
+if (charData.display_image && charData.display_image.trim()) {
+    // Modal header 中字形補丁可適當放大顯示（max-height: 220px）
+    displayContent = `<img src="${charData.display_image.trim()}" style="max-height: 220px; max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="comp" onerror="this.style.display='none';">`;
+}
+// Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
+else if (charData.character && typeof charData.character === 'string' && charData.character.trim().toLowerCase().startsWith('http')) {
+    displayContent = `<img src="${charData.character.trim()}" style="max-height: 220px; max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="comp" onerror="this.style.display='none';">`;
+}
 
-            // Basic info section
-            bodyHTML += `
-                <div class="modal-section">
-                    <div style="text-align: center;">
-                        <div style="font-size: var(--text-2xl); color: var(--pinyin-color); font-weight: var(--font-semibold); margin-bottom: var(--spacing-sm);">
-                            ${charData.pinyin}
-                        </div>
-                        <div style="font-size: var(--text-xl); color: var(--meaning-color); font-weight: var(--font-medium);">
-                            ${charData.meaning}
-                        </div>
-            `;
+modalCharacter.innerHTML = displayContent;
 
-            if (charData.components_breakdown) {
-                bodyHTML += `
-                    <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--bg-light); border-radius: var(--radius-md); font-size: var(--text-base); color: var(--text-secondary);">
-                        ${charData.components_breakdown}
-                    </div>
-                `;
-            }
+    // Build modal body content preserving original order
+    let bodyHTML = '';
 
-            bodyHTML += `</div></div>`;
+    // Basic info section
+    bodyHTML += `
+        <div class="modal-section">
+            <div style="text-align: center;">
+                <div style="font-size: var(--text-2xl); color: var(--pinyin-color); font-weight: var(--font-semibold); margin-bottom: var(--spacing-sm);">
+                    ${charData.pinyin}
+                </div>
+                <div style="font-size: var(--text-xl); color: var(--meaning-color); font-weight: var(--font-medium);">
+                    ${charData.meaning}
+                </div>
+    `;
 
-            // Image (if exists)
-            if (charData.image) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <img src="${charData.image}" class="img-origin" alt="origin" onerror="this.parentElement.style.display='none'">
-                    </div>
-                `;
-            }
+    // ✅ 修改：先解析 Markdown，再處理圖片
+    if (charData.components_breakdown) {
+        bodyHTML += `
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--bg-light); border-radius: var(--radius-md); font-size: var(--text-base); color: var(--text-secondary);">
+                ${processMarkdownImages(marked.parse(charData.components_breakdown))}
+            </div>
+        `;
+    }
 
-            // Book explanation
-            if (charData.book_explanation) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <div class="modal-section-title">📖 解释</div>
-                        <div class="markdown-content">${processMarkdownImages(marked.parse(charData.book_explanation))}</div>
-                    </div>
-                `;
-            }
+    bodyHTML += `</div></div>`;
 
-            // Story
-            if (charData.story) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <div class="modal-section-title">🧠 记忆故事</div>
-                        <div class="markdown-content">${processMarkdownImages(marked.parse(charData.story))}</div>
-                    </div>
-                `;
-            }
+    // Image (輔助插圖) - 根據 V2.2 規格，只顯示 image 欄位，不顯示 display_image
+    // display_image 已作為字形補丁在 modal header 中顯示
+    if (charData.image && charData.image.trim()) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-image-container">
+                    <img src="${charData.image.trim()}" 
+                        alt="${charData.meaning || charData.character || '輔助插圖'}"
+                        style="max-height: 300px; object-fit: contain;"
+                        onerror="this.parentElement.parentElement.style.display='none'">
+                </div>
+            </div>
+        `;
+    }
 
-            // Pronunciation cue
-            if (charData.pronunciation_cue) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <div class="modal-section-title">🔊 发音</div>
-                        <div class="markdown-content">${processMarkdownImages(marked.parse(charData.pronunciation_cue))}</div>
-                    </div>
-                `;
-            }
+    // Book explanation
+    if (charData.book_explanation) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-section-title">📖 解释</div>
+                <div class="markdown-content">${processMarkdownImages(marked.parse(charData.book_explanation))}</div>
+            </div>
+        `;
+    }
 
-            // Phrases
-            if (charData.phrases) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <div class="modal-section-title">💬 词组范例</div>
-                        <div class="markdown-content">${processMarkdownImages(marked.parse(charData.phrases))}</div>
-                    </div>
-                `;
-            }
+    // Story
+    if (charData.story) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-section-title">🧠 记忆故事</div>
+                <div class="markdown-content">${processMarkdownImages(marked.parse(charData.story))}</div>
+            </div>
+        `;
+    }
 
-            // Example
-            if (charData.example) {
-                bodyHTML += `
-                    <div class="modal-section">
-                        <div class="modal-section-title">💡 例句</div>
-                        <div class="markdown-content">${charData.example}</div>
-                    </div>
-                `;
-            }
+    // Pronunciation cue
+    if (charData.pronunciation_cue) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-section-title">🔊 发音</div>
+                <div class="markdown-content">${processMarkdownImages(marked.parse(charData.pronunciation_cue))}</div>
+            </div>
+        `;
+    }
 
-            modalBody.innerHTML = bodyHTML;
-            modal.classList.add('active');
+    // Phrases
+    if (charData.phrases) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-section-title">💬 词组范例</div>
+                <div class="markdown-content">${processMarkdownImages(marked.parse(charData.phrases))}</div>
+            </div>
+        `;
+    }
 
-            // Prevent body scroll when modal is open
-            document.body.style.overflow = 'hidden';
-        }
+    // Example
+    if (charData.example) {
+        bodyHTML += `
+            <div class="modal-section">
+                <div class="modal-section-title">💡 例句</div>
+                <div class="markdown-content">${charData.example}</div>
+            </div>
+        `;
+    }
+
+    modalBody.innerHTML = bodyHTML;
+    modal.classList.add('active');
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+}
 
         // ==================== Close Character Modal ====================
         function closeCharacterModal() {
@@ -2170,7 +2253,15 @@ function createAdminCharacterCard(char, index) {
     // ==================== Initialize Navigation ====================
     renderLessonNavigation();
 
-
+// 測試用：印出第一個部件的資料，看 image 有沒有值
+window.addEventListener('DOMContentLoaded', () => {
+    loadLesson().then(() => {
+        if (currentLessonData && currentLessonData.components && currentLessonData.components[0]) {
+            console.log('第一個部件的資料：', currentLessonData.components[0]);
+            console.log('它的 image 欄位是：', currentLessonData.components[0].image);
+        }
+    });
+});
 
     </script>
 </body>

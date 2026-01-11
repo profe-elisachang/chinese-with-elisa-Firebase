@@ -920,9 +920,20 @@
             const char = characters[index];
             const container = document.getElementById('cardContainer');
 
+            // 字形補丁系統：優先檢查 display_image 欄位（V2.2 規格）
+            let charDisplay = char.character || '';
+            if (char.display_image && char.display_image.trim()) {
+                // Teaching Presentation (電視)：固定寬高 120px（V2.2 規格）
+                charDisplay = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="width: 120px; height: 120px; object-fit: contain;" onerror="this.style.display='none';">`;
+            }
+            // Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
+            else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
+                charDisplay = `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="width: 120px; height: 120px; object-fit: contain;" onerror="this.style.display='none';">`;
+            }
+
             // 直接輸出內容，不用 presentation-card 容器
             let html = `
-                <div class="character">${char.character}</div>
+                <div class="character">${charDisplay}</div>
                 <div class="pinyin">${char.pinyin}</div>
                 <div class="meaning">${char.meaning}</div>
             `;
@@ -932,9 +943,9 @@
                 html += `<div class="breakdown">${char.components_breakdown}</div>`;
             }
 
-            // Image
-            if (char.image) {
-                html += `<img src="${char.image}" class="image" alt="${char.character}" onerror="this.style.display='none'">`;
+            // Image (輔助插圖) - 根據 V2.2 規格，只顯示 image 欄位
+            if (char.image && char.image.trim()) {
+                html += `<img src="${char.image.trim()}" class="image" alt="${char.character || '輔助插圖'}" onerror="this.style.display='none'">`;
             }
 
             // Book explanation
