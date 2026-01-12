@@ -1,31 +1,241 @@
-
 <!DOCTYPE html>
-
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Elisa中文 - course map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandarin with Elisa - Home</title>
     <style>
-        body { background-color: #e0f7fa; font-family: 'Arial', sans-serif; text-align: center; }
-        .ocean-map { max-width: 800px; margin: 0 auto; padding: 20px; }       
-        h2 { color: #007791; border-bottom: 2px solid #00acc1; display: inline-block; }
+        :root {
+            /* 藍綠色系 */
+            --primary: #0891b2;
+            --primary-dark: #0e7490;
+            --primary-light: #06b6d4;
+            --bg-page: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #f3f4f6;
+            --bg-light: #f0f9fa;
+            --border: #e5e7eb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow: rgba(8, 145, 178, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9fa 0%, #e0f7fa 100%);
+            min-height: 100vh;
+        }
+
+        /* ==================== Top Navigation ==================== */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+            background: var(--bg-card);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .nav-separator {
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+
+        /* ==================== Container ==================== */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px var(--shadow);
+            padding: 40px;
+        }
+
+        /* ==================== Header ==================== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+
+        .subtitle-en {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* ==================== Tagline ==================== */
+        .tagline {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #e0f7fa 100%);
+            padding: 25px 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 30px 0;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.15);
+        }
+
+        .tagline-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin: 5px 0;
+        }
+
+        .tagline-text:first-child {
+            font-size: 1.4rem;
+            font-style: italic;
+        }
+
+        /* ==================== About Section ==================== */
+        .about-section {
+            margin-top: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f0f9fa 0%, #e0f7fa 100%);
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .about-icon {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .about-title {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .about-content {
+            line-height: 1.8;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .top-nav {
+                gap: 10px;
+                padding: 15px 10px;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .nav-separator {
+                display: none;
+            }
+
+            .container {
+                padding: 25px;
+                margin: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tagline-text {
+                font-size: 1rem;
+            }
+
+            .tagline-text:first-child {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-link active">Home</a>
+        <span class="nav-separator">|</span>
+        <a href="courses/shizi/lesson.html" class="nav-link">Literacy</a>
+        <span class="nav-separator">|</span>
+        <a href="courses/shizi/review.html" class="nav-link">Review Lit.</a>
+        <span class="nav-separator">|</span>
+        <a href="courses/bct/lessons/lesson.html" class="nav-link">Lessons</a>
+        <span class="nav-separator">|</span>
+        <a href="pages/grammar.html" class="nav-link">Grammar</a>
+        <span class="nav-separator">|</span>
+        <a href="pages/mini-story.html" class="nav-link">Mini Story</a>
+        <span class="nav-separator">|</span>
+        <a href="pages/reading-material.html" class="nav-link">Reading Material</a>
+        <span class="nav-separator">|</span>
+        <a href="pages/music.html" class="nav-link">Music</a>
+        <span class="nav-separator">|</span>
+        <a href="pages/timeline.html" class="nav-link">Timeline</a>
+    </nav>
 
-    <div class="ocean-map">
-        <h1>🌊 Welcome to Your Chinese Class</h1>
-        <h1>欢迎来到你的中文课</h1>
-        <p>Let's explore the ocean of Chinese together!</p>
-        <p>让我们一起探索中文的海洋</p>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="header">
+            <h1>🌊 Mandarin with Elisa 🌊</h1>
+            <p class="subtitle">欢迎来到你的中文课</p>
+            <p class="subtitle-en">Welcome to Your Chinese Class</p>
 
-        <h2>🐚 识字课程 <a href="courses/shizi/index.html">Rapid Literacy</a></h2>
-        <div id="shizi-grid" class="grid-container"></div>
+            <div class="tagline">
+                <p class="tagline-text">Progress, Not Perfection.</p>
+                <p class="tagline-text">Let's explore the ocean of Chinese together!</p>
+                <p class="tagline-text">让我们一起探索中文的海洋!</p>
+            </div>
+        </div>
 
-        <h2>🐠 识字复习 <a href="courses/shizi/review.html">Smart Review</a> </h2>
-        <div id="component-grid" class="grid-container"></div>
+        <!-- About Section -->
+        <div class="about-section">
+            <div class="about-icon">📖</div>
+            <h2 class="about-title">About This Course</h2>
+            <p class="about-content">
+                Simple rule: if you can have a try, we keep going. The goal isn't to know everything, but to start using something. We take our time. No rush, no forcing. We learn, forget sometimes, and meet words again—like old friends.
+            </p>
+        </div>
     </div>
-
-
-
-
+</body>
 </html>

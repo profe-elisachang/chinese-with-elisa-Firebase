@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Chinese - Lesson</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="../assets/js/navigation.js"></script>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="../" class="nav-link">Home</a>
+        <span class="nav-separator">|</span>
+        <a href="./lesson.html" class="nav-link active">Lessons</a>
+        <span class="nav-separator">|</span>
+        <a href="#" class="nav-link">Grammar</a>
+        <span class="nav-separator">|</span>
+        <a href="#" class="nav-link">Mini Story</a>
+        <span class="nav-separator">|</span>
+        <a href="#" class="nav-link">Reading Material</a>
+        <span class="nav-separator">|</span>
+        <a href="#" class="nav-link">Music</a>
+        <span class="nav-separator">|</span>
+        <a href="#" class="nav-link">Timeline</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Lesson Navigation (BBC Style) -->
+        <div class="lesson-navigation">
+            <div class="lesson-nav-header">
+                <span class="lesson-nav-title">SELECT A LESSON</span>
+            </div>
+
+            <!-- Desktop: Horizontal bars -->
+            <div class="lesson-numbers" id="lessonNumbers">
+                <!-- JavaScript 動態生成 -->
+            </div>
+
+            <!-- Mobile: Dropdown -->
+            <select class="lesson-dropdown" id="lessonDropdown" onchange="navigateToLesson(this.value)">
+                <!-- JavaScript 動態生成 -->
+            </select>
+        </div>
+
+        <!-- Lesson Tip (shown when no lesson selected) -->
+        <div class="lesson-tip" id="lessonTip" style="display: none;">
+            💡 点击课程号进入学习 / Click lesson number to start learning
+        </div>
+
+        <!-- Lesson Content (hidden until lesson selected) -->
+        <div id="lessonContent" style="display: none;">
+            <!-- Lesson Header -->
+        <div class="lesson-header">
+            <h1 id="lesson-title">L1 - Business Greetings</h1>
+            <p class="lesson-subtitle" id="lesson-subtitle">商务问候 / Professional Greetings</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs-nav">
+            <button class="tab-button active" data-tab="vocab">生词</button>
+            <button class="tab-button" data-tab="grammar">语法</button>
+            <button class="tab-button" data-tab="dialogue">对话</button>
+            <button class="tab-button" data-tab="reading">短文</button>
+            <button class="tab-button" data-tab="practice">练习</button>
+            <button class="tab-button" data-tab="supplement">补充</button>
+        </div>
+
+            <!-- Tab Content Area -->
+            <div class="tab-content-area">
+                <div id="content" class="tab-content">
+                    <!-- Content will be loaded here by JavaScript -->
+                    <p class="loading">加载中... Loading...</p>
+                </div>
+            </div>
+        </div>
+        <!-- End Lesson Content -->
+    </div>
+
+    <script src="../assets/js/tabs.js"></script>
+    <script>
+        // Initialize lesson page
+        document.addEventListener('DOMContentLoaded', function() {
+            const lessonId = getLessonIdFromURL();
+
+            // Show/hide content based on lesson selection
+            const lessonContent = document.getElementById('lessonContent');
+            const lessonTip = document.getElementById('lessonTip');
+
+            if (lessonId) {
+                // Lesson selected - show content
+                lessonContent.style.display = 'block';
+                lessonTip.style.display = 'none';
+                initializeLessonPage(lessonId);
+            } else {
+                // No lesson selected - show tip
+                lessonContent.style.display = 'none';
+                lessonTip.style.display = 'block';
+            }
+        });
+
+        function getLessonIdFromURL() {
+            const path = window.location.pathname;
+            const match = path.match(/lesson-(\d+)/);
+            return match ? match[1] : null;
+        }
+
+        function initializeLessonPage(lessonId) {
+            // Load first tab automatically
+            const firstTab = document.querySelector('.tab-button.active');
+            if (firstTab) {
+                loadTabContent(lessonId, firstTab.dataset.tab);
+            }
+
+            // Set up tab click handlers
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    loadTabContent(lessonId, tabName);
+
+                    // Update active state
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function loadTabContent(lessonId, tabName) {
+            const contentDiv = document.getElementById('content');
+            const filePath = `../tabs/lesson-${lessonId}-${tabName}.html`;
+
+            contentDiv.innerHTML = '<p class="loading">加载中... Loading...</p>';
+
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File not found');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    contentDiv.innerHTML = '<p class="error-message">此内容暂未提供 / Content not available yet</p>';
+                    console.error('Error loading tab:', error);
+                });
+        }
+    </script>
+</body>
+</html>

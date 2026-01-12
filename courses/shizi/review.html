@@ -733,36 +733,6 @@
             margin: 12px 0;
         }
 
-        /* 三層圖片樣式系統 (Alt-based 分類) - Review 頁面 */
-        .img-comp {
-            height: 1.8em;
-            width: auto;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 4px;
-            object-fit: contain;
-        }
-        
-        .img-origin {
-            max-height: 30vh;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            display: block;
-            margin: 12px auto;
-            border-radius: 8px;
-        }
-        
-        .img-story {
-            max-height: 20vh;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            display: block;
-            margin: 8px auto;
-            border-radius: 6px;
-        }
-
         @media (max-width: 640px) {
             .card-image {
                 max-height: 150px;
@@ -780,8 +750,37 @@
         
         .content-label {
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--primary);
             margin-bottom: 4px;
+        }
+        
+        /* ==================== Markdown Image Styles (Alt-based) ==================== */
+        .card-content img.img-comp {
+            height: 1.8em;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+        
+        .card-content img.img-origin {
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 8px;
+            display: block;
+            margin: 12px auto;
+        }
+        
+        .card-content img.img-story {
+            max-width: 100%;
+            height: 250px;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+            margin: 12px auto;
         }
         
         .speak-btn {
@@ -983,11 +982,23 @@
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="../../index.html" class="nav-link">Home</a>
         <span class="nav-separator">|</span>
-        <a href="lesson.html?id=lesson1" class="nav-link">Lessons</a>
+        <a href="lesson.html" class="nav-link">Literacy</a>
         <span class="nav-separator">|</span>
-        <a href="review.html" class="nav-link active">Review</a>
+        <a href="review.html" class="nav-link active">Review Lit.</a>
+        <span class="nav-separator">|</span>
+        <a href="../bct/lessons/lesson.html" class="nav-link">Lessons</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/grammar.html" class="nav-link">Grammar</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/mini-story.html" class="nav-link">Mini Story</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/reading-material.html" class="nav-link">Reading Material</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/music.html" class="nav-link">Music</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/timeline.html" class="nav-link">Timeline</a>
     </nav>
 
     <div class="container">
@@ -1127,6 +1138,10 @@
                             <button class="speak-btn" onclick="speakPinyin(event)">🔊 Read</button>
                             <div class="meaning" id="meaning">one</div>
                             <img id="cardImage" class="card-image hidden">
+                            <div id="cardBookExplanation" class="card-content hidden">
+                                <div class="content-label">📖 解释:</div>
+                                <div id="bookExplanationContent"></div>
+                            </div>
                             <div id="cardStory" class="card-content hidden">
                                 <div class="content-label">记忆故事:</div>
                                 <div id="storyContent"></div>
@@ -1676,28 +1691,6 @@ function startReview() {
             updateStats();
         }
         
-        // ==================== Markdown 圖片處理 ====================
-        function processMarkdownImages(html) {
-            // Parse HTML and add classes based on alt text (Alt-based 分類系統)
-            const div = document.createElement('div');
-            div.innerHTML = html;
-
-            const images = div.querySelectorAll('img');
-            images.forEach(img => {
-                const alt = img.getAttribute('alt') || '';
-
-                if (alt === 'origin') {
-                    img.classList.add('img-origin');
-                } else if (alt === 'story') {
-                    img.classList.add('img-story');
-                } else if (alt === 'comp') {
-                    img.classList.add('img-comp');
-                }
-            });
-
-            return div.innerHTML;
-        }
-
         // ==================== Show Card ====================
         function showCard() {
             if (currentReviewIndex >= reviewQueue.length) {
@@ -1709,30 +1702,13 @@ function startReview() {
             isCardFlipped = false;
             document.getElementById('card').classList.remove('flipped');
             
-            // Front: 字形補丁系統（優先檢查 display_image，自動轉化 Fallback）
-            const frontCharEl = document.getElementById('character');
-            let frontDisplay = char.character || '';
-            if (char.display_image && char.display_image.trim()) {
-                frontCharEl.innerHTML = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            } else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
-                frontCharEl.innerHTML = `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            } else {
-                frontCharEl.textContent = frontDisplay;
-            }
+            // Front
+            document.getElementById('character').textContent = char.character;
             
-            // Back: 同樣處理
-            const backCharEl = document.getElementById('backCharacter');
-            let backDisplay = char.character || '';
-            if (char.display_image && char.display_image.trim()) {
-                backCharEl.innerHTML = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            } else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
-                backCharEl.innerHTML = `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            } else {
-                backCharEl.textContent = backDisplay;
-            }
-            
-            document.getElementById('pinyin').textContent = char.pinyin || '';
-            document.getElementById('meaning').textContent = char.meaning || '';
+            // Back
+            document.getElementById('backCharacter').textContent = char.character;
+            document.getElementById('pinyin').textContent = char.pinyin;
+            document.getElementById('meaning').textContent = char.meaning;
             
             // Image
             const cardImage = document.getElementById('cardImage');
@@ -1743,19 +1719,31 @@ function startReview() {
                 cardImage.classList.add('hidden');
             }
             
-            // Story (使用 processMarkdownImages 處理 Alt-based 分類)
+            // Book Explanation
+            const cardBookExplanation = document.getElementById('cardBookExplanation');
+            if (char.book_explanation && char.book_explanation.trim()) {
+                const processedExplanation = processMarkdownImages(marked.parse(char.book_explanation));
+                document.getElementById('bookExplanationContent').innerHTML = processedExplanation;
+                cardBookExplanation.classList.remove('hidden');
+            } else {
+                cardBookExplanation.classList.add('hidden');
+            }
+            
+            // Story
             const cardStory = document.getElementById('cardStory');
-            if (char.story) {
-                document.getElementById('storyContent').innerHTML = processMarkdownImages(marked.parse(char.story));
+            if (char.story && char.story.trim()) {
+                const processedStory = processMarkdownImages(marked.parse(char.story));
+                document.getElementById('storyContent').innerHTML = processedStory;
                 cardStory.classList.remove('hidden');
             } else {
                 cardStory.classList.add('hidden');
             }
             
-            // Phrases (使用 processMarkdownImages 處理 Alt-based 分類)
+            // Phrases
             const cardPhrases = document.getElementById('cardPhrases');
-            if (char.phrases) {
-                document.getElementById('phrasesContent').innerHTML = processMarkdownImages(marked.parse(char.phrases));
+            if (char.phrases && char.phrases.trim()) {
+                const processedPhrases = processMarkdownImages(marked.parse(char.phrases));
+                document.getElementById('phrasesContent').innerHTML = processedPhrases;
                 cardPhrases.classList.remove('hidden');
             } else {
                 cardPhrases.classList.add('hidden');
@@ -1828,20 +1816,43 @@ function startReview() {
             document.getElementById('completionMessage').classList.add('hidden');
             endReview();
         }
+        
         function speakPinyin(event) {
-    event.stopPropagation();
-    const character = document.getElementById('backCharacter').textContent;
-    const utterance = new SpeechSynthesisUtterance(character);
-    
-    // 强制使用中文声音
-    const voices = speechSynthesis.getVoices();
-    const chineseVoice = voices.find(v => v.lang.includes('zh'));
-    if (chineseVoice) utterance.voice = chineseVoice;
-    
-    utterance.lang = 'zh-CN';
-    utterance.rate = 0.8;
-    speechSynthesis.speak(utterance);
-}
+            event.stopPropagation();
+            const character = document.getElementById('backCharacter').textContent;
+            const utterance = new SpeechSynthesisUtterance(character);
+            
+            // 强制使用中文声音
+            const voices = speechSynthesis.getVoices();
+            const chineseVoice = voices.find(v => v.lang.includes('zh'));
+            if (chineseVoice) utterance.voice = chineseVoice;
+            
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+        
+        // ==================== Process Markdown Images ====================
+        function processMarkdownImages(html) {
+            // Parse HTML and add classes based on alt text
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            
+            const images = div.querySelectorAll('img');
+            images.forEach(img => {
+                const alt = img.getAttribute('alt') || '';
+                
+                if (alt === 'comp') {
+                    img.classList.add('img-comp');
+                } else if (alt === 'origin') {
+                    img.classList.add('img-origin');
+                } else if (alt === 'story') {
+                    img.classList.add('img-story');
+                }
+            });
+            
+            return div.innerHTML;
+        }
         
         // ==================== User Progress (Firebase) ====================
         async function loadUserProgress() {

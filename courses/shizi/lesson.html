@@ -461,16 +461,6 @@
         }
 
         /* ==================== Image Styles (Alt-based) ==================== */
-        /* 字形補丁系統 (Character Patch) - 通用樣式 */
-        .img-comp {
-            height: 1.8em;
-            width: auto;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 var(--spacing-xs);
-            object-fit: contain;
-        }
-
         .markdown-content img.img-origin {
             max-width: 100%;
             height: 200px;
@@ -492,7 +482,7 @@
         }
 
         .markdown-content img.img-comp {
-            height: 1.8em;
+            height: 35px;
             width: auto;
             display: inline-block;
             vertical-align: middle;
@@ -1202,11 +1192,23 @@
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="../../index.html" class="nav-link">Home</a>
         <span class="nav-separator">|</span>
-        <a href="index.html" class="nav-link active">Lessons</a>
+        <a href="lesson.html" class="nav-link active">Literacy</a>
         <span class="nav-separator">|</span>
-        <a href="review.html" class="nav-link">Review</a>
+        <a href="review.html" class="nav-link">Review Lit.</a>
+        <span class="nav-separator">|</span>
+        <a href="../bct/lessons/lesson.html" class="nav-link">Lessons</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/grammar.html" class="nav-link">Grammar</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/mini-story.html" class="nav-link">Mini Story</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/reading-material.html" class="nav-link">Reading Material</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/music.html" class="nav-link">Music</a>
+        <span class="nav-separator">|</span>
+        <a href="../../pages/timeline.html" class="nav-link">Timeline</a>
     </nav>
 
     <!-- Lesson Navigation Bar (BBC Style) -->
@@ -1405,15 +1407,28 @@
             try {
                 console.time('Loading ' + lessonId);
 
-                // ========== 強制繞過快取：直接從 Firestore 載入 ==========
-                console.log('📡 Loading from Firebase (bypassing cache):', lessonId);
-                const doc = await db.collection('lessons').doc(lessonId).get();
+                // ========== 檢查本地緩存 ==========
+                const cacheKey = `lesson_cache_${lessonId}`;
+                const cached = localStorage.getItem(cacheKey);
 
-                if (!doc.exists) {
-                    throw new Error('课程不存在/Course not found');
+                if (cached) {
+                    console.log('✅ Loaded from cache:', lessonId);
+                    currentLessonData = JSON.parse(cached);
+                } else {
+                    // 從 Firebase 載入
+                    console.log('📡 Loading from Firebase:', lessonId);
+                    const doc = await db.collection('lessons').doc(lessonId).get();
+
+                    if (!doc.exists) {
+                        throw new Error('课程不存在/Course not found');
+                    }
+
+                    currentLessonData = doc.data();
+
+                    // 存入緩存
+                    localStorage.setItem(cacheKey, JSON.stringify(currentLessonData));
+                    console.log('💾 Saved to cache:', lessonId);
                 }
-
-                currentLessonData = doc.data();
 
                 console.timeEnd('Loading ' + lessonId);
 
@@ -1459,8 +1474,8 @@ function renderComponents(components) {
     if (components.length === 0) {
         grid.innerHTML = `
             <div class="placeholder" style="grid-column: 1 / -1;">
-                <h3>📦No Components Yet</h3>
-                <p>This part will grow as you learn</p>
+                <h3>📦 暫無部件資料</h3>
+                <p>此課程尚未新增部件</p>
             </div>
         `;
         return;
@@ -1482,8 +1497,8 @@ function renderTargets(targets) {
     if (targets.length === 0) {
         grid.innerHTML = `
             <div class="placeholder" style="grid-column: 1 / -1;">
-                <h3>🎯Nothing Here Yet</h3>
-                <p>Target characters will appear here once they are added.</p>
+                <h3>🎯 暫無目標字資料</h3>
+                <p>此課程尚未新增目標字</p>
             </div>
         `;
         return;
@@ -1500,13 +1515,15 @@ function createSimpleCharacterCard(char, cardId) {
     
     let charDisplay = char.character; // 預設顯示文字
     
-    // 字形補丁系統：優先檢查 display_image 欄位（V2.2 規格）
+    // 只看 display_image 欄位（跟 modal 一樣的邏輯）
     if (char.display_image && char.display_image.trim()) {
-        charDisplay = `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
-    }
-    // Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
-    else if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
-        charDisplay = `<img src="${char.character.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
+        charDisplay = `
+            <img src="${char.display_image.trim()}" 
+                 style="height: 1.8em; width: auto; vertical-align: middle;"
+                 alt="${char.meaning || char.character || '字形'}"
+                 onerror="this.onerror=null; 
+                          this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27 text-anchor=%27middle%27 x=%2750%%27%3E${encodeURIComponent(char.character)}%3C/text%3E%3C/svg%3E';">
+        `;
     }
 
     const html = `
@@ -1631,7 +1648,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = vocabulary.length;
             
             if (vocabulary.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
                 return;
             }
             
@@ -1699,7 +1716,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = phrases.length;
             
             if (phrases.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
                 return;
             }
             
@@ -1759,7 +1776,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = grammar.length;
             
             if (grammar.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
                 return;
             }
             
@@ -1834,7 +1851,7 @@ function createAdminCharacterCard(char, index) {
             countBadge.textContent = exercises.length;
             
             if (exercises.length === 0) {
-                container.innerHTML = '<div class="placeholder"><h3>暂无资料/Nothing Here Yet</h3></div>';
+                container.innerHTML = '<div class="placeholder"><h3>暂无资料/No data available</h3></div>';
                 return;
             }
             
@@ -1987,11 +2004,41 @@ function createAdminCharacterCard(char, index) {
                 return;
             }
             
-            // 嚴格遵守 Alt-based 分類系統
-            container.innerHTML = processMarkdownImages(marked.parse(readingText));
+            container.innerHTML = marked.parse(readingText);
         }
         
-        // ==================== Open Character Modal ====================
+      // ==================== Create Character Card (Streamlined) ====================
+function createCharacterCard(char, index) {
+    const cardId = `char-card-${index}`;
+
+    let charDisplay = char.character;
+    if (char.image && char.image.trim() !== '') {
+        charDisplay = `<img src="${char.image}" 
+                            style="height: 1.8em; width: auto; vertical-align: middle;" 
+                            alt="${char.meaning || char.character || '字形'}">`;
+    }
+
+    let html = `
+        <div class="character-card" id="${cardId}">
+            <div class="character" style="font-size: var(--char-size-large); line-height: 1.1;">
+                ${charDisplay}
+            </div>
+            <div class="pinyin">${char.pinyin}</div>
+            <div class="meaning">${char.meaning}</div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const cardElement = document.getElementById(cardId);
+        if (cardElement) {
+            cardElement.addEventListener('click', () => openCharacterModal(char));
+        }
+    }, 0);
+
+    return html;
+}
+
+// ==================== Open Character Modal ====================
 function openCharacterModal(charData) {
     if (!charData) {
         console.error('No character data provided');
@@ -2002,18 +2049,16 @@ function openCharacterModal(charData) {
     const modalCharacter = document.getElementById('modalCharacter');
     const modalBody = document.getElementById('modalBody');
 
-// Set character display (優先用 display_image 字形補丁，沒有就顯示文字)
-// 根據 V2.2 規格：display_image 是字形補丁，與文字地位相同
-let displayContent = `<div style="font-size: 4rem; font-weight: bold; line-height: 1;">${charData.character || ''}</div>`;
+// Set character display (優先用 display_image 圖片，沒有就顯示文字)
+let displayContent = `<div style="font-size: 4rem; font-weight: bold; line-height: 1;">${charData.character}</div>`;
 
-// 優先檢查 display_image 欄位（V2.2 規格）
 if (charData.display_image && charData.display_image.trim()) {
-    // Modal header 中字形補丁可適當放大顯示（max-height: 220px）
-    displayContent = `<img src="${charData.display_image.trim()}" style="max-height: 220px; max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="comp" onerror="this.style.display='none';">`;
-}
-// Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
-else if (charData.character && typeof charData.character === 'string' && charData.character.trim().toLowerCase().startsWith('http')) {
-    displayContent = `<img src="${charData.character.trim()}" style="max-height: 220px; max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="comp" onerror="this.style.display='none';">`;
+    displayContent = `
+        <img src="${charData.display_image.trim()}" 
+             style="max-height: 220px; max-width: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+             alt="${charData.meaning || charData.character || '字形'}"
+             onerror="this.style.display='none';">
+    `;
 }
 
 modalCharacter.innerHTML = displayContent;
@@ -2044,20 +2089,20 @@ modalCharacter.innerHTML = displayContent;
 
     bodyHTML += `</div></div>`;
 
-    // Image (輔助插圖) - 根據 V2.2 規格，只顯示 image 欄位，不顯示 display_image
-    // display_image 已作為字形補丁在 modal header 中顯示
-    if (charData.image && charData.image.trim()) {
-        bodyHTML += `
-            <div class="modal-section">
-                <div class="modal-image-container">
-                    <img src="${charData.image.trim()}" 
-                        alt="${charData.meaning || charData.character || '輔助插圖'}"
-                        style="max-height: 300px; object-fit: contain;"
-                        onerror="this.parentElement.parentElement.style.display='none'">
+    // Image (if exists)
+   // 顯示用圖片（優先用後台新填的 display_image）
+        if (charData.display_image && charData.display_image.trim()) {
+            bodyHTML += `
+                <div class="modal-section">
+                    <div class="modal-image-container">
+                        <img src="${charData.display_image.trim()}" 
+                            alt="${charData.meaning || charData.character || '字形'}"
+                            style="max-height: 300px; object-fit: contain;"
+                            onerror="this.parentElement.parentElement.style.display='none'">
+                    </div>
                 </div>
-            </div>
-        `;
-    }
+            `;
+        }
 
     // Book explanation
     if (charData.book_explanation) {

@@ -410,16 +410,6 @@
             margin: 10px 0;
         }
         
-        /* 字形補丁系統 (Character Patch) - Admin 後台 */
-        .img-comp {
-            height: 1.8em;
-            width: auto;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 4px;
-            object-fit: contain;
-        }
-        
         /* ==================== CSV 上传区 ==================== */
         .upload-area {
             border: 3px dashed var(--primary-color);
@@ -594,44 +584,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        /* --- 全域圖片渲染規範 --- */
-
-/* 確保所有 Markdown 區域內的圖片都不會撐破容器 */
-.markdown-body img, 
-.admin-char-section-content img,
-.character-card img {
-    max-width: 100% !important;
-    height: auto !important;
-    display: block; /* 預設區塊顯示，避免下方留白 */
-}
-
-/* 象形演變圖 (origin)：縮小並置中 */
-img.img-origin {
-    width: 55% !important;
-    min-width: 180px;
-    margin: 15px auto !important;
-    border: 1px solid #eee;
-    padding: 8px;
-    background: #fff;
-    border-radius: 6px;
-}
-
-/* 故事插圖 (story)：較大尺寸，視覺中心 */
-img.img-story {
-    width: 90% !important;
-    margin: 20px auto !important;
-    border-radius: 10px;
-}
-
-/* 字形補丁 (comp)：嵌入行內，高度與文字對齊 */
-img.img-comp {
-    height: 1.6em !important;
-    width: auto !important;
-    display: inline-block !important;
-    vertical-align: middle !important;
-    margin: 0 2px !important;
-}
     </style>
 </head>
 <body>
@@ -733,27 +685,11 @@ img.img-comp {
 
                     
                                 <div class="form-section">
-                <label for="displayImage">字形補丁圖片（display_image）<span style="font-size:0.9em;color:#666;">（顯示在大卡片和小卡片）</span></label>
+                <label for="displayImage">部件顯示補丁用圖片（優先顯示在大卡片和小卡片）</label>
                 <input type="text" id="displayImage" placeholder="https://res.cloudinary.com/... （貼網址即可）">
-                <div style="margin-top:12px;">
-                    <button type="button" class="btn btn-secondary" id="uploadDisplayImageBtn">
-                        🖼️ 上傳字形補丁圖片到 Cloudinary
-                    </button>
-                    <div id="displayImageUploadProgress" style="margin-top:10px;display:none;">
-                        <div style="background:#eee;height:8px;border-radius:4px;overflow:hidden;">
-                            <div id="displayImageProgressBar" style="height:100%;background:var(--primary-color);width:0%;transition:width 0.3s;"></div>
-                        </div>
-                        <small id="displayImageProgressText" style="color:var(--primary-color);font-weight:bold;">上傳中 0%</small>
-                    </div>
-                </div>
                 <small style="color:#666; display:block; margin-top:6px;">
-                     Markdown 圖片分類 (Alt-based)<br>
-                    渲染器根據 Alt 文字自動分配 CSS Class：<br>
-                    • ![comp](url)：套用「字形補丁系統」樣式。<br>
-                    • ![origin](url)：象形演變圖，適中尺寸並置中。<br>
-                    • ![story](url)：故事插圖，較大尺寸，視覺重心。<br>
-                    • 無標註或 ![small/large]：套用 .modal-image-container，max-width: 100% 自適應。<br>
-
+                    留空 = 顯示文字<br>
+                    建議尺寸：正方形或寬高比接近 1:1
                 </small>
             </div>
                     
@@ -861,12 +797,8 @@ img.img-comp {
                     
                     <div style="background:#fffbe6;padding:20px;border-radius:8px;margin:20px 0;">
                         <h3 style="color:#856404;">📋 CSV 格式說明</h3>
-                        <p>請確保包含以下欄位（前三欄必填，其餘選填）：</p>
-                        <pre style="background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:6px;overflow-x:auto;font-size:0.9em;">character,pinyin,meaning,display_image,components_breakdown,book_explanation,story,pronunciation_cue,phrases,image,example</pre>
-                        <small style="color:#856404;display:block;margin-top:8px;">
-                            • display_image: 字形補丁圖片（用於當字無法正常顯示時）<br>
-                            • image: 輔助插圖（故事圖、象形演變圖等）
-                        </small>
+                        <p>請確保包含以下欄位（前三個必填）：</p>
+                        <pre style="background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:6px;overflow-x:auto;font-size:0.9em;">character,pinyin,meaning,components_breakdown,book_explanation,story,pronunciation_cue,phrases,image,example</pre>
                         <button class="btn btn-secondary" onclick="downloadTemplate()" style="margin-top:10px;">⬇️ 下載空白模板</button>
                     </div>
                     
@@ -910,7 +842,7 @@ img.img-comp {
                                     <th>拼音</th>
                                     <th>意思</th>
                                     <th>部件拆解</th>
-                                    <th>圖片<br><small style="font-size:0.8em;font-weight:normal;">補丁/插圖</small></th>
+                                    <th>圖片</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -1174,7 +1106,6 @@ img.img-comp {
             document.getElementById('character').value = data.character || '';
             document.getElementById('pinyin').value = data.pinyin || '';
             document.getElementById('meaning').value = data.meaning || '';
-            document.getElementById('displayImage').value = data.display_image || '';
             document.getElementById('componentsBreakdown').value = data.components_breakdown || '';
             document.getElementById('bookExplanation').value = data.book_explanation || '';
             document.getElementById('story').value = data.story || '';
@@ -1197,7 +1128,7 @@ img.img-comp {
         }
 
         function clearForm() {
-            document.querySelectorAll('#character, #pinyin, #meaning, #displayImage, #componentsBreakdown, #bookExplanation, #story, #pronunciationCue, #image, #phrases, #example').forEach(el => el.value = '');
+            document.querySelectorAll('#character, #pinyin, #meaning, #componentsBreakdown, #bookExplanation, #story, #pronunciationCue, #image, #phrases, #example').forEach(el => el.value = '');
             document.getElementById('typeComponent').checked = true;
             currentEditIndex = null;
             currentEditType = null;
@@ -1209,35 +1140,10 @@ img.img-comp {
             renderCharacterLists();
         }
 
+        // Markdown 渲染輔助函數
         function renderMarkdown(text) {
-    if (!text) return '';
-    // 1. 先用 marked 轉成 HTML
-    let html = marked.parse(text);
-    
-    // 2. 全域攔截自定義圖片標籤：將 ![--Image of: --type] 轉為 class="img-type"
-    return html.replace(
-        /<img src="([^"]+)" alt="--Image of: --([^"]+)"/g, 
-        (match, src, type) => {
-            // type 會抓到 origin, story, comp 等關鍵字
-            return `<img src="${src}" class="img-${type}" alt="${type}" loading="lazy">`;
-        }
-    );
-}
-
-        // 渲染字符顯示邏輯（優先檢查 display_image，自動轉化 Fallback）
-        function renderCharacterDisplay(char) {
-            // 優先檢查 display_image 欄位
-            if (char.display_image && char.display_image.trim()) {
-                return `<img src="${char.display_image.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            }
-            
-            // Fallback: 如果 character 欄位本身是 http 開頭的網址，自動視為圖片補丁
-            if (char.character && typeof char.character === 'string' && char.character.trim().toLowerCase().startsWith('http')) {
-                return `<img src="${char.character.trim()}" class="img-comp" alt="comp" style="height: 1.8em; width: auto; vertical-align: middle;" onerror="this.style.display='none';">`;
-            }
-            
-            // 預設顯示文字
-            return char.character || '';
+            if (!text) return '';
+            return marked.parse(text);
         }
 
         function renderCharacterLists() {
@@ -1249,14 +1155,11 @@ img.img-comp {
                 if (data.length === 0) {
                     grid.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">尚未新增任何' + (type === 'component' ? '部件' : '目標字') + '</div>';
                 } else {
-                   grid.innerHTML = data.map((c, i) => {
-                       // 使用 renderCharacterDisplay 處理字符顯示
-                       const charDisplay = renderCharacterDisplay(c);
-                       return `
+                   grid.innerHTML = data.map((c, i) => `
                         <div class="character-card">
-                            <div class="char-main">${charDisplay}</div>
-                            <div class="char-pinyin">${c.pinyin || ''}</div>
-                            <div class="char-meaning">${c.meaning || ''}</div>
+                            <div class="char-main">${renderMarkdown(c.character)}</div>
+                            <div class="char-pinyin">${renderMarkdown(c.pinyin)}</div>
+                            <div class="char-meaning">${renderMarkdown(c.meaning)}</div>
                             ${c.components_breakdown ? `<div style="font-size:0.9em;color:var(--text-secondary);margin:5px 0;">${renderMarkdown(c.components_breakdown)}</div>` : ''}
                             ${c.image ? `<img src="${c.image}" class="char-image" onerror="this.style.display='none'">` : ''}
                             ${c.book_explanation ? `<div style="font-size:0.9em;margin:8px 0;padding:8px;background:var(--bg-light);border-radius:5px;">${renderMarkdown(c.book_explanation)}</div>` : ''}
@@ -1269,8 +1172,7 @@ img.img-comp {
                                 <button class="btn btn-small btn-delete" onclick="deleteCharacter('${type}', ${i})">🗑️ 刪除</button>
                             </div>
                         </div>
-                    `;
-                   }).join('');
+                    `).join('');
                 }
             };
 
@@ -1313,8 +1215,8 @@ img.img-comp {
         let validData = [];
 
         function downloadTemplate() {
-            const csv = `character,pinyin,meaning,display_image,components_breakdown,book_explanation,story,pronunciation_cue,phrases,image,example
-夬,guài,cut apart / separate,https://res.cloudinary.com/.../xxx.png,ユ + 人,,,,,,https://example.com/image.png,COW needs TOWEL`;
+            const csv = `character,pinyin,meaning,components_breakdown,book_explanation,story,pronunciation_cue,phrases,image,example
+夬,guài,cut apart / separate,ユ + 人,,,,,,https://example.com/image.png,COW needs TOWEL`;
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -1370,7 +1272,7 @@ img.img-comp {
                     pinyin: row.pinyin.trim(),
                     meaning: row.meaning.trim(),
                 };
-                ['display_image','components_breakdown','book_explanation','story','pronunciation_cue','phrases','image','example'].forEach(k => {
+                ['components_breakdown','book_explanation','story','pronunciation_cue','phrases','image','example'].forEach(k => {
                     if (row[k] && row[k].trim()) clean[k] = row[k].trim();
                 });
 
@@ -1383,11 +1285,7 @@ img.img-comp {
                     <td>${clean.pinyin}</td>
                     <td>${clean.meaning}</td>
                     <td>${clean.components_breakdown || '-'}</td>
-                    <td>
-                        ${clean.display_image ? '<span title="字形補丁">補丁✓</span>' : ''}
-                        ${clean.image ? '<span title="輔助插圖">插圖✓</span>' : ''}
-                        ${!clean.display_image && !clean.image ? '-' : ''}
-                    </td>
+                    <td>${clean.image ? '✓' : '-'}</td>
                     <td><button class="btn btn-small btn-delete" onclick="validData.splice(${validData.length-1},1); validateAndPreview();">刪除</button></td>
                 `;
                 tbody.appendChild(tr);
@@ -1695,7 +1593,6 @@ img.img-comp {
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // 区域 7: Cloudinary 图片上传
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Widget for 輔助插圖 (image)
         const myWidget = cloudinary.createUploadWidget({
             cloudName: 'dxc8rcjuh',
             uploadPreset: 'elisa_shizi',
@@ -1730,43 +1627,6 @@ img.img-comp {
 
         document.getElementById("uploadWidgetBtn").addEventListener("click", () => {
             myWidget.open();
-        });
-
-        // Widget for 字形補丁圖片 (display_image)
-        const displayImageWidget = cloudinary.createUploadWidget({
-            cloudName: 'dxc8rcjuh',
-            uploadPreset: 'elisa_shizi',
-            folder: 'shizi-lessons/display-images',
-            cropping: false,
-            multiple: false,
-            clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp'],
-            maxFileSize: 10000000,
-            styles: {
-                palette: {
-                    window: "#FFFFFF",
-                    windowBorder: "#0891b2",
-                    tabIcon: "#0891b2",
-                    menuIcons: "#0891b2",
-                    textDark: "#000000",
-                    textLight: "#FFFFFF",
-                    link: "#0891b2",
-                    action: "#0891b2",
-                    inProgress: "#0891b2",
-                    complete: "#28a745",
-                    error: "#dc3545",
-                    sourceBg: "#0891b2"
-                }
-            }
-        }, (error, result) => {
-            if (!error && result && result.event === "success") {
-                document.getElementById('displayImage').value = result.info.secure_url;
-                document.getElementById('displayImageUploadProgress').style.display = 'none';
-                showMessage('🖼️ 字形補丁圖片上傳成功！已自動填入網址', 'success');
-            }
-        });
-
-        document.getElementById("uploadDisplayImageBtn").addEventListener("click", () => {
-            displayImageWidget.open();
         });
 
 
