@@ -528,9 +528,11 @@
                 <label>筛选：</label>
                 <select id="filterBy" onchange="filterStudents()">
                     <option value="all">全部</option>
+                    <option value="realStudents">真实学生（排除测试）</option>
                     <option value="active">活跃（7天内）</option>
                     <option value="inactive">不活跃（7天+）</option>
                     <option value="named">有姓名</option>
+                    <option value="testDevices">仅显示测试设备</option>
                 </select>
             </div>
         </div>
@@ -610,19 +612,21 @@
                 let totalReviews = 0;
                 let totalProgress = 0;
                 let activeToday = 0;
-                
+                let testDeviceCount = 0;
+
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                
+
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const progress = data.characterProgress || {};
                     const characters = Object.values(progress);
-                    
+
                     // Calculate stats
                     const reviewed = characters.length;
                     const reviews = characters.reduce((sum, c) => sum + (c.reviews || 0), 0);
-                    
+                    const isTestDevice = data.isTestDevice || false;
+
                     // Check if active today
                     let lastReviewDate = null;
                     if (data.lastReview) {
@@ -635,10 +639,9 @@
                             }
                         }
                     }
-                    
+
                     const isActiveToday = lastReviewDate && lastReviewDate >= today;
-                    if (isActiveToday) activeToday++;
-                    
+
                     allStudents.push({
                         userId: doc.id,
                         deviceCode: data.deviceCode || '------',
@@ -647,20 +650,28 @@
                         reviews: reviews,
                         lastReview: lastReviewDate,
                         characters: characters,
-                        progress: data
+                        progress: data,
+                        isTestDevice: isTestDevice
                     });
-                    
-                    totalReviews += reviews;
-                    totalProgress += reviewed;
+
+                    // Only count non-test devices in stats
+                    if (!isTestDevice) {
+                        if (isActiveToday) activeToday++;
+                        totalReviews += reviews;
+                        totalProgress += reviewed;
+                    } else {
+                        testDeviceCount++;
+                    }
                 });
-                
-                // Update stats
-                document.getElementById('totalStudents').textContent = allStudents.length;
+
+                // Update stats (excluding test devices)
+                const realStudentCount = allStudents.length - testDeviceCount;
+                document.getElementById('totalStudents').textContent = realStudentCount + (testDeviceCount > 0 ? ` (${testDeviceCount} 测试)` : '');
                 document.getElementById('activeToday').textContent = activeToday;
                 document.getElementById('totalReviews').textContent = totalReviews;
                 
-                const avgProg = allStudents.length > 0 
-                    ? Math.round((totalProgress / allStudents.length / 500) * 100) // Assuming ~500 total characters
+                const avgProg = realStudentCount > 0
+                    ? Math.round((totalProgress / realStudentCount / 500) * 100) // Assuming ~500 total characters
                     : 0;
                 document.getElementById('avgProgress').textContent = avgProg + '%';
                 
@@ -694,15 +705,26 @@
             
             tbody.innerHTML = filteredStudents.map((student, index) => {
                 const progressPercent = Math.round((student.reviewed / 500) * 100); // Assuming ~500 total
-                const lastReviewText = student.lastReview 
+                const lastReviewText = student.lastReview
                     ? formatDate(student.lastReview)
                     : '从未复习';
-                
+
+                const isTestDevice = student.isTestDevice || false;
+                const rowStyle = isTestDevice ? 'background: #f5f5f5;' : '';
+                const deviceCodeDisplay = isTestDevice
+                    ? `🧪 ${student.deviceCode} <span style="color:#999; font-size: 0.85em;">(测试)</span>`
+                    : student.deviceCode;
+                const nameDisplay = isTestDevice
+                    ? '<span style="color:#999;">测试设备</span>'
+                    : (student.name || '<i style="color:#999;">未填写</i>');
+                const testBtnText = isTestDevice ? '❌ 取消标记' : '🧪 标记测试';
+                const testBtnClass = isTestDevice ? 'btn-secondary' : 'btn-primary';
+
                 return `
-                    <tr>
+                    <tr style="${rowStyle}">
                         <td>${index + 1}</td>
-                        <td class="device-code">${student.deviceCode}</td>
-                        <td class="student-name">${student.name || '<i style="color:#999;">未填写</i>'}</td>
+                        <td class="device-code">${deviceCodeDisplay}</td>
+                        <td class="student-name">${nameDisplay}</td>
                         <td class="progress-bar-cell">
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${progressPercent}%">
@@ -719,6 +741,9 @@
                                 </button>
                                 <button class="btn btn-small btn-primary" onclick="copyDeviceCode('${student.deviceCode}')">
                                     📋 复制码
+                                </button>
+                                <button class="btn btn-small ${testBtnClass}" onclick="toggleTestDevice('${student.userId}', ${!isTestDevice})">
+                                    ${testBtnText}
                                 </button>
                             </div>
                         </td>
@@ -754,26 +779,32 @@
             const filterBy = document.getElementById('filterBy').value;
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            
+
             switch (filterBy) {
                 case 'all':
                     filteredStudents = [...allStudents];
                     break;
+                case 'realStudents':
+                    filteredStudents = allStudents.filter(s => !s.isTestDevice);
+                    break;
                 case 'active':
-                    filteredStudents = allStudents.filter(s => 
+                    filteredStudents = allStudents.filter(s =>
                         s.lastReview && s.lastReview >= sevenDaysAgo
                     );
                     break;
                 case 'inactive':
-                    filteredStudents = allStudents.filter(s => 
+                    filteredStudents = allStudents.filter(s =>
                         !s.lastReview || s.lastReview < sevenDaysAgo
                     );
                     break;
                 case 'named':
                     filteredStudents = allStudents.filter(s => s.name);
                     break;
+                case 'testDevices':
+                    filteredStudents = allStudents.filter(s => s.isTestDevice);
+                    break;
             }
-            
+
             sortStudents();
         }
         
@@ -887,7 +918,39 @@
                 alert('设备码已复制：' + code);
             });
         }
-        
+
+        // ==================== Toggle Test Device ====================
+        async function toggleTestDevice(userId, markAsTest) {
+            const confirmMsg = markAsTest
+                ? '确定要将此设备标记为测试设备吗？\nMark this device as test device?'
+                : '确定要取消测试设备标记吗？\nRemove test device mark?';
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await db.collection('user_progress').doc(userId).update({
+                    isTestDevice: markAsTest
+                });
+
+                // Update local data
+                const student = allStudents.find(s => s.userId === userId);
+                if (student) {
+                    student.isTestDevice = markAsTest;
+                }
+
+                const filteredStudent = filteredStudents.find(s => s.userId === userId);
+                if (filteredStudent) {
+                    filteredStudent.isTestDevice = markAsTest;
+                }
+
+                renderTable();
+                alert(markAsTest ? '✅ 已标记为测试设备' : '✅ 已取消测试标记');
+            } catch (error) {
+                console.error('Error updating test device status:', error);
+                alert('❌ 操作失败：' + error.message);
+            }
+        }
+
         // ==================== Refresh Data ====================
         function refreshData() {
             loadStudentsData();

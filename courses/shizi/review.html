@@ -1182,12 +1182,24 @@
     </div>
     
     <input type="file" id="importFile" accept=".json" style="display: none;">
-    <!-- 简单显示 -->
-<div style="margin-top: 20px; padding: 16px; background: rgba(0,172,193,0.1); border-radius: 10px; text-align: center;">
-    <span style="font-size: 0.9em; color: var(--text-secondary);">Device Code:</span>
-    <strong style="font-size: 1.5em; color: var(--primary); margin: 0 10px;" id="deviceCode">------</strong>
-    <span style="font-size: 0.85em; color: var(--text-muted); display: inline-block; margin-top: 8px;">(Enter this code on another device to sync progress)</span>
-</div>
+
+    <!-- Device Code & Student Name Display -->
+    <div style="margin-top: 20px; padding: 16px; background: rgba(0,172,193,0.1); border-radius: 10px; text-align: center;">
+        <div style="margin-bottom: 8px;">
+            <span style="font-size: 0.9em; color: var(--text-secondary);">Device Code:</span>
+            <strong style="font-size: 1.5em; color: var(--primary); margin: 0 10px;" id="deviceCode">------</strong>
+        </div>
+        <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 12px;">
+            (Enter this code on another device to sync progress)
+        </div>
+        <div style="margin-bottom: 8px;">
+            <span style="font-size: 0.9em; color: var(--text-secondary);">Student Name:</span>
+            <strong style="font-size: 1.2em; color: var(--primary-dark); margin: 0 10px;" id="studentNameDisplay">Not set</strong>
+        </div>
+        <button class="btn btn-secondary" onclick="editStudentName()" style="padding: 8px 20px; font-size: 0.9rem;">
+            📝 <span id="editNameBtnText">Set Name</span>
+        </button>
+    </div>
 
 <style>
 @media (max-width: 640px) {
@@ -1224,9 +1236,26 @@
         </div> <!-- end of #mainContent -->
     </div> <!-- end of .container -->
 
+    <!-- Student Name Modal -->
+    <div id="nameModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="color: var(--primary-dark); font-size: 2rem; margin-bottom: 8px;">Welcome! 👋</h2>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.6;">
+                    Please enter your name so we can save and restore your learning progress.
+                </p>
+            </div>
+
+            <input type="text" id="studentNameInput" placeholder="Your name"
+                   style="width: 100%; padding: 14px; font-size: 1.1rem; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 20px;">
+
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="skipNameInput()" style="flex: 1;">Skip for now</button>
+                <button class="btn btn-primary" onclick="saveStudentName()" style="flex: 1;">Confirm</button>
+            </div>
         </div>
     </div>
-    
+
     <script>
         // ==================== Firebase Configuration ====================
         const firebaseConfig = {
@@ -1245,6 +1274,7 @@
         // ==================== Global Variables ====================
         let currentUser = null;
         let deviceCode = null;
+        let studentName = '';
         let allCharacters = [];
         let componentCharacters = [];
         let targetCharacters = [];
@@ -1269,6 +1299,9 @@
                         await loadLessonsFromFirebase();
                         await loadUserProgress();
 
+                        // Update student name display
+                        updateStudentNameDisplay();
+
                         // Render with progress data
                         renderLessonCheckboxes();
 
@@ -1277,6 +1310,9 @@
                         document.getElementById('mainContent').classList.remove('hidden');
 
                         updateStats();
+
+                        // Check if we need to show name input modal
+                        checkAndShowNameModal();
                     }
                 });
             } catch (error) {
@@ -1850,6 +1886,7 @@ function startReview() {
                 if (doc.exists) {
                     const data = doc.data();
                     userProgress = data.characterProgress || {};
+                    studentName = data.studentName || '';
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
@@ -1861,7 +1898,8 @@ function startReview() {
                 await db.collection('user_progress').doc(currentUser.uid).set({
                     characterProgress: userProgress,
                     lastReview: new Date().toISOString(),
-                    deviceCode: deviceCode
+                    deviceCode: deviceCode,
+                    studentName: studentName
                 });
             } catch (error) {
                 console.error('Error saving progress:', error);
@@ -1992,6 +2030,72 @@ window.addEventListener('load', () => {
     document.getElementById('reviewMethodTabs').style.display = 'none';
     document.getElementById('recommendedSection').style.display = 'none';
     document.getElementById('difficultySection').style.display = 'none';
+});
+
+// ==================== Student Name Management ====================
+function updateStudentNameDisplay() {
+    const displayElement = document.getElementById('studentNameDisplay');
+    const btnTextElement = document.getElementById('editNameBtnText');
+
+    if (studentName && studentName.trim() !== '') {
+        displayElement.textContent = studentName;
+        btnTextElement.textContent = 'Edit Name';
+    } else {
+        displayElement.textContent = 'Not set';
+        btnTextElement.textContent = 'Set Name';
+    }
+}
+
+function checkAndShowNameModal() {
+    // Show modal if student name is not set
+    if (!studentName || studentName.trim() === '') {
+        const modal = document.getElementById('nameModal');
+        modal.style.display = 'flex';
+    }
+}
+
+function editStudentName() {
+    const modal = document.getElementById('nameModal');
+    const input = document.getElementById('studentNameInput');
+    input.value = studentName || '';
+    modal.style.display = 'flex';
+    input.focus();
+}
+
+async function saveStudentName() {
+    const input = document.getElementById('studentNameInput');
+    const name = input.value.trim();
+
+    if (name) {
+        studentName = name;
+        await saveUserProgress();
+        updateStudentNameDisplay();
+        showMessage('Name saved successfully! 姓名保存成功！', 'success');
+    }
+
+    closeNameModal();
+}
+
+function skipNameInput() {
+    closeNameModal();
+}
+
+function closeNameModal() {
+    const modal = document.getElementById('nameModal');
+    modal.style.display = 'none';
+    document.getElementById('studentNameInput').value = '';
+}
+
+// Allow Enter key to submit name
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('studentNameInput');
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveStudentName();
+            }
+        });
+    }
 });
 
     </script>
