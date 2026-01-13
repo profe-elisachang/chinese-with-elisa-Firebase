@@ -1235,12 +1235,7 @@
 
     <!-- Lesson Navigation Bar (BBC Style) -->
     <div class="container" style="margin-top: 20px;">
-        <!-- Page Title -->
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h1 id="lessonTitle" style="color: var(--primary-color); font-size: 2rem; font-weight: 700; margin-bottom: 8px;">加载中...Loading…</h1>
-            <p id="lessonSubtitle" style="color: var(--text-secondary); font-size: 1.1rem;">Rapid Literacy</p>
-        </div>
-
+        <!-- Lesson Navigation (Always visible at top) -->
         <div class="lesson-navigation">
             <div class="lesson-nav-header">
                 <span class="lesson-nav-title">SELECT A LESSON</span>
@@ -1258,14 +1253,27 @@
             </select>
         </div>
 
-        <!-- Loading Indicator -->
-        <div class="loader" id="loader"></div>
-        
-        <!-- Error Message -->
-        <div id="errorMessage" style="display: none;"></div>
-        
-        <!-- Tabs Navigation -->
-        <div class="tabs-nav" id="tabsNav" style="display: none;">
+        <!-- Lesson Tip (shown when no lesson selected) -->
+        <div class="lesson-tip" id="lessonTip" style="display: none; text-align: center; padding: var(--spacing-2xl); background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin: var(--spacing-xl) 0; font-size: var(--text-xl); color: var(--text-secondary);">
+            💡 点击课程号进入学习 / Click lesson number to start learning
+        </div>
+
+        <!-- Lesson Content (shown when lesson selected) -->
+        <div id="lessonContent" style="display: none;">
+            <!-- Lesson Header -->
+            <div class="header">
+                <h1 id="lessonTitle">加载中...Loading…</h1>
+                <p class="subtitle" id="lessonSubtitle">Rapid Literacy</p>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loader" id="loader"></div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" style="display: none;"></div>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav" id="tabsNav" style="display: none;">
             <button class="tab-button active" data-tab="components">🧩 部件</button>
             <button class="tab-button" data-tab="targets">🎯 目标字</button>
             <button class="tab-button" data-tab="vocabulary">📚 生词表</button>
@@ -1366,6 +1374,8 @@
                 </div>
             </div>
         </div>
+        </div>
+        <!-- End Lesson Content -->
     </div>
 
     <!-- Character Detail Modal -->
@@ -1413,7 +1423,7 @@
         // ==================== Get Lesson ID from URL ====================
         function getLessonId() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id') || 'lesson7';
+            return urlParams.get('id') || null;
         }
         
         // ==================== Load Lesson Data ====================
@@ -1422,7 +1432,21 @@
             const loader = document.getElementById('loader');
             const errorMessage = document.getElementById('errorMessage');
             const tabsNav = document.getElementById('tabsNav');
+            const lessonTip = document.getElementById('lessonTip');
+            const lessonTitle = document.getElementById('lessonTitle');
+            const lessonSubtitle = document.getElementById('lessonSubtitle');
 
+            // Check if no lesson is selected
+            if (!lessonId) {
+                // Show lesson selection tip
+                lessonTip.style.display = 'block';
+                document.getElementById('lessonContent').style.display = 'none';
+                return;
+            }
+
+            // Lesson is selected - hide tip and show content
+            lessonTip.style.display = 'none';
+            document.getElementById('lessonContent').style.display = 'block';
             loader.style.display = 'block';
             errorMessage.style.display = 'none';
 
@@ -1444,9 +1468,9 @@
                 // Update header with Chinese number format
                 const lessonNum = parseInt(lessonId.replace('lesson', ''));
                 const chineseTitle = convertToChineseNumber(lessonNum);
-                document.getElementById('lessonTitle').textContent = chineseTitle;
-                document.getElementById('lessonSubtitle').textContent = 'Chinese Learning Platform';
-                
+                lessonTitle.textContent = chineseTitle;
+                lessonSubtitle.textContent = 'Chinese Learning Platform';
+
                 // Render all content
                 renderComponents(currentLessonData.components || []);
                 renderTargets(currentLessonData.target_characters || []);
@@ -1454,13 +1478,24 @@
                 renderPhrases(currentLessonData.phrases || []);
                 renderGrammar(currentLessonData.grammar || []);
                 renderExercises(currentLessonData.exercises || []);
-                
+
                 // Check if reading text exists
                 if (currentLessonData.reading_text && currentLessonData.reading_text.trim()) {
                     document.getElementById('readingTab').style.display = 'block';
                     renderReading(currentLessonData.reading_text);
                 }
-                
+
+                // Reset all tabs to use CSS classes (remove inline styles)
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.style.display = '';
+                    tab.classList.remove('active');
+                });
+
+                // Set first tab as active
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.tab-button[data-tab="components"]').classList.add('active');
+                document.getElementById('tab-components').classList.add('active');
+
                 // Show tabs
                 tabsNav.style.display = 'flex';
                 
@@ -2200,7 +2235,7 @@ modalCharacter.innerHTML = displayContent;
  // ==================== Render Lesson Navigation (BBC Style) ====================
     function renderLessonNavigation() {
         const currentLesson = getLessonId();
-        const currentNum = parseInt(currentLesson.replace('lesson', ''));
+        const currentNum = currentLesson ? parseInt(currentLesson.replace('lesson', '')) : null;
 
         const lessonNumbers = document.getElementById('lessonNumbers');
         const lessonDropdown = document.getElementById('lessonDropdown');
