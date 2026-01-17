@@ -61,71 +61,86 @@
             background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
         }
         
-        /* ==================== 侧边栏 ==================== */
+        /* ==================== 顶部导航栏 ==================== */
         .sidebar {
-            width: 280px;
+            width: 100%;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 30px 20px;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.15);
-            position: fixed;
+            padding: 15px 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+           /* 修改這裡 */
+            position: relative; /* 從 fixed 改成 relative */
             left: 0;
             top: 0;
-            bottom: 0;
-            overflow-y: auto;
+            right: 0;
             z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
         }
         
         .logo {
-            text-align: center;
-            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
         }
         
         .logo h1 {
             color: var(--primary-color);
-            font-size: 2em;
+            font-size: 1.5em;
+            margin: 0;
         }
         
         .logo p {
             color: var(--text-secondary);
-            font-size: 1em;
-            margin-top: 8px;
+            font-size: 0.9em;
+            margin: 0;
         }
         
         .logo .version {
             display: inline-block;
             background: var(--primary-color);
             color: white;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 12px;
             font-size: 0.7em;
-            margin-top: 8px;
         }
         
         .nav-menu {
             list-style: none;
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+            flex: 1;
+            justify-content: center;
         }
         
         .nav-item {
-            margin-bottom: 12px;
+            margin: 0;
         }
         
         .nav-link {
             display: block;
-            padding: 16px 20px;
+            padding: 12px 20px;
             border-radius: 12px;
             color: var(--text-primary);
             font-weight: bold;
             text-decoration: none;
             transition: all 0.3s;
             cursor: pointer;
+            white-space: nowrap;
         }
         
         .nav-link:hover {
             background: var(--bg-hover);
-            transform: translateX(6px);
+            transform: translateY(-2px);
         }
         
         .nav-link.active {
@@ -136,7 +151,7 @@
         /* ==================== 主内容区 ==================== */
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-top: 80px;
             padding: 30px;
             overflow-y: auto;
         }
@@ -579,15 +594,21 @@
         
         /* ==================== 响应式设计 ==================== */
         @media (max-width: 1024px) {
-            body { flex-direction: column; }
             .sidebar {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+            }
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-menu {
                 width: 100%;
-                height: auto;
-                position: relative;
-                padding: 20px;
+                justify-content: center;
             }
             .main-content {
-                margin-left: 0;
+                margin-top: 0px;/* margin-top: 150px;  <-- 把這行刪掉或設為 0 */
                 padding: 20px;
             }
             .character-lists {
