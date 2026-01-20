@@ -1219,6 +1219,18 @@ img.img-comp {
         let currentEditIndex = null;
         let currentEditType = null;
 
+        function sanitizeCharacters(chars) {
+            return chars.map(char => {
+                const clean = {};
+                Object.entries(char).forEach(([key, value]) => {
+                    if (value !== undefined) {
+                        clean[key] = value;
+                    }
+                });
+                return clean;
+            });
+        }
+
         document.getElementById('lessonSelect').addEventListener('change', function() {
             const lessonId = this.value;
             if (lessonId) loadLessonData(lessonId);
@@ -1349,13 +1361,15 @@ img.img-comp {
                 
                 // 準備更新數據
                 const updateData = {};
+                const sanitizedComponents = sanitizeCharacters(components);
+                const sanitizedTargets = sanitizeCharacters(targetCharacters);
                 
                 if (type === 'component') {
                     // 更新整個 components 數組（包含已修改的元素）
-                    updateData['components'] = components;
+                    updateData['components'] = sanitizedComponents;
                 } else {
                     // 更新整個 target_characters 數組（包含已修改的元素）
-                    updateData['target_characters'] = targetCharacters;
+                    updateData['target_characters'] = sanitizedTargets;
                 }
                 
                 // 更新 meta 信息
@@ -1421,9 +1435,11 @@ img.img-comp {
 
             showLoader();
             try {
+                const sanitizedComponents = sanitizeCharacters(components);
+                const sanitizedTargets = sanitizeCharacters(targetCharacters);
                 await db.collection('lessons').doc(lessonId).set({
-                    components,
-                    target_characters: targetCharacters,
+                    components: sanitizedComponents,
+                    target_characters: sanitizedTargets,
                     meta: {
                         component_count: components.length,
                         target_count: targetCharacters.length,
@@ -1542,9 +1558,11 @@ img.img-comp {
 
             showLoader();
             try {
+                const sanitizedComponents = sanitizeCharacters(components);
+                const sanitizedTargets = sanitizeCharacters(targetCharacters);
                 await db.collection('lessons').doc(lessonId).set({
-                    components,
-                    target_characters: targetCharacters,
+                    components: sanitizedComponents,
+                    target_characters: sanitizedTargets,
                     meta: {
                         component_count: components.length,
                         target_count: targetCharacters.length,
