@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文词汇辨析：另一个 vs 别的 vs 其他的</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #4a6fa5;
+            --correct-color: #4CAF50;
+            --incorrect-color: #f44336;
+            --light-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --light-text: #666;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .hsk-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .content-section {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin: 20px 0 12px;
+        }
+        
+        p {
+            margin-bottom: 16px;
+        }
+        
+        .highlight {
+            background-color: #f0f7ff;
+            padding: 15px 20px;
+            border-left: 4px solid var(--primary-color);
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .example-box {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 18px;
+            margin: 18px 0;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .chinese-example {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .pinyin {
+            font-style: italic;
+            color: var(--light-text);
+            margin-bottom: 8px;
+        }
+        
+        .translation {
+            color: var(--light-text);
+        }
+        
+        /* Main Tab Switcher Styles - Sophisticated and Elegant */
+        .main-tabs-wrapper {
+            background: linear-gradient(to bottom, rgba(44, 90, 160, 0.02), transparent);
+            border-bottom: 1px solid var(--border-color);
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        
+        .main-tabs-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+        }
+        
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
+            position: relative;
+        }
+        
+        .main-tab {
+            padding: 18px 40px;
+            background: transparent;
+            border: none;
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: var(--light-text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+            outline: none;
+        }
+        
+        .main-tab:focus {
+            outline: 2px solid rgba(44, 90, 160, 0.3);
+            outline-offset: -2px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .main-tab:hover {
+            color: var(--primary-color);
+            background-color: rgba(44, 90, 160, 0.04);
+        }
+        
+        .main-tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom-color: var(--primary-color);
+            background-color: rgba(44, 90, 160, 0.06);
+        }
+        
+        .main-tab.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+            opacity: 0.3;
+        }
+        
+        .main-tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+        
+        .main-tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Original exercise tabs - keep existing styles */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin: 30px 0 0;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--light-text);
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background-color: var(--white);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .question {
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            margin-right: 12px;
+            font-weight: 600;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 14px 18px;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: var(--secondary-color);
+            background-color: #f0f7ff;
+        }
+        
+        .option.selected {
+            border-color: var(--primary-color);
+            background-color: #e8f0fe;
+        }
+        
+        .option.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+        }
+        
+        .option.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+        }
+        
+        .option-letter {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 15px;
+            font-weight: 600;
+        }
+        
+        .option.selected .option-letter {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .option.correct .option-letter {
+            background-color: var(--correct-color);
+            color: white;
+        }
+        
+        .option.incorrect .option-letter {
+            background-color: var(--incorrect-color);
+            color: white;
+        }
+        
+        .answer-feedback {
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .answer-feedback.correct {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--correct-color);
+        }
+        
+        .answer-feedback.incorrect {
+            background-color: #ffebee;
+            border-left: 4px solid var(--incorrect-color);
+        }
+        
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feedback-title i {
+            margin-right: 10px;
+        }
+        
+        .drag-drop-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .drag-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .drag-item {
+            padding: 18px;
+            background-color: white;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            cursor: move;
+            text-align: center;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .drag-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .drop-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            padding: 25px;
+            background-color: var(--light-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--light-text);
+        }
+        
+        .drop-zone.active {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+        }
+        
+        .drop-zone.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+        }
+        
+        .drop-zone.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--light-text);
+            font-size: 0.95rem;
+        }
+        
+        .mobile-warning {
+            display: none;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content-section, header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .drag-drop-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .mobile-warning {
+                display: block;
+            }
+            
+            .main-tabs {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .main-tab {
+                padding: 14px 24px;
+                font-size: 0.95rem;
+                flex: 1;
+                min-width: 140px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .tab.active::after {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .option {
+                padding: 12px;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>中文词汇辨析</h1>
+            <div class="subtitle">「另一个」、「别的」、「其他的」的区别与用法</div>
+            <div class="hsk-badge">HSK 3级核心语法点</div>
+        </header>
+        
+        <!-- Main Tab Switcher -->
+        <div class="main-tabs-wrapper">
+            <div class="main-tabs">
+                <button class="main-tab active" data-main-tab="grammar-insight">Grammar Insight</button>
+                <button class="main-tab" data-main-tab="interactive-practice">Interactive Practice</button>
+            </div>
+        </div>
+        
+        <!-- Grammar Insight Tab Content -->
+        <div id="grammar-insight" class="main-tab-content active">
+            <div class="content-section">
+                <h2>核心区别</h2>
+            
+            <div class="highlight">
+                <p><strong>简单记忆方法：</strong> <span style="color: #6b7280; font-weight: normal;">(Simple way to remember:)</span></p>
+                <p>• <strong>另一个</strong>：同一种类中的"另外一个" <br><span class="explain-en">(another one of the same kind; one more from the same group)</span></p>
+                <p>• <strong>别的</strong>：不同种类的"其他东西" <br><span class="explain-en">(something of a different kind; something else)</span></p>
+                <p>• <strong>其他的</strong>："剩下的全部"东西 <br><span class="explain-en">(all the rest; all the others left)</span></p>
+            </div>
+            
+            <h3>苹果例子（想象有6个苹果的盘子）<br><span class="explain-en">(Apple examples: Imagine a plate with 6 apples)</span></h3>
+            
+            <div class="example-box">
+                <div class="chinese-example">这个苹果不好吃，我吃<strong>另一个</strong>苹果。</div>
+                <div class="pinyin">Zhège píngguǒ bù hǎochī, wǒ chī <strong>lìng yī gè</strong> píngguǒ.</div>
+                <div class="translation">(This apple doesn't taste good, I'll eat <strong>another</strong> apple.)</div>
+                <p><em>说明：从盘子里拿起另一个特定的苹果<br>
+                    <span class="explain-en">(You take a different specific apple from the plate.)</span>
+                </em></p>
+            </div>
+            
+            <div class="example-box">
+                <div class="chinese-example">我不想吃苹果了，有<strong>别的</strong>水果吗？</div>
+                <div class="pinyin">Wǒ bùxiǎng chī píngguǒle, yǒu <strong>bié de</strong> shuǐguǒ ma?</div>
+                <div class="translation">(I don't want apples anymore, do you have <strong>other</strong> fruits?)</div>
+                <p><em>说明：想要完全不同的东西（比如香蕉、橘子）<br>
+                    <span class="explain-en">(You want something completely different, like bananas or oranges.)</span>
+                </em></p>
+            </div>
+            
+            <div class="example-box">
+                <div class="chinese-example">这个苹果我吃，<strong>其他的</strong>苹果给你。</div>
+                <div class="pinyin">Zhège píngguǒ wǒ chī, <strong>qí tā de</strong> píngguǒ gěi nǐ.</div>
+                <div class="translation">(I'll eat this apple, <strong>the other</strong> apples are for you.)</div>
+                <p><em>说明：把剩下的所有苹果（5个）都给对方<br>
+                    <span class="explain-en">(All the remaining apples (5) are given to the other person.)</span>
+                </em></p>
+            </div>
+            
+            <h2>快速选择指南</h2>
+            
+            <div class="how-to-choose">
+                <h3>怎么选择？(How to Choose)</h3>
+                <ol class="choose-steps">
+                    <li>
+                        <strong>Question 1:</strong> 我是在说同一种类的东西吗？<br>
+                        <span class="explain-en">Am I talking about the same kind of thing?</span><br>
+                        <span class="arrow">→</span>
+                        <span class="decision">NO</span>
+                        <span class="arrow">→</span>
+                        <span class="use-key"><strong>别的</strong> ✅</span>
+                        <br>
+                        <span class="arrow">→</span>
+                        <span class="decision">YES</span>
+                        <span class="arrow">→</span>
+                        <strong>Question 2</strong>
+                    </li>
+                    <li style="margin-top:8px;">
+                        <strong>Question 2:</strong> 我想表达“剩下的全部”吗？<br>
+                        <span class="explain-en">Do I mean "all the rest"?</span><br>
+                        <span class="arrow">→</span>
+                        <span class="decision">YES</span>
+                        <span class="arrow">→</span>
+                        <span class="use-key"><strong>其他的</strong> ✅</span>
+                        <br>
+                        <span class="arrow">→</span>
+                        <span class="decision">NO</span>
+                        <span class="arrow">→</span>
+                        <strong>Question 3</strong>
+                    </li>
+                    <li style="margin-top:8px;">
+                        <strong>Question 3:</strong> 我是在说同一组里的某一个具体东西吗？<br>
+                        <span class="explain-en">Am I talking about one specific item from the same group?</span><br>
+                        <span class="arrow">→</span>
+                        <span class="decision">YES</span>
+                        <span class="arrow">→</span>
+                        <span class="use-key"><strong>另一个</strong> ✅</span>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="real-life-examples">
+                <h3>生活例子 (Real-Life Examples)</h3>
+                
+                <strong>学校和工作 (School & Work)</strong>
+                <ul>
+                    <li>
+                        <span class="zh">这个教室满了，我们去<strong>另一个</strong>教室吧。</span><br>
+                        <span class="en">(This classroom is full, let's go to another classroom.)</span><br>
+                        <span class="note">↳ 同一种类（教室），具体的一个。</span>
+                    </li>
+                    <li>
+                        <span class="zh">我不喜欢数学，有<strong>别的</strong>课吗？</span><br>
+                        <span class="en">(I don't like math, are there other classes?)</span><br>
+                        <span class="note">↳ 不同种类（不是数学课）。</span>
+                    </li>
+                    <li>
+                        <span class="zh">这些作业今天做，<strong>其他的</strong>作业明天做。</span><br>
+                        <span class="en">(Do this homework today, do the other homework tomorrow.)</span><br>
+                        <span class="note">↳ 剩下的所有作业。</span>
+                    </li>
+                </ul>
+                
+                <strong>购物 (Shopping)</strong>
+                <ul>
+                    <li>
+                        <span class="zh">这双鞋太小，请给我<strong>另一双</strong>。</span><br>
+                        <span class="en">(These shoes are too small, please give me another pair.)</span><br>
+                        <span class="note">↳ 同一种类（鞋），具体一双。</span>
+                    </li>
+                    <li>
+                        <span class="zh">不要红色，有<strong>别的</strong>颜色吗？</span><br>
+                        <span class="en">(Not red, do you have other colors?)</span><br>
+                        <span class="note">↳ 不同种类（不是红色）。</span>
+                    </li>
+                    <li>
+                        <span class="zh">这件衣服我买，<strong>其他的</strong>衣服都不买了。</span><br>
+                        <span class="en">(I'll buy this clothes, the other clothes I won't buy.)</span><br>
+                        <span class="note">↳ 剩下的所有衣服。</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="common-mistakes">
+                <h3>常见错误 (Common Mistakes)</h3>
+                <ul>
+                    <li>
+                        <span class="wrong">❌ "我有别的问题。"</span>
+                        <span class="wrong-exp">(I have other/different problems?)</span><br>
+                        <span class="explain-en">This sounds like you have "different kinds" of problems.</span>
+                    </li>
+                    <li>
+                        <span class="right">✅ "我还有一个问题。"</span>
+                        <span class="right-exp">(I have one more question.)</span><br>
+                        <span class="explain-en">This is natural Chinese for "I have another question."</span>
+                    </li>
+                    <li>
+                        <span class="right">✅ "我问了这个问题，还有另一个问题。"</span>
+                        <span class="right-exp">(I asked this question, and there's another question.)</span><br>
+                        <span class="explain-en">This is good if you're comparing two specific questions.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quick-summary">
+                <h3>快速总结表 (Quick Summary Table)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>如果你想表达...<br><span class="explain-en">If you want to say...</span></th>
+                            <th>最佳选择<br><span class="explain-en">Best Chinese choice</span></th>
+                            <th>例子<br><span class="explain-en">Example</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>同类中再要一个<br><span class="explain-en">one more of the same</span></td>
+                            <td><strong>另一个</strong></td>
+                            <td>用<strong>另一支</strong>笔 (use another pen)</td>
+                        </tr>
+                        <tr>
+                            <td>不同种类/类型<br><span class="explain-en">different kind/type</span></td>
+                            <td><strong>别的</strong></td>
+                            <td>吃<strong>别的</strong>菜 (eat different dishes)</td>
+                        </tr>
+                        <tr>
+                            <td>剩下的全部<br><span class="explain-en">all the rest/remaining</span></td>
+                            <td><strong>其他的</strong></td>
+                            <td><strong>其他的</strong>人都走了 (all the other people left)</td>
+                        </tr>
+                        <tr>
+                            <td>我还有一个...（事实）<br><span class="explain-en">I have another X (fact)</span></td>
+                            <td><strong>还有一个</strong></td>
+                            <td>我<strong>还有一个</strong>哥哥 (I have another older brother)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="remember-tip" style="margin-top:18px;">
+                <strong>记住这个小提示 (Remember This Tip):</strong><br>
+                <div style="margin:8px 0 8px 0;">
+                    <span class="explain-en">When you think of English "another" in daily conversation:</span><br>
+                    <span class="tip-ch">日常对话说“another”，先试试：“还有一个...” —— 这个非常自然、安全！</span><br>
+                    <span class="tip-en">First try “还有一个...” (<em>hái yǒu yī gè...</em>) — it's safe and natural!</span>
+                </div>
+                <ul>
+                    <li>如果是具体选择同一组里的某个，用 <b>另一个</b>。</li>
+                    <li>如果是“不同种类”，用 <b>别的</b>。</li>
+                </ul>
+                <div>
+                    <b>Example:</b><br>
+                    English: "I have another class after this."<br>
+                    中文自然表达: <span class="zh">这节课后，我还有一节课。</span> <span style="color:green;">✅</span>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <!-- Interactive Practice Tab Content -->
+        <div id="interactive-practice" class="main-tab-content">
+            <div class="content-section">
+                <div class="mobile-warning">
+                    <i class="fas fa-mobile-alt"></i> 在手机上，拖放练习可能需要较大的触摸区域，建议使用平板或电脑获得最佳体验。
+                </div>
+                
+                <h2>互动练习</h2>
+                
+                <div class="tabs">
+                <button class="tab active" data-tab="multiple-choice">选择题 (1-7)</button>
+                <button class="tab" data-tab="drag-drop">拖放练习 (8-10)</button>
+            </div>
+            
+            <!-- 选择题部分 -->
+            <div id="multiple-choice" class="tab-content active">
+                <div class="question" id="q1">
+                    <div class="question-text">
+                        <span class="question-number">1</span>
+                        这本书看完了，我想看______书。
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a" data-correct="true">
+                            <span class="option-letter">A</span> 另一个
+                        </div>
+                        <div class="option" data-option="b">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: A</div>
+                        <p>这里指的是同一种类（书）中的另外一本，所以用"另一个"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q2">
+                    <div class="question-text">
+                        <span class="question-number">2</span>
+                        我不喝咖啡，有______饮料吗？
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a">
+                            <span class="option-letter">A</span> 另一个
+                        </div>
+                        <div class="option" data-option="b" data-correct="true">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: B</div>
+                        <p>这里指的是不同种类的饮料（不是咖啡），所以用"别的"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q3">
+                    <div class="question-text">
+                        <span class="question-number">3</span>
+                        这个苹果是我的，______苹果都是你的。
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a">
+                            <span class="option-letter">A</span> 另一个
+                        </div>
+                        <div class="option" data-option="b">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c" data-correct="true">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: C</div>
+                        <p>这里指的是剩下的所有苹果，所以用"其他的"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q4">
+                    <div class="question-text">
+                        <span class="question-number">4</span>
+                        这支笔没水了，请给我______笔。
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a" data-correct="true">
+                            <span class="option-letter">A</span> 另一支
+                        </div>
+                        <div class="option" data-option="b">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: A</div>
+                        <p>这里指的是同一种类（笔）中的另外一支，所以用"另一支"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q5">
+                    <div class="question-text">
+                        <span class="question-number">5</span>
+                        这件衣服不好看，我想试试______衣服。
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a" data-correct="true">
+                            <span class="option-letter">A</span> 另一件
+                        </div>
+                        <div class="option" data-option="b">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: A</div>
+                        <p>这里指的是同一种类（衣服）中的另外一件，所以用"另一件"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q6">
+                    <div class="question-text">
+                        <span class="question-number">6</span>
+                        我们班有20个学生，5个是美国人，______都是中国人。
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a">
+                            <span class="option-letter">A</span> 另一个
+                        </div>
+                        <div class="option" data-option="b">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c" data-correct="true">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: C</div>
+                        <p>这里指的是剩下的所有学生（15个），所以用"其他的"。</p>
+                    </div>
+                </div>
+                
+                <div class="question" id="q7">
+                    <div class="question-text">
+                        <span class="question-number">7</span>
+                        我不喜欢这个手机，有______型号吗？
+                    </div>
+                    <div class="options">
+                        <div class="option" data-option="a">
+                            <span class="option-letter">A</span> 另一个
+                        </div>
+                        <div class="option" data-option="b" data-correct="true">
+                            <span class="option-letter">B</span> 别的
+                        </div>
+                        <div class="option" data-option="c">
+                            <span class="option-letter">C</span> 其他的
+                        </div>
+                    </div>
+                    <div class="answer-feedback">
+                        <div class="feedback-title"><i class="fas fa-check-circle"></i> 正确答案: B</div>
+                        <p>这里指的是不同型号的手机，所以用"别的"。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 拖放练习部分 (Drag-and-drop exercises) -->
+            <div id="drag-drop" class="tab-content">
+                <div class="question">
+                    <div class="question-text">
+                        <span class="question-number">8</span>
+                        把正确的词拖到对应的解释框中：
+                    </div>
+                    
+                    <div class="drag-drop-container">
+                        <div class="drag-items">
+                            <div class="drag-item" draggable="true" data-word="另一个">另一个</div>
+                            <div class="drag-item" draggable="true" data-word="别的">别的</div>
+                            <div class="drag-item" draggable="true" data-word="其他的">其他的</div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-correct="另一个">
+                                <span class="drop-text">同一种类中的"另外一个"</span>
+                            </div>
+                            <div class="drop-zone" data-correct="别的">
+                                <span class="drop-text">不同种类的"其他东西"</span>
+                            </div>
+                            <div class="drop-zone" data-correct="其他的">
+                                <span class="drop-text">"剩下的全部"东西</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">
+                        <span class="question-number">9</span>
+                        把正确的词拖到句子空白处：
+                    </div>
+                    
+                    <div class="drag-drop-container">
+                        <div class="drag-items">
+                            <div class="drag-item" draggable="true" data-word="另一个">另一个</div>
+                            <div class="drag-item" draggable="true" data-word="别的">别的</div>
+                            <div class="drag-item" draggable="true" data-word="其他的">其他的</div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-correct="另一个">
+                                <span class="drop-text">这间教室满了，我们去______教室吧。</span>
+                            </div>
+                            <div class="drop-zone" data-correct="别的">
+                                <span class="drop-text">不要红色，有______颜色吗？</span>
+                            </div>
+                            <div class="drop-zone" data-correct="其他的">
+                                <span class="drop-text">这个问题解决了，______问题都不难。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">
+                        <span class="question-number">10</span>
+                        选择正确的词完成句子：
+                    </div>
+                    
+                    <div class="drag-drop-container">
+                        <div class="drag-items">
+                            <div class="drag-item" draggable="true" data-word="另一个">另一个</div>
+                            <div class="drag-item" draggable="true" data-word="别的">别的</div>
+                            <div class="drag-item" draggable="true" data-word="其他的">其他的</div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-correct="别的">
+                                <span class="drop-text">我不喜欢数学，有______课吗？</span>
+                            </div>
+                            <div class="drop-zone" data-correct="另一个">
+                                <span class="drop-text">这双鞋太小，请给我______双。</span>
+                            </div>
+                            <div class="drop-zone" data-correct="其他的">
+                                <span class="drop-text">这些作业今天做，______作业明天做。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="drag-feedback" class="answer-feedback" style="display: none; margin-top: 20px;">
+                    <div class="feedback-title"><i class="fas fa-info-circle"></i> 拖放练习反馈</div>
+                    <p id="drag-feedback-text"></p>
+                    <button id="check-drag-btn" style="margin-top: 10px; padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">检查答案</button>
+                </div>
+            </div>
+            
+                <div class="footer-note">
+                    <p>© 2026 中文教学资源 | 本内容适用于HSK 3级学习者 | 建议在教师指导下使用<br>
+                    <span style="font-size:0.95em; color:#888;">
+                        © 2026 Chinese Teaching Resources | This content is suitable for HSK Level 3 learners | Recommended for use under teacher guidance
+                    </span></p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        提示：当你想说英语的"another"时，可以先尝试使用"还有一个..."，这在日常对话中非常自然且安全。<br>
+                        <span style="color:#888;">Tip: When you want to say "another" in English, you can try using "还有一个..." ("there is one more...") in Chinese. This is very natural and safe in daily conversation.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main Tab Switcher Functionality
+        document.querySelectorAll('.main-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all main tabs
+                document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+                // Hide all main tab contents
+                document.querySelectorAll('.main-tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Activate current main tab
+                tab.classList.add('active');
+                // Show corresponding main tab content
+                const tabId = tab.getAttribute('data-main-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Exercise Tab Switching Functionality (original)
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有标签的active类
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // 隐藏所有内容
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 激活当前标签
+                tab.classList.add('active');
+                // 显示对应内容
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 选择题功能
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除同一问题中其他选项的选择状态
+                const question = this.closest('.question');
+                question.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                // 标记当前选项为选中
+                this.classList.add('selected');
+                
+                // 检查答案
+                const isCorrect = this.getAttribute('data-correct') === 'true';
+                const feedback = question.querySelector('.answer-feedback');
+                
+                if (isCorrect) {
+                    this.classList.add('correct');
+                    feedback.classList.remove('incorrect');
+                    feedback.classList.add('correct');
+                    feedback.querySelector('.feedback-title').innerHTML = '<i class="fas fa-check-circle"></i> 正确！';
+                } else {
+                    this.classList.add('incorrect');
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('incorrect');
+                    feedback.querySelector('.feedback-title').innerHTML = '<i class="fas fa-times-circle"></i> 不正确';
+                    
+                    // 显示正确答案
+                    const correctOption = question.querySelector('.option[data-correct="true"]');
+                    correctOption.classList.add('correct');
+                }
+                
+                // 显示反馈
+                feedback.style.display = 'block';
+            });
+        });
+        
+        // 拖放功能
+        let draggedItem = null;
+        
+        // 拖拽开始
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                this.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', this.getAttribute('data-word'));
+            });
+            
+            item.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedItem = null;
+            });
+        });
+        
+        // 拖拽经过区域
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('active');
+            });
+            
+            zone.addEventListener('dragleave', function() {
+                this.classList.remove('active');
+            });
+            
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('active');
+                
+                if (draggedItem) {
+                    const word = draggedItem.getAttribute('data-word');
+                    this.innerHTML = `<strong>${word}</strong><br><span class="drop-text">${this.querySelector('.drop-text') ? this.querySelector('.drop-text').textContent : ''}</span>`;
+                    this.setAttribute('data-dropped', word);
+                    
+                    // 检查拖放练习反馈是否显示
+                    const dragFeedback = document.getElementById('drag-feedback');
+                    if (dragFeedback.style.display === 'none') {
+                        dragFeedback.style.display = 'block';
+                    }
+                }
+            });
+        });
+        
+        // 检查拖放答案
+        document.getElementById('check-drag-btn').addEventListener('click', function() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let allCorrect = true;
+            let correctCount = 0;
+            const totalZones = dropZones.length;
+            
+            dropZones.forEach(zone => {
+                const correctAnswer = zone.getAttribute('data-correct');
+                const droppedAnswer = zone.getAttribute('data-dropped');
+                
+                zone.classList.remove('correct', 'incorrect');
+                
+                if (droppedAnswer === correctAnswer) {
+                    zone.classList.add('correct');
+                    correctCount++;
+                } else if (droppedAnswer) {
+                    zone.classList.add('incorrect');
+                    allCorrect = false;
+                } else {
+                    allCorrect = false;
+                }
+            });
+            
+            const feedback = document.getElementById('drag-feedback');
+            const feedbackText = document.getElementById('drag-feedback-text');
+            
+            if (allCorrect) {
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                feedback.querySelector('.feedback-title').innerHTML = '<i class="fas fa-check-circle"></i> 全部正确！';
+                feedbackText.textContent = `太好了！你答对了全部 ${totalZones} 题。`;
+            } else {
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+                feedback.querySelector('.feedback-title').innerHTML = '<i class="fas fa-times-circle"></i> 需要检查';
+                feedbackText.textContent = `你答对了 ${correctCount} 题，还有 ${totalZones - correctCount} 题需要纠正。请检查红色框中的答案。`;
+            }
+        });
+        
+        // 页面加载时初始化第一个问题的反馈显示
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为第一个问题显示反馈区域（但隐藏内容）
+            const firstQuestion = document.querySelector('.question');
+            const firstFeedback = firstQuestion.querySelector('.answer-feedback');
+            firstFeedback.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
