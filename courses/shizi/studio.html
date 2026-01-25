@@ -147,6 +147,46 @@
             align-items: center;
         }
 
+        /* ==================== 批量发布按钮组 ==================== */
+        .batch-publish-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .batch-publish-buttons .btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .batch-publish-buttons .btn-success {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .batch-publish-buttons .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+        }
+
+        .batch-publish-buttons .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .batch-publish-buttons .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(107,114,128,0.4);
+        }
+
         .control-group {
             display: flex;
             align-items: center;
@@ -179,6 +219,42 @@
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+        }
+
+        /* ==================== Type Tabs ==================== */
+        .type-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .type-tab {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: var(--font-primary);
+        }
+
+        .type-tab:hover:not(:disabled) {
+            color: var(--primary-color);
+            background: var(--bg-hover);
+        }
+
+        .type-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .type-tab:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* ==================== Main Container ==================== */
@@ -273,18 +349,18 @@
 
         .btn-expand-all,
         .btn-collapse-all {
-            width: 28px;
-            height: 28px;
-            padding: 0;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: var(--radius-sm);
-            font-size: var(--text-lg);
-            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-base);
+            color: rgba(255, 255, 255, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            white-space: nowrap;
+            font-weight: var(--font-semibold);
         }
 
         .btn-expand-all:hover,
@@ -373,14 +449,30 @@
         }
 
         .form-item-toggle-icon {
-            font-size: var(--text-lg);
-            color: var(--text-muted);
-            transition: transform 0.3s;
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            background: var(--bg-light);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            transition: all 0.3s;
             flex-shrink: 0;
+            font-weight: var(--font-semibold);
+            min-width: 40px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .form-item-toggle-icon:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .form-item-card.expanded .form-item-toggle-icon {
-            transform: rotate(90deg);
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .form-item-preview {
@@ -637,62 +729,116 @@
         .preview-panel-content {
             flex: 1;
             overflow-y: auto;
-            padding: var(--spacing-lg);
+            padding: var(--spacing-xl);
         }
 
-        /* ==================== Character Grid (對齊 lesson.html) ==================== */
-        .character-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .character-card {
-            background: var(--bg-card);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-lg);
-            border: 2px solid var(--border-light);
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            min-height: 180px;
-            max-height: 180px;
-            overflow: hidden;
+        /* ==================== Preview Display (類似 lesson-presentation.html) ==================== */
+        .preview-display {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            gap: var(--spacing-sm);
-            position: relative;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: var(--spacing-xl);
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .character-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-3px);
-        }
-
-        .character-card.active {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
-        }
-
-        .character-card .character {
-            font-size: var(--char-size-large);
+        .preview-display .character {
+            font-size: clamp(3.5rem, 7vw, 6rem);
             font-weight: var(--font-bold);
             color: var(--character-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.1;
         }
 
-        .character-card .pinyin {
-            font-size: var(--text-xl);
+        .preview-display .pinyin {
+            font-size: clamp(1.5rem, 3vw, 2.4rem);
             color: var(--pinyin-color);
+            margin: 0;
+            padding: 0;
             font-weight: var(--font-medium);
         }
 
-        .character-card .meaning {
-            font-size: var(--text-base);
+        .preview-display .meaning {
+            font-size: clamp(1.4rem, 2.8vw, 2.2rem);
             color: var(--meaning-color);
-            font-weight: var(--font-medium);
+            margin: 0;
+            padding: 0;
+            font-weight: var(--font-semibold);
+        }
+
+        .preview-display .breakdown {
+            font-size: var(--text-xl);
+            color: var(--text-secondary);
+            margin: 0;
+            padding: var(--spacing-lg);
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            width: 100%;
+        }
+
+        .preview-display .preview-section {
+            width: 100%;
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .preview-display .preview-section-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .preview-display .preview-section-content {
+            font-size: var(--text-lg);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .preview-display .preview-image {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+            margin: var(--spacing-md) 0;
+        }
+
+        .preview-display .img-comp {
+            width: 120px;
+            height: 120px;
+            display: inline-block;
+            vertical-align: middle;
+            object-fit: contain;
+            margin: 0 var(--spacing-sm);
+            border-radius: var(--radius-md);
+        }
+
+        .preview-display .img-origin {
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: var(--spacing-lg) auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-display .img-story {
+            max-height: 500px;
+            width: 90%;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: var(--spacing-xl) auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
         }
 
         /* 字形補丁系統 (對齊 structure.md) */
@@ -705,177 +851,6 @@
             object-fit: contain;
         }
 
-        /* ==================== Teaching Modal (65寸電視) ==================== */
-        .teaching-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 3000;
-            overflow-y: auto;
-            padding: var(--spacing-xl);
-            cursor: pointer;
-        }
-
-        .teaching-modal.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .teaching-modal-content {
-            cursor: default;
-        }
-
-        .teaching-modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            max-width: 1400px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            padding: var(--spacing-2xl);
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .teaching-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-2xl);
-            padding-bottom: var(--spacing-lg);
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .teaching-modal-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: var(--font-bold);
-            color: var(--primary-color);
-        }
-
-        .btn-close-modal {
-            padding: var(--spacing-sm) var(--spacing-lg);
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: var(--text-lg);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-close-modal:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        .teaching-modal-body {
-            text-align: center;
-        }
-
-        .teaching-modal-body .character {
-            font-size: clamp(4rem, 7vw, 6rem);
-            font-weight: var(--font-bold);
-            color: var(--character-color);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .teaching-modal-body .pinyin {
-            font-size: clamp(1.5rem, 3vw, 2.2rem);
-            color: var(--pinyin-color);
-            margin-bottom: var(--spacing-md);
-            font-weight: var(--font-medium);
-        }
-
-        .teaching-modal-body .meaning {
-            font-size: clamp(1.4rem, 2.8vw, 2.8rem);
-            color: var(--meaning-color);
-            margin-bottom: var(--spacing-xl);
-            font-weight: var(--font-semibold);
-        }
-
-        .teaching-modal-section {
-            margin-bottom: var(--spacing-xl);
-            text-align: left;
-            padding: var(--spacing-lg);
-            background: var(--bg-light);
-            border-radius: var(--radius-lg);
-        }
-
-        .teaching-modal-section-title {
-            font-size: clamp(1.2rem, 2.2vw, 1.8rem);
-            font-weight: var(--font-bold);
-            color: var(--primary-color);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .teaching-modal-section-content {
-            font-size: clamp(1.2rem, 2.2vw, 2.2rem);
-            line-height: 1.8;
-            color: var(--text-primary);
-        }
-
-        /* 教學模態框中的字形補丁（65寸電視：120px） */
-        .teaching-modal-body .img-comp {
-            height: 120px;
-            width: auto;
-        }
-
-        .teaching-modal-navigation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: var(--spacing-2xl);
-            padding-top: var(--spacing-lg);
-            border-top: 2px solid var(--border-light);
-        }
-
-        .btn-nav {
-            padding: var(--spacing-md) var(--spacing-xl);
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: var(--text-lg);
-            font-weight: var(--font-semibold);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-nav:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-nav:disabled {
-            background: var(--text-muted);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .modal-position {
-            font-size: var(--text-lg);
-            color: var(--text-secondary);
-            font-weight: var(--font-semibold);
-        }
 
         /* ==================== Markdown 渲染 ==================== */
         .markdown-content {
@@ -1012,13 +987,7 @@
             <span>🎓 識字課程管理 Studio</span>
         </div>
         <div class="studio-controls">
-            <div class="control-group">
-                <label for="typeSelect">類型：</label>
-                <select id="typeSelect">
-                    <option value="component">部件</option>
-                    <option value="target">目標字</option>
-                </select>
-            </div>
+            <!-- 课次选单在左侧 -->
             <div class="control-group">
                 <label for="lessonSelect">課次：</label>
                 <select id="lessonSelect">
@@ -1050,6 +1019,18 @@
                     <option value="lesson25">Lesson 25</option>
                 </select>
             </div>
+            <!-- 类型Tab -->
+            <div class="control-group">
+                <div class="type-tabs">
+                    <button class="type-tab active" id="tabComponent" data-type="component" disabled>🧩 部件</button>
+                    <button class="type-tab" id="tabTarget" data-type="target" disabled>🎯 目標字</button>
+                </div>
+            </div>
+            <!-- 发布按钮组 -->
+            <div class="batch-publish-buttons">
+                <button class="btn btn-success" id="btnPublishAll">✅ 整課發布</button>
+                <button class="btn btn-secondary" id="btnUnpublishAll">⛔ 整課取消發布</button>
+            </div>
         </div>
     </div>
 
@@ -1062,8 +1043,8 @@
                     <div class="edit-panel-title">編輯表單</div>
                 </div>
                 <div class="edit-panel-header-right">
-                    <button class="btn-expand-all" id="btnExpandAll" title="全部展開">↑</button>
-                    <button class="btn-collapse-all" id="btnCollapseAll" title="全部折疊">↓</button>
+                    <button class="btn-expand-all" id="btnExpandAll">+ 全部展開</button>
+                    <button class="btn-collapse-all" id="btnCollapseAll">- 全部收合</button>
                     <button class="btn-add" id="btnAdd">+ 新增</button>
                 </div>
             </div>
@@ -1095,23 +1076,6 @@
         </div>
     </div>
 
-    <!-- Teaching Modal (65寸電視) -->
-    <div class="teaching-modal" id="teachingModal">
-        <div class="teaching-modal-content">
-            <div class="teaching-modal-header">
-                <div class="teaching-modal-title" id="modalTitle">字卡詳情</div>
-                <button class="btn-close-modal" id="btnCloseModal">✕ 關閉</button>
-            </div>
-            <div class="teaching-modal-body" id="modalBody">
-                <!-- Modal content will be inserted here -->
-            </div>
-            <div class="teaching-modal-navigation">
-                <button class="btn-nav" id="btnPrev">← 上一個</button>
-                <div class="modal-position" id="modalPosition">第 1 / 共 10 個</div>
-                <button class="btn-nav" id="btnNext">下一個 →</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         // ==================== Firebase 配置 ====================
@@ -1132,10 +1096,11 @@
         let currentData = [];
         let currentType = 'component';
         let currentLesson = '';
-        let currentModalIndex = -1;
         let saveTimeout = null;
         let draggedElement = null;
         let clickTimeout = null;
+        let lastClickIndex = -1;
+        let lastClickTime = 0;
 
         // ==================== 工具函數 ====================
         function showMessage(text, type = 'info') {
@@ -1193,10 +1158,39 @@
 
         // ==================== 載入資料 ====================
         async function loadData() {
-            const type = document.getElementById('typeSelect').value;
             const lesson = document.getElementById('lessonSelect').value;
 
             if (!lesson) {
+                currentData = [];
+                currentPreviewIndex = -1;
+                currentLesson = '';
+                // 禁用Tab
+                document.getElementById('tabComponent').disabled = true;
+                document.getElementById('tabTarget').disabled = true;
+                renderEditPanel();
+                renderPreviewPanel();
+                return;
+            }
+
+            // 启用Tab
+            document.getElementById('tabComponent').disabled = false;
+            document.getElementById('tabTarget').disabled = false;
+
+            // 如果没有选择类型，使用当前类型或默认类型
+            if (!currentType) {
+                currentType = 'component';
+                updateTabState('component');
+            }
+
+            currentLesson = lesson;
+
+            // 加载当前类型的数据
+            await loadDataForType(currentType);
+        }
+
+        // ==================== 加载指定类型的数据 ====================
+        async function loadDataForType(type) {
+            if (!currentLesson) {
                 currentData = [];
                 renderEditPanel();
                 renderPreviewPanel();
@@ -1204,10 +1198,9 @@
             }
 
             currentType = type;
-            currentLesson = lesson;
 
             try {
-                const lessonId = lesson;
+                const lessonId = currentLesson;
                 const doc = await db.collection('lessons').doc(lessonId).get();
                 
                 if (doc.exists) {
@@ -1226,12 +1219,83 @@
             }
 
             renderEditPanel();
-            renderPreviewPanel();
+            renderPreviewPanel(0); // 显示第一个字符
+        }
+
+        // ==================== 更新Tab状态 ====================
+        function updateTabState(type) {
+            document.querySelectorAll('.type-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const activeTab = document.querySelector(`.type-tab[data-type="${type}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        // ==================== Tab切换 ====================
+        async function switchTypeTab(newType) {
+            // 检查是否已选择课次
+            if (!currentLesson) {
+                showMessage('請先選擇課次', 'error');
+                return;
+            }
+            
+            // 如果类型相同，不切换
+            if (currentType === newType) return;
+            
+            // 标记正在切换，避免显示自动保存消息
+            const activeTab = document.querySelector('.type-tab.active');
+            if (activeTab) {
+                activeTab.classList.add('switching');
+            }
+            
+            // 显示保存提示
+            showMessage('💾 正在保存並切換...', 'info');
+            
+            try {
+                // 立即保存当前类型的数据（强制保存）
+                if (saveTimeout) clearTimeout(saveTimeout);
+                
+                // 只有在有当前类型且有数据时才保存
+                if (currentType && currentData.length > 0) {
+                    try {
+                        await saveToFirebase();
+                    } catch (saveError) {
+                        console.error('保存失败:', saveError);
+                        // 保存失败不影响切换
+                    }
+                }
+                
+                // 更新Tab状态
+                updateTabState(newType);
+                
+                // 加载新类型的数据
+                await loadDataForType(newType);
+                
+                showMessage(`✅ 已切換到${newType === 'component' ? '部件' : '目標字'}`, 'success');
+            } catch (error) {
+                console.error('Tab切换错误:', error);
+                showMessage('切換失敗：' + error.message, 'error');
+                // 即使失败，也尝试更新Tab状态和加载数据
+                try {
+                    updateTabState(newType);
+                    await loadDataForType(newType);
+                } catch (loadError) {
+                    console.error('加载数据失败:', loadError);
+                }
+            } finally {
+                // 移除切换标记
+                if (activeTab) {
+                    activeTab.classList.remove('switching');
+                }
+            }
         }
 
         // ==================== 保存到 Firebase ====================
         async function saveToFirebase() {
-            if (!currentLesson) return;
+            if (!currentLesson || !currentType) return;
 
             const lessonId = currentLesson;
             const fieldName = currentType === 'component' ? 'components' : 'target_characters';
@@ -1246,9 +1310,14 @@
                     }
                 }, { merge: true });
                 
-                showMessage('✅ 已自動保存', 'success');
+                // 只在非Tab切换时显示自动保存消息（避免干扰）
+                const activeTab = document.querySelector('.type-tab.active');
+                if (!activeTab || !activeTab.classList.contains('switching')) {
+                    showMessage('✅ 已自動保存', 'success');
+                }
             } catch (error) {
                 showMessage('保存失敗：' + error.message, 'error');
+                throw error; // 抛出错误以便调用者处理
             }
         }
 
@@ -1257,12 +1326,18 @@
             const container = document.getElementById('editPanelContent');
             const emptyState = document.getElementById('emptyEditState');
 
-            if (currentData.length === 0) {
-                emptyState.style.display = 'block';
+            if (!container) {
+                console.error('editPanelContent not found');
                 return;
             }
 
-            emptyState.style.display = 'none';
+            if (currentData.length === 0) {
+                if (emptyState) emptyState.style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = 'none';
             container.innerHTML = currentData.map((item, index) => createFormItem(item, index)).join('');
             
             // 綁定事件
@@ -1274,8 +1349,8 @@
             const isPublished = item.is_published !== false;
             return `
                 <div class="form-item-card collapsed" data-index="${index}" draggable="true">
-                    <div class="form-item-header" onclick="toggleFormItem(${index})">
-                        <span class="form-item-toggle-icon">▶</span>
+                    <div class="form-item-header" onclick="handleFormItemClick(${index})">
+                        <span class="form-item-toggle-icon" onclick="event.stopPropagation(); toggleFormItem(${index})">展</span>
                         <span class="drag-handle" onclick="event.stopPropagation();">≡</span>
                         <div class="form-item-preview">${charDisplay || '新項目'}</div>
                         <div class="publish-toggle" onclick="event.stopPropagation();">
@@ -1336,15 +1411,6 @@
                             <input type="text" data-field="example" value="${item.example || ''}" placeholder="例如：COW needs a TOWEL">
                         </div>
                         <div class="form-field">
-                            <label>課次</label>
-                            <select data-field="lesson">
-                                <option value="">-- 請選擇 --</option>
-                                ${Array.from({length: 25}, (_, i) => 
-                                    `<option value="lesson${i+1}" ${item.lesson === `lesson${i+1}` ? 'selected' : ''}>Lesson ${i+1}</option>`
-                                ).join('')}
-                            </select>
-                        </div>
-                        <div class="form-field">
                             <label>排序</label>
                             <input type="number" data-field="order" value="${item.order || index}" min="0">
                         </div>
@@ -1359,6 +1425,11 @@
             if (card) {
                 card.classList.toggle('collapsed');
                 card.classList.toggle('expanded');
+                // 更新按钮文字
+                const toggleIcon = card.querySelector('.form-item-toggle-icon');
+                if (toggleIcon) {
+                    toggleIcon.textContent = card.classList.contains('expanded') ? '收' : '展';
+                }
             }
         }
 
@@ -1366,6 +1437,10 @@
             document.querySelectorAll('.form-item-card').forEach(card => {
                 card.classList.remove('collapsed');
                 card.classList.add('expanded');
+                const toggleIcon = card.querySelector('.form-item-toggle-icon');
+                if (toggleIcon) {
+                    toggleIcon.textContent = '收';
+                }
             });
             showMessage('已展開所有項目', 'success');
         }
@@ -1374,6 +1449,10 @@
             document.querySelectorAll('.form-item-card').forEach(card => {
                 card.classList.remove('expanded');
                 card.classList.add('collapsed');
+                const toggleIcon = card.querySelector('.form-item-toggle-icon');
+                if (toggleIcon) {
+                    toggleIcon.textContent = '展';
+                }
             });
             showMessage('已折疊所有項目', 'success');
         }
@@ -1398,16 +1477,117 @@
             }
             
             debounceSave();
-            renderPreviewPanel();
+            renderPreviewPanel(currentPreviewIndex >= 0 ? currentPreviewIndex : 0);
             showMessage(checked ? '已發布' : '已取消發布', 'success');
         }
 
-        function scrollToFormItem(index) {
+        // ==================== 整課發布/取消發布 ====================
+        async function publishAll() {
+            if (!currentLesson) {
+                showMessage('請先選擇課次', 'error');
+                return;
+            }
+
+            if (currentData.length === 0) {
+                showMessage('沒有可發布的項目', 'error');
+                return;
+            }
+
+            if (!confirm(`確定要發布本課的所有 ${currentData.length} 個項目嗎？`)) {
+                return;
+            }
+
+            // 批量設置所有項目為已發布
+            currentData.forEach((item, index) => {
+                item.is_published = true;
+                
+                // 更新UI中的checkbox和狀態文字
+                const card = document.querySelector(`.form-item-card[data-index="${index}"]`);
+                if (card) {
+                    const checkbox = card.querySelector('input[type="checkbox"]');
+                    const statusText = card.querySelector('.publish-status');
+                    
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                    
+                    if (statusText) {
+                        statusText.classList.add('published');
+                        statusText.classList.remove('unpublished');
+                        statusText.textContent = '已發布';
+                    }
+                }
+            });
+
+            // 立即保存到 Firebase（不使用防抖）
+            if (saveTimeout) clearTimeout(saveTimeout);
+            await saveToFirebase();
+            
+            showMessage(`✅ 已發布 ${currentData.length} 個項目`, 'success');
+        }
+
+        async function unpublishAll() {
+            if (!currentLesson) {
+                showMessage('請先選擇課次', 'error');
+                return;
+            }
+
+            if (currentData.length === 0) {
+                showMessage('沒有可取消發布的項目', 'error');
+                return;
+            }
+
+            if (!confirm(`確定要取消發布本課的所有 ${currentData.length} 個項目嗎？`)) {
+                return;
+            }
+
+            // 批量設置所有項目為未發布
+            currentData.forEach((item, index) => {
+                item.is_published = false;
+                
+                // 更新UI中的checkbox和狀態文字
+                const card = document.querySelector(`.form-item-card[data-index="${index}"]`);
+                if (card) {
+                    const checkbox = card.querySelector('input[type="checkbox"]');
+                    const statusText = card.querySelector('.publish-status');
+                    
+                    if (checkbox) {
+                        checkbox.checked = false;
+                    }
+                    
+                    if (statusText) {
+                        statusText.classList.remove('published');
+                        statusText.classList.add('unpublished');
+                        statusText.textContent = '未發布';
+                    }
+                }
+            });
+
+            // 立即保存到 Firebase（不使用防抖）
+            if (saveTimeout) clearTimeout(saveTimeout);
+            await saveToFirebase();
+            
+            showMessage(`❌ 已取消發布 ${currentData.length} 個項目`, 'success');
+        }
+
+        // 点击字卡头部时的处理
+        function handleFormItemClick(index) {
+            const now = Date.now();
             const card = document.querySelector(`.form-item-card[data-index="${index}"]`);
-            if (card) {
-                // 展開卡片
-                card.classList.remove('collapsed');
-                card.classList.add('expanded');
+            
+            if (!card) return;
+            
+            // 如果是同一个字卡且在300ms内点击，视为双击，展开表单
+            if (lastClickIndex === index && (now - lastClickTime) < 300) {
+                // 第二次点击：展开表单
+                toggleFormItem(index);
+                lastClickIndex = -1;
+                lastClickTime = 0;
+            } else {
+                // 第一次点击：只显示预览和滚动，不展开表单
+                lastClickIndex = index;
+                lastClickTime = now;
+                
                 // 高亮顯示
                 card.classList.add('highlighted');
                 // 移除其他卡片的高亮
@@ -1420,6 +1600,38 @@
                 setTimeout(() => {
                     card.classList.remove('highlighted');
                 }, 3000);
+                
+                // 更新右侧预览
+                renderPreviewPanel(index);
+            }
+        }
+
+        function scrollToFormItem(index) {
+            const card = document.querySelector(`.form-item-card[data-index="${index}"]`);
+            if (card) {
+                // 展開卡片
+                card.classList.remove('collapsed');
+                card.classList.add('expanded');
+                // 更新按钮文字
+                const toggleIcon = card.querySelector('.form-item-toggle-icon');
+                if (toggleIcon) {
+                    toggleIcon.textContent = '收';
+                }
+                // 高亮顯示
+                card.classList.add('highlighted');
+                // 移除其他卡片的高亮
+                document.querySelectorAll('.form-item-card').forEach(c => {
+                    if (c !== card) c.classList.remove('highlighted');
+                });
+                // 滾動到該位置
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // 3秒後移除高亮
+                setTimeout(() => {
+                    card.classList.remove('highlighted');
+                }, 3000);
+                
+                // 更新右侧预览
+                renderPreviewPanel(index);
             }
         }
 
@@ -1448,7 +1660,10 @@
                     }
                     
                     debounceSave();
-                    renderPreviewPanel();
+                    // 如果修改的是当前预览的字符，更新预览
+                    if (index === currentPreviewIndex) {
+                        renderPreviewPanel(index);
+                    }
                 });
             });
         }
@@ -1464,15 +1679,13 @@
                 character: '',
                 pinyin: '',
                 meaning: '',
-                type: currentType,
                 is_published: false,
                 order: currentData.length
             };
 
             currentData.push(newItem);
             renderEditPanel();
-            renderPreviewPanel();
-            // 自動展開新項目
+            // 自動展開新項目並顯示預覽
             setTimeout(() => {
                 scrollToFormItem(currentData.length - 1);
             }, 100);
@@ -1483,6 +1696,13 @@
         function deleteItem(index) {
             if (!confirm('確定要刪除此項目？')) return;
             
+            // 如果删除的是当前预览的字符，切换到第一个字符
+            if (index === currentPreviewIndex) {
+                currentPreviewIndex = 0;
+            } else if (index < currentPreviewIndex) {
+                currentPreviewIndex--;
+            }
+            
             currentData.splice(index, 1);
             // 重新排序
             currentData.forEach((item, i) => {
@@ -1491,168 +1711,152 @@
             
             debounceSave();
             renderEditPanel();
-            renderPreviewPanel();
+            renderPreviewPanel(currentPreviewIndex >= 0 && currentData.length > 0 ? currentPreviewIndex : 0);
             showMessage('已刪除', 'success');
         }
 
         // ==================== 渲染預覽面板 ====================
-        function renderPreviewPanel() {
+        let currentPreviewIndex = -1;
+
+        function renderPreviewPanel(index = null) {
             const container = document.getElementById('previewPanelContent');
             const emptyState = document.getElementById('emptyPreviewState');
 
+            if (!container) return;
+
             if (currentData.length === 0) {
-                emptyState.style.display = 'block';
+                if (emptyState) emptyState.style.display = 'block';
+                container.innerHTML = '';
                 return;
             }
 
-            emptyState.style.display = 'none';
-            container.innerHTML = `
-                <div class="character-grid">
-                    ${currentData.map((item, index) => createPreviewCard(item, index)).join('')}
-                </div>
-            `;
+            // 如果指定了index，显示该字符；否则显示当前选中的字符
+            const displayIndex = index !== null ? index : (currentPreviewIndex >= 0 ? currentPreviewIndex : 0);
+            currentPreviewIndex = displayIndex;
+            const item = currentData[displayIndex];
 
-            // 綁定點擊事件：單擊跳轉，雙擊開啟模態框
-            document.querySelectorAll('.character-card').forEach((card, index) => {
-                let clickTimer = null;
-                card.addEventListener('click', (e) => {
-                    if (clickTimer === null) {
-                        clickTimer = setTimeout(() => {
-                            // 單擊：跳轉到對應編輯欄位
-                            scrollToFormItem(index);
-                            clickTimer = null;
-                        }, 300);
-                    }
-                });
-                card.addEventListener('dblclick', (e) => {
-                    if (clickTimer) {
-                        clearTimeout(clickTimer);
-                        clickTimer = null;
-                    }
-                    // 雙擊：開啟教學模態框
-                    openTeachingModal(index);
-                });
-            });
-        }
+            if (!item) {
+                if (emptyState) emptyState.style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
 
-        function createPreviewCard(item, index) {
-            const charDisplay = renderCharacterDisplay(item);
-            const isPublished = item.is_published !== false;
+            if (emptyState) emptyState.style.display = 'none';
             
-            return `
-                <div class="character-card ${isPublished ? '' : 'unpublished'}" data-index="${index}">
+            // 字形補丁系統
+            let charDisplay = item.character || '';
+            if (item.display_image && item.display_image.trim()) {
+                charDisplay = `<img src="${item.display_image.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
+            } else if (item.character && typeof item.character === 'string' && item.character.trim().toLowerCase().startsWith('http')) {
+                charDisplay = `<img src="${item.character.trim()}" class="img-comp" alt="comp" onerror="this.style.display='none';">`;
+            }
+
+            let html = `
+                <div class="preview-display">
                     <div class="character">${charDisplay}</div>
-                    <div class="pinyin">${item.pinyin || ''}</div>
-                    <div class="meaning">${item.meaning || ''}</div>
-                </div>
             `;
-        }
 
-        // ==================== 教學模態框 ====================
-        function openTeachingModal(index) {
-            currentModalIndex = index;
-            const item = currentData[index];
-            if (!item) return;
+            // 拼音
+            if (item.pinyin) {
+                html += `<div class="pinyin">${item.pinyin}</div>`;
+            }
 
-            const modal = document.getElementById('teachingModal');
-            const modalBody = document.getElementById('modalBody');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalPosition = document.getElementById('modalPosition');
+            // 意思
+            if (item.meaning) {
+                html += `<div class="meaning">${item.meaning}</div>`;
+            }
 
-            modalTitle.textContent = `字卡詳情 - ${item.character || '新項目'}`;
-            modalPosition.textContent = `第 ${index + 1} / 共 ${currentData.length} 個`;
-
-            const charDisplay = renderCharacterDisplay(item);
-            
-            let sectionsHTML = '';
+            // 部件拆解
             if (item.components_breakdown) {
-                sectionsHTML += `
-                    <div class="teaching-modal-section">
-                        <div class="teaching-modal-section-title">部件拆解</div>
-                        <div class="teaching-modal-section-content markdown-content">${renderMarkdown(item.components_breakdown)}</div>
-                    </div>
-                `;
+                const processedBreakdown = processMarkdownImages(marked.parse(item.components_breakdown));
+                html += `<div class="breakdown">${processedBreakdown}</div>`;
             }
+
+            // 圖片（輔助插圖）
+            if (item.image && item.image.trim()) {
+                html += `<img src="${item.image.trim()}" class="preview-image" alt="${item.character || '輔助插圖'}" onerror="this.style.display='none'">`;
+            }
+
+            // 書本解釋
             if (item.book_explanation) {
-                sectionsHTML += `
-                    <div class="teaching-modal-section">
-                        <div class="teaching-modal-section-title">書本解釋</div>
-                        <div class="teaching-modal-section-content markdown-content">${renderMarkdown(item.book_explanation)}</div>
+                const processedExplanation = processMarkdownImages(marked.parse(item.book_explanation));
+                html += `
+                    <div class="preview-section">
+                        <div class="preview-section-title">📖 解釋</div>
+                        <div class="preview-section-content markdown-content">${processedExplanation}</div>
                     </div>
                 `;
             }
+
+            // 記憶故事
             if (item.story) {
-                sectionsHTML += `
-                    <div class="teaching-modal-section">
-                        <div class="teaching-modal-section-title">記憶故事</div>
-                        <div class="teaching-modal-section-content markdown-content">${renderMarkdown(item.story)}</div>
+                const processedStory = processMarkdownImages(marked.parse(item.story));
+                html += `
+                    <div class="preview-section">
+                        <div class="preview-section-title">🧠 記憶故事</div>
+                        <div class="preview-section-content markdown-content">${processedStory}</div>
                     </div>
                 `;
             }
+
+            // 發音提示
             if (item.pronunciation_cue) {
-                sectionsHTML += `
-                    <div class="teaching-modal-section">
-                        <div class="teaching-modal-section-title">發音提示</div>
-                        <div class="teaching-modal-section-content markdown-content">${renderMarkdown(item.pronunciation_cue)}</div>
-                    </div>
-                `;
-            }
-            if (item.image) {
-                sectionsHTML += `
-                    <div class="teaching-modal-section">
-                        <div class="teaching-modal-section-title">輔助插圖</div>
-                        <div class="teaching-modal-section-content">
-                            <img src="${item.image}" style="max-width: 100%; height: auto; border-radius: var(--radius-lg);">
-                        </div>
+                const processedPronunciation = processMarkdownImages(marked.parse(item.pronunciation_cue));
+                html += `
+                    <div class="preview-section">
+                        <div class="preview-section-title">🔊 發音提示</div>
+                        <div class="preview-section-content markdown-content">${processedPronunciation}</div>
                     </div>
                 `;
             }
 
-            modalBody.innerHTML = `
-                <div class="character">${charDisplay}</div>
-                <div class="pinyin">${item.pinyin || ''}</div>
-                <div class="meaning">${item.meaning || ''}</div>
-                ${sectionsHTML}
-            `;
+            // 詞組範例
+            if (item.phrases) {
+                const processedPhrases = processMarkdownImages(marked.parse(item.phrases));
+                html += `
+                    <div class="preview-section">
+                        <div class="preview-section-title">💬 詞組範例</div>
+                        <div class="preview-section-content markdown-content">${processedPhrases}</div>
+                    </div>
+                `;
+            }
 
-            // 更新導航按鈕狀態
-            document.getElementById('btnPrev').disabled = index === 0;
-            document.getElementById('btnNext').disabled = index === currentData.length - 1;
+            // 例句
+            if (item.example) {
+                html += `
+                    <div class="preview-section">
+                        <div class="preview-section-title">💡 例句</div>
+                        <div class="preview-section-content markdown-content">${item.example}</div>
+                    </div>
+                `;
+            }
 
-            modal.classList.add('active');
-        }
-
-        function closeTeachingModal() {
-            document.getElementById('teachingModal').classList.remove('active');
-        }
-
-        // 點擊背景關閉模態框
-        function initModalClose() {
-            const modal = document.getElementById('teachingModal');
-            const modalContent = document.querySelector('.teaching-modal-content');
+            html += `</div>`;
+            container.innerHTML = html;
             
-            modal.addEventListener('click', (e) => {
-                // 如果點擊的是背景（不是內容區域），則關閉
-                if (e.target === modal) {
-                    closeTeachingModal();
+            // 滚动到顶部
+            container.scrollTop = 0;
+        }
+
+        // 处理 Markdown 图片分类（类似 lesson-presentation.html）
+        function processMarkdownImages(htmlContent) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            const images = tempDiv.querySelectorAll('img');
+            images.forEach(img => {
+                const alt = (img.getAttribute('alt') || '').toLowerCase();
+                if (alt.includes('comp')) {
+                    img.className = 'img-comp';
+                } else if (alt.includes('origin')) {
+                    img.className = 'img-origin';
+                } else if (alt.includes('story')) {
+                    img.className = 'img-story';
                 }
+                img.setAttribute('onerror', "this.style.display='none'");
             });
-            
-            // 防止點擊內容區域時關閉
-            if (modalContent) {
-                modalContent.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            }
+            return tempDiv.innerHTML;
         }
 
-        function navigateModal(direction) {
-            if (direction === 'prev' && currentModalIndex > 0) {
-                openTeachingModal(currentModalIndex - 1);
-            } else if (direction === 'next' && currentModalIndex < currentData.length - 1) {
-                openTeachingModal(currentModalIndex + 1);
-            }
-        }
 
         // ==================== 拖拽排序 ====================
         function initDragAndDrop() {
@@ -1701,7 +1905,7 @@
                     
                     debounceSave();
                     renderEditPanel();
-                    renderPreviewPanel();
+                    renderPreviewPanel(currentPreviewIndex >= 0 ? currentPreviewIndex : 0);
                 }
             });
         }
@@ -1766,37 +1970,27 @@
             });
         }
 
-        // ==================== 鍵盤快捷鍵 ====================
-        function initKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                const modal = document.getElementById('teachingModal');
-                if (modal.classList.contains('active')) {
-                    if (e.key === 'Escape') {
-                        closeTeachingModal();
-                    } else if (e.key === 'ArrowLeft') {
-                        navigateModal('prev');
-                    } else if (e.key === 'ArrowRight') {
-                        navigateModal('next');
-                    }
-                }
-            });
-        }
 
         // ==================== 初始化 ====================
-        document.getElementById('typeSelect').addEventListener('change', loadData);
+        // Tab切换事件
+        document.querySelectorAll('.type-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (!tab.disabled) {
+                    const type = tab.dataset.type;
+                    switchTypeTab(type);
+                }
+            });
+        });
+        
         document.getElementById('lessonSelect').addEventListener('change', loadData);
         document.getElementById('btnAdd').addEventListener('click', addItem);
         document.getElementById('btnExpandAll').addEventListener('click', expandAllItems);
         document.getElementById('btnCollapseAll').addEventListener('click', collapseAllItems);
-        document.getElementById('btnCloseModal').addEventListener('click', closeTeachingModal);
-        document.getElementById('btnPrev').addEventListener('click', () => navigateModal('prev'));
-        document.getElementById('btnNext').addEventListener('click', () => navigateModal('next'));
-
+        document.getElementById('btnPublishAll').addEventListener('click', publishAll);
+        document.getElementById('btnUnpublishAll').addEventListener('click', unpublishAll);
         initResizer();
         initToggleEdit();
         initDragAndDrop();
-        initKeyboardShortcuts();
-        initModalClose();
 
         // 載入全域導航腳本
         const navScript = document.createElement('script');
