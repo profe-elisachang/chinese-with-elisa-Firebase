@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坪镇的天鹅 - 三语对照</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .paragraph {
+            margin-bottom: 35px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .paragraph:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+        
+        .sentence {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #dee2e6;
+        }
+        
+        .sentence:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .pinyin {
+            color: #e74c3c;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+        
+        .pinyin .vocab {
+            cursor: help;
+            position: relative;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            background-color: #fff3cd;
+        }
+        
+        .pinyin .vocab:hover {
+            background-color: #ffd700;
+        }
+        
+        .pinyin .vocab::after {
+            content: attr(data-en);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            margin-bottom: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin .vocab:hover::after {
+            opacity: 1;
+        }
+        
+        .hanzi {
+            font-size: 1.3em;
+            margin: 8px 0;
+            color: #2c3e50;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+        
+        .spanish {
+            color: #495057;
+            font-style: italic;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        
+        .highlight-yellow {
+            background-color: #fff9c4;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .highlight-gray {
+            background-color: #e9ecef;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .paragraph {
+                padding: 15px;
+            }
+            
+            .hanzi {
+                font-size: 1.15em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>坪镇的天鹅</h1>
+            <p>The Swans of Pingzhen | Los Cisnes de Pingzhen</p>
+        </div>
+        
+        <div class="content">
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> shì <span class="highlight-yellow">Zhōngguó nánfāng</span> de yí gè xiǎo <span class="vocab" data-en="town">zhèn</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>是<span class="highlight-yellow">中国南方</span>的一个小镇。
+                    </div>
+                    <div class="spanish">
+                        Pingzhen es un pequeño pueblo en el sur de China.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> yǒu yí gè <span class="highlight-yellow vocab" data-en="lake">hú</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>有一个<span class="highlight-yellow">湖</span>。
+                    </div>
+                    <div class="spanish">
+                        Pingzhen tiene un lago.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Sān nián qián de yí gè <span class="highlight-yellow vocab" data-en="winter">dōngtiān</span>，<span class="highlight-yellow vocab" data-en="to fly">fēi</span> lái hěn duō tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        三年前的一个<span class="highlight-yellow">冬天</span>，<span class="highlight-yellow">飞</span>来很多天鹅。
+                    </div>
+                    <div class="spanish">
+                        En un invierno hace tres años, volaron muchos cisnes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Dì-èr tiān zǎoshang，rénmen <span class="vocab" data-en="to hear (said)">tīngshuō</span> tiān'é fēi lái le，dōu pǎo lái kàn tiān'é，<span class="highlight-yellow vocab" data-en="huge crowds">rénshān-rénhǎi</span>。
+                    </div>
+                    <div class="hanzi">
+                        第二天早上，人们听说天鹅飞来了，都跑来看天鹅，<span class="highlight-yellow">人山人海</span>。
+                    </div>
+                    <div class="spanish">
+                        A la mañana siguiente, la gente escuchó que los cisnes habían llegado volando, y todos corrieron a verlos, formando una multitud.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> yě lái kàn tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">领导</span>也来看天鹅。
+                    </div>
+                    <div class="spanish">
+                        Los líderes de Pingzhen también vinieron a ver a los cisnes.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="Leader">Lǐngdǎo</span> <span class="vocab" data-en="to tell">gàosu</span> rénmen，yào <span class="highlight-yellow vocab" data-en="to protect">bǎohù</span> tiān'é，ràng dàjiā <span class="vocab" data-en="to leave">lǐkāi</span>，bù ràng rénmen kàn tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">领导</span>告诉人们，要<span class="highlight-yellow">保护</span>天鹅，让大家离开，不让人们看天鹅。
+                    </div>
+                    <div class="spanish">
+                        Los líderes le dijeron a la gente que debían proteger a los cisnes, les pidieron a todos que se fueran y no dejaron que la gente los viera.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Nà yì nián，tiān'é zài <span class="highlight-yellow">Píngzhèn</span> <span class="vocab" data-en="to spend (time)">guò</span> le yí gè kuàilè de <span class="highlight-yellow vocab" data-en="winter">dōngtiān</span>。
+                    </div>
+                    <div class="hanzi">
+                        那一年，天鹅在<span class="highlight-yellow">坪镇</span>过了一个快乐的<span class="highlight-yellow">冬天</span>。
+                    </div>
+                    <div class="spanish">
+                        Ese año, los cisnes pasaron un invierno feliz en Pingzhen.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Dì-èr nián，tiān'é yòu fēi lái le，zài <span class="highlight-yellow">Píngzhèn</span> yòu <span class="vocab" data-en="to spend (time)">guò</span> le yí gè kuàilè de <span class="highlight-yellow vocab" data-en="winter">dōngtiān</span>。
+                    </div>
+                    <div class="hanzi">
+                        第二年，天鹅又飞来了，在<span class="highlight-yellow">坪镇</span>又过了一个快乐的<span class="highlight-yellow">冬天</span>。
+                    </div>
+                    <div class="spanish">
+                        Al año siguiente, los cisnes volvieron a llegar volando, y pasaron otro invierno feliz en Pingzhen.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Rénmen gāoxìng de <span class="vocab" data-en="to see">kàndào</span> tiān'é <span class="vocab" data-en="more and more">yuèláiyuè</span> duō le。
+                    </div>
+                    <div class="hanzi">
+                        人们高兴地看到天鹅越来越多了。
+                    </div>
+                    <div class="spanish">
+                        La gente estaba feliz de ver que los cisnes eran cada vez más numerosos.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="to arrive at">Dàole</span> dì-sān nián de <span class="highlight-yellow vocab" data-en="summer">xiàtiān</span>，zài tiān'é hái méiyǒu lái de shíhou，<span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> <span class="vocab" data-en="to change">huàn</span> le。
+                    </div>
+                    <div class="hanzi">
+                        到了第三年的<span class="highlight-yellow">夏天</span>，在天鹅还没有来的时候，<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">领导</span>换了。
+                    </div>
+                    <div class="spanish">
+                        Llegó el verano del tercer año, cuando los cisnes aún no habían llegado, los líderes de Pingzhen cambiaron.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Xīn de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> <span class="vocab" data-en="to think of">xiǎngchū</span> yí gè hǎo <span class="highlight-yellow vocab" data-en="idea">zhǔyi</span>：<span class="highlight-yellow vocab" data-en="to hold/organize">Júbàn</span> yí gè <span class="vocab" data-en="Swan Festival">tiān'é jié</span>，ràng <span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> lái kàn tiān'é，lái <span class="highlight-yellow">Píngzhèn</span> <span class="highlight-yellow vocab" data-en="invest">tóuzī</span> <span class="vocab" data-en="build">bàn</span> <span class="vocab" data-en="factory">gōngcháng</span>！
+                    </div>
+                    <div class="hanzi">
+                        新的<span class="highlight-yellow">领导</span>想出一个好<span class="highlight-yellow">主意</span>：<span class="highlight-yellow">举办一个天鹅节</span>，让<span class="highlight-yellow">商人</span>来看天鹅，来<span class="highlight-yellow">坪镇</span><span class="highlight-yellow">投资办工厂</span>！
+                    </div>
+                    <div class="spanish">
+                        Los nuevos líderes tuvieron una buena idea: organizar un Festival del Cisne, para que los comerciantes vinieran a ver a los cisnes y a invertir en la construcción de fábricas en Pingzhen.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="County">Xiàn</span> <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> gāoxìng de <span class="vocab" data-en="to agree">tóngyì</span> le zhège hǎo <span class="highlight-yellow vocab" data-en="idea">zhǔyi</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">县领导</span>高兴地同意了这个好<span class="highlight-yellow">主意</span>。
+                    </div>
+                    <div class="spanish">
+                        Los líderes del condado aceptaron felizmente esta buena idea.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="therefore">Yúshì</span>，<span class="highlight-yellow">Píngzhèn</span> jiù kāishǐ <span class="vocab" data-en="to prepare">zhǔnběi</span> tiān'é jié le。
+                    </div>
+                    <div class="hanzi">
+                        于是，<span class="highlight-yellow">坪镇</span>就开始准备天鹅节了。
+                    </div>
+                    <div class="spanish">
+                        Entonces, Pingzhen comenzó a preparar el Festival del Cisne.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> méiyǒu qián，jiù xiàng <span class="vocab" data-en="bank">yínháng</span> <span class="vocab" data-en="to borrow">jiè</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>没有钱，就向银行借。
+                    </div>
+                    <div class="spanish">
+                        Pingzhen no tenía dinero, así que pidió prestado al banco.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Tāmen hěn kuài jiù <span class="highlight-yellow vocab" data-en="to build/repair">xīūhǎo</span> le <span class="vocab" data-en="hotel">bīnguǎn</span> hé <span class="highlight-yellow vocab" data-en="entertainment venue">yúlè chǎngsuǒ</span>。
+                    </div>
+                    <div class="hanzi">
+                        他们很快就<span class="highlight-yellow">修</span>好了宾馆和<span class="highlight-yellow">娱乐场所</span>。
+                    </div>
+                    <div class="spanish">
+                        Rápidamente construyeron hoteles y lugares de entretenimiento.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Tāmen <span class="vocab" data-en="to invite">qǐnglái</span> <span class="highlight-yellow vocab" data-en="artist">yìshù jiā</span> hé <span class="vocab" data-en="singer">gēxīng</span>，hái xiě le hěnduō xìn <span class="highlight-yellow vocab" data-en="to mail">jì</span> dào <span class="vocab" data-en="abroad">guówài</span>，qǐng guówài de <span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> yě lái <span class="highlight-yellow">Píngzhèn</span> kàn tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        他们请来<span class="highlight-yellow">艺术家和歌星</span>，还写了很多信<span class="highlight-yellow">寄</span>到国外，请国外的<span class="highlight-yellow">商人</span>也来<span class="highlight-yellow">坪镇</span>看天鹅。
+                    </div>
+                    <div class="spanish">
+                        Invitaron artistas y estrellas del canto, y también escribieron muchas cartas que enviaron al extranjero, invitando a comerciantes extranjeros a venir también a Pingzhen a ver a los cisnes.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="many">Xǔduō</span> <span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> dōu shuō，<span class="highlight-yellow vocab" data-en="winter">dōngtiān</span> yíding lái kàn tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        许多<span class="highlight-yellow">商人</span>都说，<span class="highlight-yellow">冬天</span>一定来看天鹅。
+                    </div>
+                    <div class="spanish">
+                        Muchos comerciantes dijeron que definitivamente vendrían en invierno a ver a los cisnes.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="Merchant">Shāngrén</span> men shuō <span class="vocab" data-en="as long as">zhǐ yào</span> <span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="condition">tiáojiàn</span> kěyǐ，yíding lái <span class="highlight-yellow vocab" data-en="invest">tóuzī</span> <span class="vocab" data-en="build">bàn</span> <span class="vocab" data-en="factory">gōngcháng</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">商人</span>们说只要<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">条件</span>可以，一定来<span class="highlight-yellow">投资办工厂</span>。
+                    </div>
+                    <div class="spanish">
+                        Los comerciantes dijeron que siempre que las condiciones en Pingzhen fueran adecuadas, definitivamente invertirían en construir fábricas.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="if">Rúguǒ</span> yí gè <span class="highlight-yellow vocab" data-en="winter">dōngtiān</span> yǒu hěn duō rén lái <span class="highlight-yellow">Píngzhèn</span> <span class="vocab" data-en="tourism">lǚyóu</span>，<span class="highlight-yellow">Píngzhèn</span> <span class="vocab" data-en="will">jiāng huì</span> yǒu <span class="vocab" data-en="tens of millions">qiānwàn</span> yuán de <span class="highlight-yellow vocab" data-en="income">shōurù</span>。
+                    </div>
+                    <div class="hanzi">
+                        如果一个<span class="highlight-yellow">冬天</span>有很多人来<span class="highlight-yellow">坪镇</span>旅游，<span class="highlight-yellow">坪镇</span>将会有千万元的<span class="highlight-yellow">收入</span>。
+                    </div>
+                    <div class="spanish">
+                        Si en un invierno muchas personas vinieran a Pingzhen como turistas, Pingzhen tendría miles de millones de yuanes en ingresos.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> <span class="vocab" data-en="will">jiāng huì</span> yǒu zhème duō de qián！
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>将会有这么多的钱！
+                    </div>
+                    <div class="spanish">
+                        Pingzhen tendría tanto dinero!
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="therefore">Yúshì</span>，<span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="land">tǔdì</span> bǐ <span class="vocab" data-en="county">xiàn</span> li de <span class="highlight-yellow vocab" data-en="land">tǔdì</span> guì，bǐ <span class="highlight-yellow vocab" data-en="city">shì</span> li de <span class="highlight-yellow vocab" data-en="land">tǔdì</span> guì。
+                    </div>
+                    <div class="hanzi">
+                        于是，<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">土地</span>比县里的<span class="highlight-yellow">土地</span>贵，比<span class="highlight-yellow">市里</span>的<span class="highlight-yellow">土地</span>贵。
+                    </div>
+                    <div class="spanish">
+                        Entonces, la tierra en Pingzhen sería más cara que la tierra en el condado, más cara que la tierra en la ciudad.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Zhèyàng hěn duō <span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> dōu huì lái <span class="highlight-yellow">Píngzhèn</span> <span class="highlight-yellow vocab" data-en="invest">tóuzī</span> <span class="vocab" data-en="build factory">bàn chǎng</span>，<span class="highlight-yellow vocab" data-en="to build">xīū</span> <span class="vocab" data-en="tall building">gāolóu</span>，<span class="vocab" data-en="establish">bàn</span> <span class="highlight-yellow vocab" data-en="entertainment venue">yúlè chǎngsuǒ</span>。
+                    </div>
+                    <div class="hanzi">
+                        这样很多<span class="highlight-yellow">商人</span>都会来<span class="highlight-yellow">坪镇</span><span class="highlight-yellow">投资办厂</span>，<span class="highlight-yellow">修</span>高楼，办<span class="highlight-yellow">娱乐场所</span>。
+                    </div>
+                    <div class="spanish">
+                        De esta manera, muchos comerciantes vendrían a Pingzhen a invertir en fábricas, construir edificios altos, establecer lugares de entretenimiento.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Dàjiā dōu <span class="highlight-yellow vocab" data-en="to look forward to">pànwàng</span> tiān'é jié de <span class="vocab" data-en="arrival">dào lái</span>！
+                    </div>
+                    <div class="hanzi">
+                        大家都<span class="highlight-yellow">盼望</span>天鹅节的到来！
+                    </div>
+                    <div class="spanish">
+                        Todos ansiaban la llegada del Festival del Cisne.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> rén xiào le，<span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> xiào le，lái <span class="highlight-yellow">Píngzhèn</span> <span class="highlight-yellow vocab" data-en="invest">tóuzī</span> de <span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> men yě xiào le，xiǎng lái <span class="highlight-yellow">Píngzhèn</span> kàn tiān'é de rén yě xiào le！
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>人笑了，<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">领导</span>笑了，来<span class="highlight-yellow">坪镇</span>投资的<span class="highlight-yellow">商人</span>们也笑了，想来<span class="highlight-yellow">坪镇</span>看天鹅的人也笑了！
+                    </div>
+                    <div class="spanish">
+                        La gente de Pingzhen sonrió, los líderes de Pingzhen sonrieron, los comerciantes que vinieron a invertir en Pingzhen también sonrieron, y las personas que querían venir a Pingzhen a ver a los cisnes también sonrieron.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="finally">Zhōngyú</span>，<span class="highlight-yellow vocab" data-en="winter">dōngtiān</span> dào le，<span class="highlight-yellow vocab" data-en="to look forward to">pànwàng</span> hěn jiǔ de tiān'é jié dào le。
+                    </div>
+                    <div class="hanzi">
+                        终于，<span class="highlight-yellow">冬天</span>到了，<span class="highlight-yellow">盼望</span>很久的天鹅节到了。
+                    </div>
+                    <div class="spanish">
+                        Finalmente, llegó el invierno, y el tan ansiado Festival del Cisne llegó.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Hěn duō rén dōu lái le。
+                    </div>
+                    <div class="hanzi">
+                        很多人都来了。
+                    </div>
+                    <div class="spanish">
+                        Mucha gente vino.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="County">Xiàn</span> <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> duìzhe <span class="highlight-yellow vocab" data-en="microphone">huàtǒng</span> shuō："Wǒ <span class="highlight-yellow vocab" data-en="to announce">xuānbù</span>，<span class="highlight-yellow">Píngzhèn</span> de tiān'é jié xiànzài kāishǐ！"
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">县领导</span>对着<span class="highlight-yellow">话筒</span>说："我<span class="highlight-yellow">宣布</span>，<span class="highlight-yellow">坪镇</span>的天鹅节现在开始！"
+                    </div>
+                    <div class="spanish">
+                        Los líderes del condado, frente al micrófono, dijeron: "Declaro que el Festival del Cisne de Pingzhen ¡comienza ahora!"
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="County">Xiàn</span> <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> <span class="highlight-yellow vocab" data-en="to announce">xuānbù</span> wán le，<span class="highlight-gray vocab" data-en="gongs and drums sound">luógǔ xiǎng</span>，<span class="highlight-gray vocab" data-en="red flags wave">hóngqí piāo</span>，<span class="highlight-gray vocab" data-en="trumpets blaring">lǎba shēngshēng</span>，<span class="highlight-yellow vocab" data-en="huge crowds">rénshān-rénhǎi</span>。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">县领导</span><span class="highlight-yellow">宣布</span>完了，<span class="highlight-gray">锣鼓响</span>，<span class="highlight-gray">红旗飘</span>，<span class="highlight-gray">喇叭声声</span>，<span class="highlight-yellow">人山人海</span>。
+                    </div>
+                    <div class="spanish">
+                        Cuando los líderes del condado terminaron el anuncio, sonaron los tambores y gongs, ondearon las banderas rojas, sonaron las trompetas, había una multitud.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-gray vocab" data-en="singing">Gēshēng</span>，<span class="highlight-gray vocab" data-en="laughter">xiàosheng</span>，<span class="highlight-gray vocab" data-en="peddling sounds">jiàomàishēng</span>，<span class="highlight-yellow">Píngzhèn</span> <span class="highlight-yellow vocab" data-en="extremely lively">rènao jíle</span>，zhēn xiàng shì <span class="highlight-yellow vocab" data-en="celebrating a festival">guòjié</span>…。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-gray">歌声</span>，<span class="highlight-gray">笑声</span>，<span class="highlight-gray">叫卖声</span>，<span class="highlight-yellow">坪镇</span><span class="highlight-yellow">热闹极了</span>，真像是<span class="highlight-yellow">过节</span>…。
+                    </div>
+                    <div class="spanish">
+                        Canciones, risas, gritos de vendedores, Pingzhen estaba extremadamente animado, realmente parecía una celebración festiva...
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="however">Rán'ér</span>，tiān'é què méiyǒu lái，dànshì，<span class="highlight-yellow vocab" data-en="leader">língdǎo</span> men bù <span class="vocab" data-en="to worry">zháojí</span>，<span class="highlight-yellow vocab" data-en="merchant">shāngrén</span> men bù <span class="vocab" data-en="to worry">zháojí</span>，lái kàn tiān'é de rén yě bù <span class="vocab" data-en="to worry">zháojí</span>，tāmen xiǎng tiān'é yíding huì lái de。
+                    </div>
+                    <div class="hanzi">
+                        然而，天鹅却没有来，但是，<span class="highlight-yellow">领导</span>们不着急，<span class="highlight-yellow">商人</span>们不着急，来看天鹅的人也不着急，他们想天鹅一定会来的。
+                    </div>
+                    <div class="spanish">
+                        Sin embargo, los cisnes no llegaron, pero, los líderes no estaban preocupados, los comerciantes no estaban preocupados, las personas que vinieron a ver a los cisnes tampoco estaban preocupadas, pensaban que los cisnes definitivamente vendrían.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Rénmen zài <span class="highlight-yellow">Píngzhèn</span> děngzhe kàn tiān'é。
+                    </div>
+                    <div class="hanzi">
+                        人们在<span class="highlight-yellow">坪镇</span>等着看天鹅。
+                    </div>
+                    <div class="spanish">
+                        La gente esperaba en Pingzhen para ver a los cisnes.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Wèile děngzhe kàn tiān'é，rénmen wǎnshang jiù zhù zài <span class="highlight-yellow">Píngzhèn</span>。
+                    </div>
+                    <div class="hanzi">
+                        为了等着看天鹅，人们晚上就住在<span class="highlight-yellow">坪镇</span>。
+                    </div>
+                    <div class="spanish">
+                        Para esperar y ver a los cisnes, la gente por la noche se quedaba en Pingzhen.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Zài <span class="highlight-yellow">Píngzhèn</span>，jiājiā dōu shì <span class="vocab" data-en="restaurant">fànguǎn</span>，jiājiā dōu shì <span class="vocab" data-en="hotel">bīnguǎn</span>。
+                    </div>
+                    <div class="hanzi">
+                        在<span class="highlight-yellow">坪镇</span>，家家都是饭馆，家家都是宾馆。
+                    </div>
+                    <div class="spanish">
+                        En Pingzhen, cada hogar era un restaurante, cada hogar era un hotel.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="therefore">Yúshì</span>，yì wǎn <span class="highlight-yellow vocab" data-en="instant noodles">fāngbiànmiàn</span> mài dào shí yuán，yì bǎ <span class="vocab" data-en="chair">yǐzi</span> zuò yì wǎnshang kěyǐ shōu èrshí yuán，yì zhāng <span class="highlight-yellow vocab" data-en="double bed">shuāngrénchuáng</span> yào shōu yì qiān kuài qián！
+                    </div>
+                    <div class="hanzi">
+                        于是，一碗<span class="highlight-yellow">方便面</span>卖到十元，一把椅子坐一晚上可以收20元，一张<span class="highlight-yellow">双人床</span>要收一千块钱！
+                    </div>
+                    <div class="spanish">
+                        Entonces, un plato de fideos instantáneos se vendía por diez yuan, una silla para sentarse una noche podía costar 20 yuanes, una cama doble costaba mil yuanes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de rén <span class="highlight-yellow vocab" data-en="to get rich">fācái</span> le，<span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> xiào le。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的人<span class="highlight-yellow">发财</span>了，<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">领导</span>笑了。
+                    </div>
+                    <div class="spanish">
+                        La gente de Pingzhen se enriqueció, los líderes de Pingzhen sonrieron.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        Kěshì，tiān'é dì-èr tiān háishi méiyǒu lái…
+                    </div>
+                    <div class="hanzi">
+                        可是，天鹅第二天还是没有来…
+                    </div>
+                    <div class="spanish">
+                        Pero, al segundo día los cisnes todavía no habían llegado...
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Tiān'é dì-sān tiān háishi méiyǒu lái…
+                    </div>
+                    <div class="hanzi">
+                        天鹅第三天还是没有来…
+                    </div>
+                    <div class="spanish">
+                        Al tercer día, los cisnes todavía no habían llegado...
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Èrshí tiān <span class="vocab" data-en="to pass">guòqù</span> le，tiān'é háishi méiyǒu lái…
+                    </div>
+                    <div class="hanzi">
+                        20天过去了，天鹅还是没有来…
+                    </div>
+                    <div class="spanish">
+                        Pasaron 20 días, y los cisnes todavía no habían llegado...
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow vocab" data-en="winter">Dōngtiān</span> <span class="vocab" data-en="to pass">guòqù</span> le，<span class="highlight-yellow vocab" data-en="spring">chūntiān</span> lái le，tiān'é háishi méiyǒu lái。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">冬天</span>过去了，<span class="highlight-yellow">春天</span>来了，天鹅还是没有来。
+                    </div>
+                    <div class="spanish">
+                        El invierno pasó, llegó la primavera, y los cisnes todavía no habían llegado.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Yǒurén qù <span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="lakeside">hú biān</span>，<span class="vocab" data-en="to see">kàndào</span> le <span class="vocab" data-en="year before last">qiánnián</span> fēi lái de tiān'é yǐjīng sǐ le，<span class="vocab" data-en="to lie">tǎng</span> zài <span class="highlight-yellow vocab" data-en="lakeside">hú biān</span> shang。
+                    </div>
+                    <div class="hanzi">
+                        有人去<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">湖边</span>，看到了前年飞来的天鹅已经死了，躺在<span class="highlight-yellow">湖边</span>上。
+                    </div>
+                    <div class="spanish">
+                        Alguien fue a la orilla del lago en Pingzhen, y vio que los cisnes que habían llegado volando el año anterior ya estaban muertos, tirados a la orilla del lago.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="vocab" data-en="it turns out">Yuánlái</span>，wèile <span class="highlight-yellow vocab" data-en="to hold/organize">jǔbàn</span> tiān'é jié，<span class="highlight-yellow">Píngzhèn</span> <span class="highlight-yellow vocab" data-en="to construct">xiūjiàn</span> <span class="vocab" data-en="hotel">bīnguǎn</span> hé <span class="highlight-yellow vocab" data-en="entertainment venue">yúlè chǎngsuǒ</span>，bǎ <span class="highlight-yellow vocab" data-en="lakeside">hú biān</span> de shù dōu <span class="vocab" data-en="to cut down">kǎn</span> le，<span class="vocab" data-en="lake water">hú shuǐ</span> yě bèi <span class="highlight-yellow vocab" data-en="to pollute">wūrǎn</span> le。
+                    </div>
+                    <div class="hanzi">
+                        原来，为了<span class="highlight-yellow">举办</span>天鹅节，<span class="highlight-yellow">坪镇</span><span class="highlight-yellow">修建</span>宾馆和<span class="highlight-yellow">娱乐场所</span>，把<span class="highlight-yellow">湖边</span>的树都砍了，湖水也被<span class="highlight-yellow">污染</span>了。
+                    </div>
+                    <div class="spanish">
+                        Resulta que, para organizar el Festival del Cisne, Pingzhen construyó hoteles y lugares de entretenimiento, y taló los árboles a la orilla del lago, y el agua del lago también fue contaminada.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Tiān'é méiyǒu <span class="highlight-yellow vocab" data-en="place">dìfang</span> zhù，yě méiyǒu <span class="highlight-yellow vocab" data-en="thing">dōngxi</span> chī，jiù dōu <span class="vocab" data-en="to fly away">fēizǒu</span> le。
+                    </div>
+                    <div class="hanzi">
+                        天鹅没有<span class="highlight-yellow">地方</span>住，也没有<span class="highlight-yellow">东西</span>吃，就都飞走了。
+                    </div>
+                    <div class="spanish">
+                        Los cisnes no tenían dónde vivir, ni nada para comer, así que todos se fueron volando.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        Yǒu jǐ zhī tiān'é <span class="vocab" data-en="to get sick">bìng</span> le，fēi bú dòng，jiù sǐ zài le <span class="highlight-yellow vocab" data-en="lakeside">hú biān</span> shang。
+                    </div>
+                    <div class="hanzi">
+                        有几只天鹅病了，飞不动，就死在了<span class="highlight-yellow">湖边</span>上。
+                    </div>
+                    <div class="spanish">
+                        Unos pocos cisnes se enfermaron, no podían volar, y murieron a la orilla del lago.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de tiān'é jié jiù zhèyàng <span class="vocab" data-en="to end">jiéshù</span> le。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的天鹅节就这样结束了。
+                    </div>
+                    <div class="spanish">
+                        Así terminó el Festival del Cisne de Pingzhen.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de tiān'é jié <span class="vocab" data-en="to end">jiéshù</span> le，<span class="highlight-yellow">Píngzhèn</span> yě méiyǒu qián le，yīnwèi tāmen xiàng <span class="vocab" data-en="bank">yínháng</span> <span class="vocab" data-en="to borrow">jiè</span> le hěn duō qián。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的天鹅节结束了，<span class="highlight-yellow">坪镇</span>也没有钱了，因为他们向银行借了很多钱。
+                    </div>
+                    <div class="spanish">
+                        El Festival del Cisne de Pingzhen terminó, y Pingzhen tampoco tenía dinero, porque habían pedido prestado mucho dinero al banco.
+                    </div>
+                </div>
+                
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de rén yě méiyǒu qián le，yīnwèi tāmen wèile <span class="highlight-yellow vocab" data-en="to earn money">zhuànqián</span>，dōu bù <span class="vocab" data-en="to farm">zhòng dì</span> le。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的人也没有钱了，因为他们为了<span class="highlight-yellow">赚钱</span>，都不种地了。
+                    </div>
+                    <div class="spanish">
+                        La gente de Pingzhen tampoco tenía dinero, porque para ganar dinero, habían dejado de cultivar la tierra.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de rén kū le，<span class="highlight-yellow">Píngzhèn</span> de <span class="highlight-yellow vocab" data-en="leader">língdǎo</span> yě kū le。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的人哭了，<span class="highlight-yellow">坪镇</span>的<span class="highlight-yellow">领导</span>也哭了。
+                    </div>
+                    <div class="spanish">
+                        La gente de Pingzhen lloró, los líderes de Pingzhen también lloraron.
+                    </div>
+                </div>
+            </div>
+
+            <div class="paragraph">
+                <div class="sentence">
+                    <div class="pinyin">
+                        <span class="highlight-yellow">Píngzhèn</span> de tiān'é <span class="vocab" data-en="never again">zài yě</span> méiyǒu <span class="vocab" data-en="to return">huílái</span> guò。
+                    </div>
+                    <div class="hanzi">
+                        <span class="highlight-yellow">坪镇</span>的天鹅再也没有回来过。
+                    </div>
+                    <div class="spanish">
+                        Los cisnes de Pingzhen nunca regresaron.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>📚 三语对照学习 | Trilingual Learning | Aprendizaje Trilingüe</p>
+            <p>鼠标悬停在黄色高亮的拼音上查看英文翻译 | Hover over highlighted pinyin for English translations</p>
+        </div>
+    </div>
+</body>
+</html>
+
+            <div class

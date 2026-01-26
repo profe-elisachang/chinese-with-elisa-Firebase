@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你很漂亮 - 双语阅读</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .break-point {
+            text-align: center;
+            margin: 30px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .pinyin {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .chinese {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .spanish {
+            color: #2c3e50;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: help;
+            position: relative;
+        }
+        .tooltip {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
+        .highlight:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        .notes {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .pinyin-highlight {
+            background-color: #e6f7ff;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h2 class="section-title">阅读指南 / Guía de lectura</h2>
+        <div class="pinyin">Xià Xiá ( 夏霞 ) shì yí gè niánqīng nǚhái, tā zài gōngchǎng gōngzuò.</div>
+        <div class="chinese">夏霞 ( 夏霞 ) 是一个年轻女孩，她在工厂工作。</div>
+        <div class="spanish">Xia Xia es una joven que trabaja en una fábrica.</div>
+        
+        <div class="pinyin">Tā fēicháng piàoliang hé jiāo'ào.</div>
+        <div class="chinese">她非常漂亮和骄傲。</div>
+        <div class="spanish">Ella es muy hermosa y orgullosa.</div>
+        
+        <div class="pinyin">Hěn duō yīngjùn de niánqīng nánrén xiǎng chéngwéi tā de nán péngyǒu, dàn méiyǒu yī gè shì dàxué bìyèshēng.</div>
+        <div class="chinese">很多英俊的年轻男人想成为她的男朋友，但没有一个是大学毕业生。</div>
+        <div class="spanish">Muchos hombres jóvenes y guapos quieren ser su novio, pero ninguno es graduado universitario.</div>
+        
+        <div class="pinyin">Cháng Píng ( 常平 ) shì yí gè bèi fēnpèi dào gōngchǎng de dàxué bìyèshēng.</div>
+        <div class="chinese">常平 ( 常平 ) 是一个被分配到工厂的大学毕业生。</div>
+        <div class="spanish">Chang Ping es un graduado universitario asignado a la fábrica.</div>
+        
+        <div class="pinyin">Xià Xiá shìtú liǎojiě tā de měimào shìfǒu gěi Cháng Píng liúxià le hǎo yìnxiàng, xiǎng xiàng biérén zhèngmíng tā yě néng huòdé dàxué bìyèshēng de ài.</div>
+        <div class="chinese">夏霞试图了解她的美貌是否给常平留下了好印象，想向别人证明她也能获得大学毕业生的爱。</div>
+        <div class="spanish">Xia Xia intenta ver si su belleza impresiona favorablemente a Chang Ping, queriendo mostrar a los demás que ella también puede obtener el amor de un graduado universitario.</div>
+        
+        <div class="pinyin">Rán'ér, Cháng Píng ài zhe lìng yī gè nǚhái, Chén Rú ( 陈如 ).</div>
+        <div class="chinese">然而，常平爱着另一个女孩，陈如 ( 陈如 )。</div>
+        <div class="spanish">Sin embargo, Chang Ping ama a otra chica, Chen Ru.</div>
+        
+        <div class="pinyin">Suīrán Xià Xiá hěn piàoliang, dàn zuìzhōng tā wúfǎ yíngdé Cháng Píng de ài.</div>
+        <div class="chinese">虽然夏霞很漂亮，但最终她无法赢得常平的爱。</div>
+        <div class="spanish">Aunque Xia Xia es hermosa, al final no puede ganar el amor de Chang Ping.</div>
+        
+        <div class="pinyin">Zài 1980 niándài de Zhōngguó, dàxué bìyèshēng bèi zhèngfǔ fēnpèi dào gōngzuò dānwèi, nǚháimen xǐhuān zhǎo dàxué bìyèshēng zuò tāmen de nán péngyǒu huò zhàngfu.</div>
+        <div class="chinese">在1980年代的中国，大学毕业生被政府分配到工作单位，女孩们喜欢找大学毕业生做她们的男朋友或丈夫。</div>
+        <div class="spanish">En la China de los años 80, los graduados universitarios eran asignados a unidades de trabajo por el gobierno y a las chicas les gustaba encontrar graduados universitarios para ser sus novios o esposos.</div>
+    </div>
+
+    <div class="break-point">--- 休息一下 / Toma un descanso ---</div>
+
+    <div class="section">
+        <h2 class="section-title">第一部分 / Parte 1</h2>
+        
+        <div class="pinyin">Xià Xiá hěn piàoliang, zǒng shì yǒu hěn duō xiǎohuǒzi xǐhuān tā, zhuī tā.</div>
+        <div class="chinese">夏霞很漂亮，总是有很多小伙子喜欢她，追她。</div>
+        <div class="spanish">Xia Xia es muy hermosa, siempre hay muchos jóvenes que la quieren y la persiguen.</div>
+        
+        <div class="pinyin">Tā hěn jiāo'ào.</div>
+        <div class="chinese">她很骄傲。</div>
+        <div class="spanish">Ella es muy orgullosa.</div>
+        
+        <div class="pinyin">Gōngchǎng lǐ xīn láile yí gè dàxuéshēng, jiào Cháng Píng.</div>
+        <div class="chinese">工厂里新来了一个大学生，叫常平。</div>
+        <div class="spanish">Un nuevo graduado universitario llegó a la fábrica, llamado Chang Ping.</div>
+        
+        <div class="pinyin">Cháng Píng dàizhe yǎnjìng, duì rén hěn rèqíng.</div>
+        <div class="chinese">常平戴着眼镜，对人很热情。</div>
+        <div class="spanish">Chang Ping usa gafas y es muy cálido con la gente.</div>
+        
+        <div class="pinyin">Cháng Píng shì dàxuéshēng.</div>
+        <div class="chinese">常平是大学生。</div>
+        <div class="spanish">Chang Ping es un graduado universitario.</div>
+        
+        <div class="pinyin">Hěn duō gūniang dōu xǐhuān dàxuéshēng, tāmen duì Cháng Píng hěn rèqíng.</div>
+        <div class="chinese">很多姑娘都喜欢大学生，她们对常平很热情。</div>
+        <div class="spanish">A muchas chicas les gustan los graduados universitarios, son muy cálidas con Chang Ping.</div>
+        
+        <div class="pinyin">Cháng Píng duì dàjiā yě hěn rèqíng.</div>
+        <div class="chinese">常平对大家也很热情。</div>
+        <div class="spanish">Chang Ping también es cálido con todos.</div>
+        
+        <div class="pinyin">Xià Xiá hěn jiāo'ào, tā bù xiǎng duì Cháng Píng tèbié rèqíng.</div>
+        <div class="chinese">夏霞很骄傲，她不想对常平特别热情。</div>
+        <div class="spanish">Xia Xia es muy orgullosa, no quiere ser especialmente cálida con Chang Ping.</div>
+        
+        <div class="pinyin">Dànshì tā xiǎng zhīdào Cháng Píng shì bu shì xǐhuān tā.</div>
+        <div class="chinese">但是她想知道常平是不是喜欢她。</div>
+        <div class="spanish">Pero quiere saber si a Chang Ping le gusta.</div>
+        
+        <div class="pinyin">Yì tiān zǎoshang, Xià Xiá zài gōngchǎng dàmén kǒu yùdào le Cháng Píng.</div>
+        <div class="chinese">一天早上，夏霞在工厂大门口遇到了常平。</div>
+        <div class="spanish">Una mañana, Xia Xia se encontró con Chang Ping en la entrada de la fábrica.</div>
+        
+        <div class="pinyin">Tā wèn tā: "Cháng jìshùyuán, nǐ yǒu gāokǎo fùxí zīliào ma?"</div>
+        <div class="chinese">她问他："常技术员，你有高考复习资料吗？"</div>
+        <div class="spanish">Ella le preguntó: "Técnico Chang, ¿tienes materiales de repaso para el examen de ingreso a la universidad?"</div>
+        
+        <div class="pinyin">Tā dìdi jīnnián gāozhōng bìyè, yào kǎo dàxué.</div>
+        <div class="chinese">她弟弟今年高中毕业，要考大学。</div>
+        <div class="spanish">Su hermano menor se gradúa de la escuela secundaria este año y quiere ingresar a la universidad.</div>
+        
+        <div class="pinyin">Tā māma chángcháng shuō yào zhǎo gāokǎo fùxí zīliào.</div>
+        <div class="chinese">她妈妈常常说要找高考复习资料。</div>
+        <div class="spanish">Su madre a menudo dice que necesita encontrar materiales de repaso para el examen de ingreso a la universidad.</div>
+        
+        <div class="pinyin">Dànshì Xià Xiá ràng Cháng Píng bāng tā zhǎo zīliào búshì wèile tā dìdi, tā shì xiǎng zhīdào Cháng Píng shì bu shì yuànyì bāngzhù tā, shì bu shì xǐhuān tā.</div>
+        <div class="chinese">但是夏霞让常平帮她找资料不是为了她弟弟，她是想知道常平是不是愿意帮助她，是不是喜欢她。</div>
+        <div class="spanish">Pero Xia Xia no le pidió a Chang Ping que la ayudara a encontrar materiales por su hermano, ella quería saber si Chang Ping estaba dispuesto a ayudarla, si le gustaba.</div>
+        
+        <div class="notes">
+            <p><strong>词汇注释 / Notas de vocabulario:</strong></p>
+            <p>1. 小伙子 (xiǎohuǒzi): joven</p>
+            <p>2. 追 (zhuī): perseguir (a una chica)</p>
+            <p>3. 骄傲 (jiāo'ào): orgulloso</p>
+            <p>4. 工厂 (gōngchǎng): fábrica</p>
+            <p>5. 大学生 (dàxuéshēng): estudiante universitario</p>
+            <p>6. 戴 (dài): usar (llevar puesto)</p>
+            <p>7. 技术员 (jìshùyuán): técnico</p>
+            <p>8. 高考复习资料 (gāokǎo fùxí zīliào): libros o referencias para los exámenes de ingreso a la universidad</p>
+            <p>9. 高中毕业 (gāozhōng bìyè): graduación de la escuela secundaria superior</p>
+            <p>10. 考 (kǎo): tomar un examen</p>
+        </div>
+    </div>
+
+    <div class="break-point">--- 休息一下 / Toma un descanso ---</div>
+
+    <div class="section">
+        <h2 class="section-title">第二部分 / Parte 2</h2>
+        
+        <div class="pinyin">Cháng Píng xiàole xiào, shuō: "Wǒ yǒu gāokǎo fùxí zīliào!"</div>
+        <div class="chinese">常平笑了笑，说："我有高考复习资料！"</div>
+        <div class="spanish">Chang Ping sonrió y dijo: "¡Tengo materiales de repaso para el examen de ingreso a la universidad!"</div>
+        
+        <div class="pinyin">Xiàwǔ, Cháng Píng gěi tā sòngqù hǎo jǐ běn fùxí zīliào.</div>
+        <div class="chinese">下午，常平给她送去好几本复习资料。</div>
+        <div class="spanish">Por la tarde, Chang Ping le llevó varios libros de materiales de repaso.</div>
+        
+        <div class="pinyin">Xià Xiá gǎndào: Zhè shì yí gè xiǎohuǒzi zài xiàng yí gè gūniang biǎoshì hǎogǎn.</div>
+        <div class="chinese">夏霞感到：这是一个小伙子在向一个姑娘表示好感。</div>
+        <div class="spanish">Xia Xia sintió: Este es un joven mostrando simpatía hacia una chica.</div>
+        
+        <div class="pinyin">Tā xiàole yíxià, tóngshí lǐmào de shuōle shēng "xièxie".</div>
+        <div class="chinese">她笑了一下，同时礼貌地说了声"谢谢"。</div>
+        <div class="spanish">Ella sonrió y al mismo tiempo dijo educadamente "gracias".</div>
+        
+        <div class="pinyin">Tā juéde Cháng Píng duì tā shì rèqíng de, yǒu hǎogǎn de.</div>
+        <div class="chinese">她觉得常平对她是热情的，有好感的。</div>
+        <div class="spanish">Ella sintió que Chang Ping era cálido con ella y tenía buena impresión de ella.</div>
+        
+        <div class="pinyin">Xià Xiá hěn měi, tā yòu tèbié huì dǎban, měi tiān dōu bǎ zìjǐ dǎban de hěn piàoliang!</div>
+        <div class="chinese">夏霞很美，她又特别会打扮，每天都把自己打扮得很漂亮！</div>
+        <div class="spanish">Xia Xia es muy hermosa, y además sabe vestirse muy bien, ¡todos los días se arregla para verse muy hermosa!</div>
+        
+        <div class="pinyin">Yīnwèi piàoliang, yǒu hěn duō xiǎohuǒzi zhuī tā.</div>
+        <div class="chinese">因为漂亮，有很多小伙子追她。</div>
+        <div class="spanish">Por ser hermosa, muchos jóvenes la persiguen.</div>
+        
+        <div class="pinyin">Zhuī tā de xiǎohuǒzi dōu fēicháng shuài, xiàng "wángzǐ" nàme shuài.</div>
+        <div class="chinese">追她的小伙子都非常帅，像"王子"那么帅。</div>
+        <div class="spanish">Los jóvenes que la persiguen son muy guapos, tan guapos como un "príncipe".</div>
+        
+        <div class="pinyin">Rán'ér, zhèxiē xiǎohuǒzi dōu bú shì dàxuéshēng, zhǐyǒu Cháng Píng shì dàxuéshēng.</div>
+        <div class="chinese">然而，这些小伙子都不是大学生，只有常平是大学生。</div>
+        <div class="spanish">Sin embargo, estos jóvenes no son graduados universitarios, solo Chang Ping es un graduado universitario.</div>
+        
+        <div class="pinyin">Kěshì Cháng Píng bù xiàng nàxiē xiǎohuǒzi nàyàng rèqíng de zhuī tā.</div>
+        <div class="chinese">可是常平不像那些小伙子那样热情地追她。</div>
+        <div class="spanish">Pero Chang Ping no la persigue con entusiasmo como esos jóvenes.</div>
+        
+        <div class="pinyin">Xià Xiá gǎndào yǒu diǎnr bù shūfu.</div>
+        <div class="chinese">夏霞感到有点儿不舒服。</div>
+        <div class="spanish">Xia Xia se sintió un poco incómoda.</div>
+        
+        <div class="pinyin">Tā juédìng hé Cháng Píng jiējìn, yào ràng dàjiā dōu kànjiàn, zhè wèi dàxuéshēng yě xǐhuān tā.</div>
+        <div class="chinese">她决定和常平接近，要让大家看见，这位大学生也喜欢她。</div>
+        <div class="spanish">Ella decidió acercarse a Chang Ping, quería que todos vieran que a este graduado universitario también le gustaba.</div>
+        
+        <div class="notes">
+            <p><strong>词汇注释 / Notas de vocabulario:</strong></p>
+            <p>1. 好感 (hǎogǎn): buena y favorable impresión</p>
+            <p>2. 同时 (tóngshí): al mismo tiempo</p>
+            <p>3. 礼貌地 (lǐmào de): educadamente</p>
+            <p>4. 打扮 (dǎban): vestirse, arreglarse</p>
+            <p>5. 帅 (shuài): guapo</p>
+            <p>6. 王子 (wángzǐ): príncipe</p>
+        </div>
+    </div>
+
+    <div class="break-point">--- 休息一下 / Toma un descanso ---</div>
+
+    <div class="section">
+        <h2 class="section-title">第三部分 / Parte 3</h2>
+        
+        <div class="pinyin">Tā jīngcháng jiējìn Cháng Píng.</div>
+        <div class="chinese">她经常接近常平。</div>
+        <div class="spanish">Ella a menudo se acercaba a Chang Ping.</div>
+        
+        <div class="pinyin">Cháng Píng duì tā hěn rèqíng.</div>
+        <div class="chinese">常平对她很热情。</div>
+        <div class="spanish">Chang Ping era muy cálido con ella.</div>
+        
+        <div class="pinyin">Zhè shǐ Xià Xiá hěn jiāo'ào.</div>
+        <div class="chinese">这使夏霞很骄傲。</div>
+        <div class="spanish">Esto hizo que Xia Xia se sintiera muy orgullosa.</div>
+        
+        <div class="pinyin">Tā jīngcháng zài xiǎng, "Nǐmen dàjiā kànkan, dàxuéshēng yě xǐhuān wǒ!"</div>
+        <div class="chinese">她经常在想，"你们大家看看，大学生也喜欢我！"</div>
+        <div class="spanish">Ella a menudo pensaba: "¡Miren todos, al graduado universitario también le gusto!"</div>
+        
+        <div class="pinyin">Dàn tā hěn kuài jiù fāxiàn, Cháng Píng duì měi yí gè rén dōu hěn rèqíng.</div>
+        <div class="chinese">但她很快就发现，常平对每一个人都很热情。</div>
+        <div class="spanish">Pero pronto descubrió que Chang Ping era cálido con todos.</div>
+        
+        <div class="pinyin">Tā hái fāxiàn, Cháng Píng duì lìng yí gè gūniang tèbié hǎo.</div>
+        <div class="chinese">她还发现，常平对另一个姑娘特别好。</div>
+        <div class="spanish">También descubrió que Chang Ping era especialmente bueno con otra chica.</div>
+        
+        <div class="pinyin">Nà ge gūniang jiào Chén Rú.</div>
+        <div class="chinese">那个姑娘叫陈如。</div>
+        <div class="spanish">Esa chica se llama Chen Ru.</div>
+        
+        <div class="pinyin">Suīrán Chén Rú méiyǒu zìjǐ piàoliang, kěshì Cháng Píng xǐhuān tā.</div>
+        <div class="chinese">虽然陈如没有自己漂亮，可是常平喜欢她。</div>
+        <div class="spanish">Aunque Chen Ru no es tan hermosa como ella, a Chang Ping le gusta.</div>
+        
+        <div class="pinyin">Xià Xiá bù míngbai wèishénme Cháng Píng huì xǐhuān Chén Rú.</div>
+        <div class="chinese">夏霞不明白为什么常平会喜欢陈如。</div>
+        <div class="spanish">Xia Xia no entiende por qué a Chang Ping le gusta Chen Ru.</div>
+        
+        <div class="pinyin">Zhè ràng Xià Xiá bù néng rěnshòu.</div>
+        <div class="chinese">这让夏霞不能忍受。</div>
+        <div class="spanish">Esto es insoportable para Xia Xia.</div>
+        
+        <div class="pinyin">Tā nǔlì dǎban zìjǐ, chuān piàoliang yīfu, hái yòng huālùshuǐ.</div>
+        <div class="chinese">她努力打扮自己，穿漂亮衣服，还用花露水。</div>
+        <div class="spanish">Ella se esfuerza por arreglarse, usa ropa bonita y también usa agua de colonia.</div>
+        
+        <div class="pinyin">Kěshì, Cháng Píng duì tā háishì hé yǐqián yíyàng.</div>
+        <div class="chinese">可是，常平对她还是和以前一样。</div>
+        <div class="spanish">Pero Chang Ping sigue siendo igual con ella que antes.</div>
+        
+        <div class="pinyin">Bàn nián yǐhòu tā tīngshuō, Chén Rú chéngle Cháng Píng de nǚ péngyǒu, Cháng Píng yě chéngrènle.</div>
+        <div class="chinese">半年以后她听说，陈如成了常平的女朋友，常平也承认了。</div>
+        <div class="spanish">Después de medio año, escuchó que Chen Ru se había convertido en la novia de Chang Ping, y Chang Ping también lo había admitido.</div>
+        
+        <div class="pinyin">Xià Xiá hěn shēngqì, tā juédìng qù cháoxiào Cháng Píng.</div>
+        <div class="chinese">夏霞很生气，她决定去嘲笑常平。</div>
+        <div class="spanish">Xia Xia está muy enojada, decide burlarse de Chang Ping.</div>
+        
+        <div class="pinyin">Zhè tiān, Xià Xiá dǎban de fēicháng piàoliang.</div>
+        <div class="chinese">这天，夏霞打扮得非常漂亮。</div>
+        <div class="spanish">Este día, Xia Xia se arregló muy hermosamente.</div>
+        
+        <div class="pinyin">Tā chuānzhe báisè de gāogēnxié lái zhǎo Cháng Píng.</div>
+        <div class="chinese">她穿着白色的高跟鞋来找常平。</div>
+        <div class="spanish">Ella vino a buscar a Chang Ping usando zapatos de tacón alto blancos.</div>
+        
+        <div class="pinyin">Tā wèn Cháng Píng: "Cháng jìshùyuán, nǐ juéde wǒ zhè ge rén zěnme yàng?"</div>
+        <div class="chinese">她问常平："常技术员，你觉得我这个人怎么样？"</div>
+        <div class="spanish">Ella le preguntó a Chang Ping: "Técnico Chang, ¿qué piensas de mí como persona?"</div>
+        
+        <div class="pinyin">Cháng Píng xiàozhe shuō: "Nǐ hěn piàoliang......"</div>
+        <div class="chinese">常平笑着说："你很漂亮......"</div>
+        <div class="spanish">Chang Ping sonrió y dijo: "Eres muy hermosa..."</div>
+        
+        <div class="notes">
+            <p><strong>词汇注释 / Notas de vocabulario:</strong></p>
+            <p>1. 接近 (jiējìn): estar en contacto cercano con</p>
+            <p>2. 经常 (jīngcháng): a menudo</p>
+            <p>3. 使 (shǐ): hacer</p>
+            <p>4. 另 (lìng): otro</p>
+            <p>5. 忍受 (rěnshòu): soportar, aguantar</p>
+            <p>6. 花露水 (huālùshuǐ): agua de colonia, agua floral</p>
+            <p>7. 承认 (chéngrèn): admitir</p>
+            <p>8. 嘲笑 (cháoxiào): burlarse de</p>
+            <p>9. 高跟鞋 (gāogēnxié): zapatos de tacón alto</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">思考题 / Preguntas de reflexión</h2>
+        
+        <div class="question">
+            <div class="question-title">1. 夏霞为什么很骄傲？</div>
+            <div class="pinyin">Xià Xiá wèishénme hěn jiāo'ào?</div>
+        </div>
+        
+        <div class="question">
+            <div class="question-title">2. 夏霞为什么喜欢接近常平？</div>
+            <div class="pinyin">Xià Xiá wèishénme xǐhuān jiējìn Cháng Píng?</div>
+        </div>
+        
+        <div class="question">
+            <div class="question-title">3. 常平是一个什么样的小伙子？</div>
+            <div class="pinyin">Cháng Píng shì yí gè shénme yàng de xiǎohuǒzi?</div>
+        </div>
+        
+        <div class="question">
+            <div class="question-title">4. 常平喜欢夏霞吗？为什么？</div>
+            <div class="pinyin">Cháng Píng xǐhuān Xià Xiá ma? Wèishénme?</div>
+        </div>
+    </div>
+
+    <script>
+        // 添加高亮词汇和悬浮提示
+        document.addEventListener('DOMContentLoaded', function() {
+            const highlights = [
+                { word: '骄傲', pinyin: 'jiāo\'ào', english: 'proud' },
+                { word: '工厂', pinyin: 'gōngchǎng', english: 'factory' },
+                { word: '大学生', pinyin: 'dàxuéshēng', english: 'college student' },
+                { word: '戴', pinyin: 'dài', english: 'wear' },
+                { word: '技术员', pinyin: 'jìshùyuán', english: 'technician' },
+                { word: '高考复习资料', pinyin: 'gāokǎo fùxí zīliào', english: 'books or references for college entrance exams' },
+                { word: '高中毕业', pinyin: 'gāozhōng bìyè', english: 'graduation of senior high school' },
+                { word: '考', pinyin: 'kǎo', english: 'take an examination' },
+                { word: '好感', pinyin: 'hǎogǎn', english: 'good and favorable impression' },
+                { word: '同时', pinyin: 'tóngshí', english: 'at the same time' },
+                { word: '礼貌地', pinyin: 'lǐmào de', english: 'politely' },
+                { word: '打扮', pinyin: 'dǎban', english: 'dress up' },
+                { word: '帅', pinyin: 'shuài', english: 'handsome' },
+                { word: '王子', pinyin: 'wángzǐ', english: 'prince' },
+                { word: '接近', pinyin: 'jiējìn', english: 'be in close contact with' },
+                { word: '经常', pinyin: 'jīngcháng', english: 'often' },
+                { word: '使', pinyin: 'shǐ', english: 'make' },
+                { word: '另', pinyin: 'lìng', english: 'another' },
+                { word: '忍受', pinyin: 'rěnshòu', english: 'bear, endure' },
+                { word: '花露水', pinyin: 'huālùshuǐ', english: 'toilet water; floral water' },
+                { word: '承认', pinyin: 'chéngrèn', english: 'admit' },
+                { word: '嘲笑', pinyin: 'cháoxiào', english: 'jeer at; mock at' },
+                { word: '高跟鞋', pinyin: 'gāogēnxié', english: 'high-heeled shoes' }
+            ];
+
+            // 为每个高亮词汇添加样式和提示
+            highlights.forEach(item => {
+                const elements = document.querySelectorAll('.chinese');
+                elements.forEach(el => {
+                    const regex = new RegExp(item.word, 'g');
+                    el.innerHTML = el.innerHTML.replace(regex, 
+                        `<span class="highlight">${item.word}<span class="tooltip">${item.pinyin}: ${item.english}</span></span>`);
+                });
+            });
+
+            // 高亮拼音行中的对应拼音
+            highlights.forEach(item => {
+                const elements = document.querySelectorAll('.pinyin');
+                elements.forEach(el => {
+                    const regex = new RegExp(item.pinyin, 'g');
+                    el.innerHTML = el.innerHTML.replace(regex, 
+                        `<span class="pinyin-highlight">${item.pinyin}</span>`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

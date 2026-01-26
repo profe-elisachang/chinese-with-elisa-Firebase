@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>故事 X - [標題] - Mandarin with Elisa</title>
+    <link rel="stylesheet" href="../../../assets/css/mini-story.css">
+</head>
+<body>
+    <div class="mini-story-container">
+        <h1>故事 X - [標題]</h1>
+        
+        <button class="toggle-en-btn" onclick="toggleEnglish()">
+            <span id="toggle-text">隐藏英文</span>
+        </button>
+        
+        <!-- 故事內容開始 -->
+        <!-- 格式：每段中文後跟一段英文 -->
+        <p class="cn">他們<span class="vocab" data-hsk="3" data-en="marry">結婚</span>已經<span class="vocab" data-hsk="2" data-en="already">兩年</span>了。</p>
+        <p class="en">They have been married for two years.</p>
+        
+        <p class="cn">丈夫<span class="vocab" data-hsk="2" data-en="husband">喜歡</span><span class="vocab" data-hsk="3" data-en="literature">文學</span>，經常<span class="vocab" data-hsk="2" data-en="often">寫</span><span class="vocab" data-hsk="3" data-en="novel">小說</span>。</p>
+        <p class="en">The husband likes literature and often writes fiction.</p>
+        
+        <!-- 更多段落... -->
+    </div>
+    
+    <script>
+        function toggleEnglish() {
+            document.body.classList.toggle('hide-en');
+            const btn = document.getElementById('toggle-text');
+            btn.textContent = document.body.classList.contains('hide-en') ? '显示英文' : '隐藏英文';
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花献给成功者与失败者 - 三语对照</title>
+    <link rel="stylesheet" href="../../../assets/css/story-quiz.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .sentence {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .sentence:last-child {
+            border-bottom: none;
+        }
+        
+        .pinyin {
+            color: #e74c3c;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            line-height: 1.6;
+        }
+        
+        .chinese {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .spanish {
+            color: #2980b9;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        
+        .highlight:hover {
+            background-color: #ffeb3b;
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+        
+        .highlight:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .chinese {
+                font-size: 1.2rem;
+            }
+            
+            .pinyin, .spanish {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>鲜花献给成功者与失败者</h1>
+            <p class="subtitle">Flowers for the Successful and the Unsuccessful | Flores para los exitosos y los no exitosos</p>
+        </header>
+        
+        <!-- Tab 导航 -->
+        <div class="story-tabs-nav">
+            <button class="story-tab-button active" onclick="switchStoryTab('story')">📖 正文</button>
+            <button class="story-tab-button" onclick="switchStoryTab('quiz')">✏️ 练习题</button>
+        </div>
+        
+        <!-- 正文 Tab -->
+        <div id="story-tab" class="story-tab-content active">
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Xiānhuā shì <span class="highlight">xiàn gěi<span class="tooltip">dedicated to</span></span> chénggōng zhě de.</div>
+                <div class="chinese">鲜花是<span class="highlight">献给<span class="tooltip">dedicated to</span></span>成功者的。</div>
+                <div class="spanish">Las flores son para los exitosos.</div>
+            </div>
+            
+            <div class="sentence">
+                <div class="pinyin">Xiānhuā yě yào <span class="highlight">xiàn gěi<span class="tooltip">dedicated to</span></span> <span class="highlight">shībài zhě<span class="tooltip">losers</span></span> ma?</div>
+                <div class="chinese">鲜花也要<span class="highlight">献给<span class="tooltip">dedicated to</span></span><span class="highlight">失败者<span class="tooltip">losers</span></span>吗？</div>
+                <div class="spanish">¿Deberían las flores también darse a los perdedores?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Sì tiān qián, zài <span class="highlight">bǐsài<span class="tooltip">competition</span></span> de shíhou, tā cóng <span class="highlight">pínghéngmù<span class="tooltip">balance beam</span></span> shàng diào xiàlái, tā méiyǒu dédào <span class="highlight">jīnpái<span class="tooltip">gold medal</span></span>, yǐhòu tā jiù bǎ měilì de tóu dī xiàlái le.</div>
+                <div class="chinese">四天前，在<span class="highlight">比赛<span class="tooltip">competition</span></span>的时候，她从<span class="highlight">平衡木<span class="tooltip">balance beam</span></span>上掉下来，她没有得到<span class="highlight">金牌<span class="tooltip">gold medal</span></span>，以后她就把美丽的头低下来了。</div>
+                <div class="spanish">Hace cuatro días, durante la competencia, se cayó de la viga de equilibrio y no obtuvo la medalla de oro. Después de eso, bajó su hermosa cabeza.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Xiànzài tā <span class="highlight">huíguó<span class="tooltip">returned to her country</span></span> le, zǒu jìn <span class="highlight">jīchǎng dàtīng<span class="tooltip">airport hall</span></span>, tā yīzhí dī zhe tóu, <span class="highlight">hàipà<span class="tooltip">afraid</span></span> kànjiàn lái jīchǎng <span class="highlight">huānyíng<span class="tooltip">welcome</span></span> de rénmen.</div>
+                <div class="chinese">现在她<span class="highlight">回国<span class="tooltip">returned to her country</span></span>了，走进<span class="highlight">机场大厅<span class="tooltip">airport hall</span></span>，她一直低着头，<span class="highlight">害怕<span class="tooltip">afraid</span></span>看见来机场<span class="highlight">欢迎<span class="tooltip">welcome</span></span>的人们。</div>
+                <div class="spanish">Ahora ha regresado a su país. Al entrar en el vestíbulo del aeropuerto, mantuvo la cabeza baja, con miedo de ver a la gente que vino a recibirla al aeropuerto.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Tā pà <span class="highlight">jìzhě<span class="tooltip">journalists</span></span> wèn tā shénme, pà jiějie hé <span class="highlight">jiěfū<span class="tooltip">brother-in-law</span></span> lái <span class="highlight">yíngjiē<span class="tooltip">welcome</span></span> tā, pà jiàndào jīchǎng nàgè <span class="highlight">rèqíng<span class="tooltip">enthusiastic</span></span> de nǚ <span class="highlight">fúwùyuán<span class="tooltip">attendant</span></span>.</div>
+                <div class="chinese">她怕<span class="highlight">记者<span class="tooltip">journalists</span></span>问她什么，怕姐姐和<span class="highlight">姐夫<span class="tooltip">brother-in-law</span></span>来<span class="highlight">迎接<span class="tooltip">welcome</span></span>她，怕见到机场那个<span class="highlight">热情<span class="tooltip">enthusiastic</span></span>的女<span class="highlight">服务员<span class="tooltip">attendant</span></span>。</div>
+                <div class="spanish">Tenía miedo de que los periodistas le hicieran preguntas, miedo de que su hermana y su cuñado vinieran a recibirla, miedo de ver a esa entusiasta empleada femenina del aeropuerto.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Nàgè jīchǎng fúwùyuán shì tā de <span class="highlight">chóngbài zhě<span class="tooltip">admirer</span></span>, měi cì <span class="highlight">chūguó<span class="tooltip">went abroad</span></span> de shíhou, tā dōu bāng tā ná dōngxī. Kěshì xiànzài tā shì gè <span class="highlight">shībài zhě<span class="tooltip">loser</span></span>, zěnme jiàn rén!</div>
+                <div class="chinese">那个机场服务员是她的<span class="highlight">崇拜者<span class="tooltip">admirer</span></span>，每次<span class="highlight">出国<span class="tooltip">went abroad</span></span>的时候，她都帮她拿东西。可是现在她是个<span class="highlight">失败者<span class="tooltip">loser</span></span>，怎么见人！</div>
+                <div class="spanish">Esa empleada del aeropuerto era su admiradora. Cada vez que viajaba al extranjero, la ayudaba a llevar sus cosas. Pero ahora es una perdedora, ¡cómo puede enfrentar a la gente!</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Zhè cì <span class="highlight">shìjiè bǐsài<span class="tooltip">world competition</span></span>, tā yīnggāi <span class="highlight">chénggōng<span class="tooltip">succeed</span></span>, rénmen dōu zhème shuō. Dàn tā <span class="highlight">shībài<span class="tooltip">failed</span></span> le, tā méiyǒu dédào <span class="highlight">jīnpái<span class="tooltip">gold medal</span></span>.</div>
+                <div class="chinese">这次<span class="highlight">世界比赛<span class="tooltip">world competition</span></span>，她应该<span class="highlight">成功<span class="tooltip">succeed</span></span>，人们都这么说。但她<span class="highlight">失败<span class="tooltip">failed</span></span>了，她没有得到<span class="highlight">金牌<span class="tooltip">gold medal</span></span>。</div>
+                <div class="spanish">En esta competencia mundial, debería haber tenido éxito, todos lo decían. Pero falló, no obtuvo la medalla de oro.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Liǎng nián qián, tā dì yī cì <span class="highlight">chūguó<span class="tooltip">went abroad</span></span> <span class="highlight">cānjiā<span class="tooltip">participate</span></span> <span class="highlight">bǐsài<span class="tooltip">competition</span></span>, rénmen méiyǒu <span class="highlight">zhùyì<span class="tooltip">pay attention</span></span> tā, tā xīnlǐ méiyǒu <span class="highlight">fùdān<span class="tooltip">burden</span></span>, tā dé le liǎng gè <span class="highlight">jīnpái<span class="tooltip">gold medals</span></span>.</div>
+                <div class="chinese">两年前，她第一次<span class="highlight">出国<span class="tooltip">went abroad</span></span><span class="highlight">参加<span class="tooltip">participate</span></span><span class="highlight">比赛<span class="tooltip">competition</span></span>，人们没有<span class="highlight">注意<span class="tooltip">pay attention</span></span>她，她心里没有<span class="highlight">负担<span class="tooltip">burden</span></span>，她得了两个<span class="highlight">金牌<span class="tooltip">gold medals</span></span>。</div>
+                <div class="spanish">Hace dos años, fue al extranjero por primera vez para participar en una competencia. La gente no le prestaba atención, no tenía carga en su corazón y ganó dos medallas de oro.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin"><span class="highlight">Huíguó<span class="tooltip">returned to her country</span></span> shí, jiùshì zài zhège <span class="highlight">jīchǎng dàtīng<span class="tooltip">airport hall</span></span> lǐ, tā shòudào <span class="highlight">rèqíng<span class="tooltip">warm</span></span> de <span class="highlight">yíngjiē<span class="tooltip">welcome</span></span>. Xǔduō shǒu xiàng tā <span class="highlight">shēn<span class="tooltip">reached out</span></span> guòlái, xǔduō <span class="highlight">shèyǐngjī<span class="tooltip">cameras</span></span> duìzhe tā, yīgè <span class="highlight">jìzhě<span class="tooltip">journalist</span></span> wèn tā: "Nǐ <span class="highlight">zuì xǐhuān<span class="tooltip">like most</span></span> shénme?"</div>
+                <div class="chinese"><span class="highlight">回国<span class="tooltip">returned to her country</span></span>时，就是在这个<span class="highlight">机场大厅<span class="tooltip">airport hall</span></span>里，她受到<span class="highlight">热情<span class="tooltip">warm</span></span>的<span class="highlight">迎接<span class="tooltip">welcome</span></span>。许多只手向她<span class="highlight">伸<span class="tooltip">reached out</span></span>过来，许多<span class="highlight">摄影机<span class="tooltip">cameras</span></span>对着她，一个<span class="highlight">记者<span class="tooltip">journalist</span></span>问她："你<span class="highlight">最喜欢<span class="tooltip">like most</span></span>什么？"</div>
+                <div class="spanish">Cuando regresó a su país, justo en este vestíbulo del aeropuerto, recibió una cálida bienvenida. Muchas manos se extendieron hacia ella, muchas cámaras apuntaron hacia ella, y un periodista le preguntó: "¿Qué es lo que más te gusta?"</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Tā bù zhīdào zěnme <span class="highlight">huídá<span class="tooltip">answer</span></span>, <span class="highlight">táitóu<span class="tooltip">raised her head</span></span> kànjiàn yī <span class="highlight">shù<span class="tooltip">bouquet</span></span> <span class="highlight">xiānhuā<span class="tooltip">flowers</span></span>, tā jiù shuō: "Wǒ <span class="highlight">xǐhuān<span class="tooltip">like</span></span> huā!" Yúshì, jiù yǒu jǐ shí <span class="highlight">shù<span class="tooltip">bouquets</span></span> huā <span class="highlight">xiàn gěi<span class="tooltip">given to</span></span> tā, huā tài duō le, tā dōu <span class="highlight">bào<span class="tooltip">hold</span></span> bù zhù le.</div>
+                <div class="chinese">她不知道怎么<span class="highlight">回答<span class="tooltip">answer</span></span>，<span class="highlight">抬头<span class="tooltip">raised her head</span></span>看见一<span class="highlight">束<span class="tooltip">bouquet</span></span><span class="highlight">鲜花<span class="tooltip">flowers</span></span>，她就说："我<span class="highlight">喜欢<span class="tooltip">like</span></span>花！"于是，就有几十<span class="highlight">束<span class="tooltip">bouquets</span></span>花<span class="highlight">献给<span class="tooltip">given to</span></span>她，花太多了，她都<span class="highlight">抱<span class="tooltip">hold</span></span>不住了。</div>
+                <div class="spanish">No sabía cómo responder, levantó la cabeza y vio un ramo de flores, así que dijo: "¡Me gustan las flores!" Entonces, le regalaron docenas de ramos, había demasiadas flores, no podía sostenerlas todas.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Zhè liǎng nián tā duō cì <span class="highlight">chūguó<span class="tooltip">went abroad</span></span> <span class="highlight">bǐsài<span class="tooltip">compete</span></span>, tā <span class="highlight">guà<span class="tooltip">wearing</span></span> zhe yīgè yòu yīgè <span class="highlight">jīnpái<span class="tooltip">gold medals</span></span> <span class="highlight">huíguó<span class="tooltip">returned</span></span>, <span class="highlight">yíngjiē<span class="tooltip">welcomed</span></span> tā de shì <span class="highlight">xiào liǎn<span class="tooltip">smiling faces</span></span> hé <span class="highlight">zhàoxiàngjī<span class="tooltip">cameras</span></span> de <span class="highlight">shǎnguāng<span class="tooltip">flashes</span></span>.</div>
+                <div class="chinese">这两年她多次<span class="highlight">出国<span class="tooltip">went abroad</span></span><span class="highlight">比赛<span class="tooltip">compete</span></span>，她<span class="highlight">挂<span class="tooltip">wearing</span></span>着一个又一个<span class="highlight">金牌<span class="tooltip">gold medals</span></span><span class="highlight">回国<span class="tooltip">returned</span></span>，<span class="highlight">迎接<span class="tooltip">welcomed</span></span>她的是<span class="highlight">笑脸<span class="tooltip">smiling faces</span></span>和<span class="highlight">照相机<span class="tooltip">cameras</span></span>的<span class="highlight">闪光<span class="tooltip">flashes</span></span>。</div>
+                <div class="spanish">En estos dos años, viajó muchas veces al extranjero para competir. Regresó con una medalla de oro tras otra, y fue recibida con rostros sonrientes y flashes de cámaras.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Tā yuè <span class="highlight">chénggōng<span class="tooltip">successful</span></span> jiù yuè pà <span class="highlight">shībài<span class="tooltip">failure</span></span>. Tā gǎn dào hěn <span class="highlight">tòngkǔ<span class="tooltip">painful</span></span>. Zhè cì <span class="highlight">bǐsài<span class="tooltip">competition</span></span> shí, yóuyú <span class="highlight">xīnqíng<span class="tooltip">mood</span></span> <span class="highlight">jǐnzhāng<span class="tooltip">nervousness</span></span>, tā <span class="highlight">shībài<span class="tooltip">failed</span></span> le.</div>
+                <div class="chinese">她越<span class="highlight">成功<span class="tooltip">successful</span></span>就越怕<span class="highlight">失败<span class="tooltip">failure</span></span>。她感到很<span class="highlight">痛苦<span class="tooltip">painful</span></span>。这次<span class="highlight">比赛<span class="tooltip">competition</span></span>时，由于<span class="highlight">心情<span class="tooltip">mood</span></span><span class="highlight">紧张<span class="tooltip">nervousness</span></span>，她<span class="highlight">失败<span class="tooltip">failed</span></span>了。</div>
+                <div class="spanish">Cuanto más exitosa se volvía, más temía al fracaso. Se sentía muy dolorida. Durante esta competencia, debido a los nervios, falló.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Xiànzài tā pà <span class="highlight">jiàn rén<span class="tooltip">see people</span></span>, jiù zǒu zài zuì hòumiàn, hěn shǎo yǒu rén <span class="highlight">zhāohū<span class="tooltip">greet</span></span> tā, <span class="highlight">jìzhě<span class="tooltip">journalists</span></span> yě bù zhǎo tā le, tā xīnlǐ hěn <span class="highlight">nánshòu<span class="tooltip">sad</span></span>. Shì a, shéi xǐhuān hé yīgè <span class="highlight">shībài zhě<span class="tooltip">loser</span></span> zhàn zài yīqǐ.</div>
+                <div class="chinese">现在她怕<span class="highlight">见人<span class="tooltip">see people</span></span>，就走在最后面，很少有人<span class="highlight">招呼<span class="tooltip">greet</span></span>她，<span class="highlight">记者<span class="tooltip">journalists</span></span>也不找她了，她心里很<span class="highlight">难受<span class="tooltip">sad</span></span>。是啊，谁喜欢和一个<span class="highlight">失败者<span class="tooltip">loser</span></span>站在一起。</div>
+                <div class="spanish">Ahora tiene miedo de ver gente, así que camina al final. Pocas personas la saludan, los periodistas ya no la buscan, se siente muy triste en su corazón. Sí, quién quiere estar con una perdedora.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin"><span class="highlight">Hūrán<span class="tooltip">suddenly</span></span> tā <span class="highlight">fāxiàn<span class="tooltip">noticed</span></span> yī shuāng jiǎo <span class="highlight">tíng<span class="tooltip">stopping</span></span> zài tā yǎnqián. Shéi? Tā yīdiǎndiǎn wǎng shàng kàn qù, <span class="highlight">shēn lán sè<span class="tooltip">dark blue</span></span> de yīfú, <span class="highlight">cháng cháng<span class="tooltip">long</span></span> de tuǐ, yī zhāng <span class="highlight">xiào liǎn<span class="tooltip">smiling face</span></span>. <span class="highlight">Yuánlái<span class="tooltip">it was</span></span> shì nàgè jīchǎng nǚ <span class="highlight">fúwùyuán<span class="tooltip">attendant</span></span>.</div>
+                <div class="chinese"><span class="highlight">忽然<span class="tooltip">suddenly</span></span>她<span class="highlight">发现<span class="tooltip">noticed</span></span>一双脚<span class="highlight">停<span class="tooltip">stopping</span></span>在她眼前。谁？她一点点往上看去，<span class="highlight">深蓝色<span class="tooltip">dark blue</span></span>的衣服，<span class="highlight">长长<span class="tooltip">long</span></span>的腿，一张<span class="highlight">笑脸<span class="tooltip">smiling face</span></span>。<span class="highlight">原来<span class="tooltip">it was</span></span>是那个机场女<span class="highlight">服务员<span class="tooltip">attendant</span></span>。</div>
+                <div class="spanish">De repente notó un par de pies detenerse frente a ella. ¿Quién? Miró hacia arriba poco a poco: ropa azul oscuro, piernas largas, una cara sonriente. Era esa empleada femenina del aeropuerto.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Nǚ <span class="highlight">fúwùyuán<span class="tooltip">attendant</span></span> <span class="highlight">bèi zhe<span class="tooltip">put behind</span></span> shuāngshǒu, xiào zhe duì tā shuō: "Wǒ zài <span class="highlight">diànshì<span class="tooltip">TV</span></span> lǐ kànjiànle nǐ de <span class="highlight">bǐsài<span class="tooltip">competition</span></span>, <span class="highlight">zhīdào<span class="tooltip">knew</span></span> nǐ jīntiān huílái, wǒ lái <span class="highlight">yíngjiē<span class="tooltip">welcome</span></span> nǐ."</div>
+                <div class="chinese">女<span class="highlight">服务员<span class="tooltip">attendant</span></span><span class="highlight">背着<span class="tooltip">put behind</span></span>双手，笑着对她说："我在<span class="highlight">电视<span class="tooltip">TV</span></span>里看见了你的<span class="highlight">比赛<span class="tooltip">competition</span></span>，<span class="highlight">知道<span class="tooltip">knew</span></span>你今天回来，我来<span class="highlight">迎接<span class="tooltip">welcome</span></span>你。"</div>
+                <div class="spanish">La empleada puso sus manos detrás de la espalda, sonrió y le dijo: "Vi tu competencia en la televisión, supe que regresabas hoy, así que vine a recibirte."</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">"Wǒ zuò dé bù hǎo! Wǒ <span class="highlight">shībài<span class="tooltip">failed</span></span> le." Tā yòu dī xià tóu.</div>
+                <div class="chinese">"我做得不好！我<span class="highlight">失败<span class="tooltip">failed</span></span>了。"她又低下头。</div>
+                <div class="spanish">"¡No lo hice bien! Fallé." Bajó la cabeza nuevamente.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">"Bù, nǐ hěn <span class="highlight">nǔlì<span class="tooltip">worked hard</span></span>." "Wǒ shì <span class="highlight">shībài zhě<span class="tooltip">loser</span></span>."</div>
+                <div class="chinese">"不，你很<span class="highlight">努力<span class="tooltip">worked hard</span></span>。" "我是<span class="highlight">失败者<span class="tooltip">loser</span></span>。"</div>
+                <div class="spanish">"No, trabajaste muy duro." "Soy una perdedora."</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">"Nǐ hěn <span class="highlight">nǔlì<span class="tooltip">worked hard</span></span>, shéi dōu bùnéng <span class="highlight">yǒngyuǎn<span class="tooltip">forever</span></span> <span class="highlight">chénggōng<span class="tooltip">succeed</span></span>, shéi dōu <span class="highlight">yǒu kěnéng<span class="tooltip">can</span></span> <span class="highlight">shībài<span class="tooltip">fail</span></span>. Wǒ <span class="highlight">xiāngxìn<span class="tooltip">believe</span></span>, <span class="highlight">shībài<span class="tooltip">failure</span></span> hé <span class="highlight">chénggōng<span class="tooltip">success</span></span> duìyú nǐ dōu hěn <span class="highlight">zhòngyào<span class="tooltip">important</span></span>. Ràng <span class="highlight">shībài<span class="tooltip">failure</span></span> <span class="highlight">shǔyú<span class="tooltip">belong to</span></span> <span class="highlight">guòqù<span class="tooltip">the past</span></span>, <span class="highlight">chénggōng<span class="tooltip">success</span></span> cái <span class="highlight">shǔyú<span class="tooltip">belongs to</span></span> <span class="highlight">wèilái<span class="tooltip">the future</span></span>." Nǚ <span class="highlight">fúwùyuán<span class="tooltip">attendant</span></span> shuō.</div>
+                <div class="chinese">"你很<span class="highlight">努力<span class="tooltip">worked hard</span></span>，谁都不能<span class="highlight">永远<span class="tooltip">forever</span></span><span class="highlight">成功<span class="tooltip">succeed</span></span>，谁都<span class="highlight">有可能<span class="tooltip">can</span></span><span class="highlight">失败<span class="tooltip">fail</span></span>。我<span class="highlight">相信<span class="tooltip">believe</span></span>，<span class="highlight">失败<span class="tooltip">failure</span></span>和<span class="highlight">成功<span class="tooltip">success</span></span>对于你都很<span class="highlight">重要<span class="tooltip">important</span></span>。让<span class="highlight">失败<span class="tooltip">failure</span></span><span class="highlight">属于<span class="tooltip">belong to</span></span><span class="highlight">过去<span class="tooltip">the past</span></span>，<span class="highlight">成功<span class="tooltip">success</span></span>才<span class="highlight">属于<span class="tooltip">belongs to</span></span><span class="highlight">未来<span class="tooltip">the future</span></span>。"女<span class="highlight">服务员<span class="tooltip">attendant</span></span>说。</div>
+                <div class="spanish">"Trabajaste muy duro, nadie puede tener éxito para siempre, todos pueden fallar. Creo que tanto el fracaso como el éxito son importantes para ti. Deja que el fracaso pertenezca al pasado, el éxito pertenece al futuro." dijo la empleada.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Tā tīngle zhè huà, <span class="highlight">táitóu<span class="tooltip">raised her head</span></span> lái. Zhǐ jiàn nǚ <span class="highlight">fúwùyuán<span class="tooltip">attendant</span></span> bǎ yī dà <span class="highlight">shù<span class="tooltip">bouquet</span></span> <span class="highlight">xiānhuā<span class="tooltip">flowers</span></span> <span class="highlight">sòng dào<span class="tooltip">presenting to</span></span> tā de miànqián.</div>
+                <div class="chinese">她听了这话，<span class="highlight">抬头<span class="tooltip">raised her head</span></span>来。只见女<span class="highlight">服务员<span class="tooltip">attendant</span></span>把一大<span class="highlight">束<span class="tooltip">bouquet</span></span><span class="highlight">鲜花<span class="tooltip">flowers</span></span><span class="highlight">送到<span class="tooltip">presenting to</span></span>她的面前。</div>
+                <div class="spanish">Al escuchar estas palabras, levantó la cabeza. Vio a la empleada presentándole un gran ramo de flores.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="sentence">
+                <div class="pinyin">Tā kàn dào <span class="highlight">xiānhuā<span class="tooltip">flowers</span></span>, fēicháng <span class="highlight">gǎndòng<span class="tooltip">moved</span></span>, <span class="highlight">liú chūle<span class="tooltip">shed</span></span> <span class="highlight">yǎnlèi<span class="tooltip">tears</span></span>. <span class="highlight">Xiānhuā<span class="tooltip">flowers</span></span>, shì <span class="highlight">xiàn gěi<span class="tooltip">for</span></span> chénggōng zhě de, <span class="highlight">nándào<span class="tooltip">can it be that</span></span> yě néng <span class="highlight">xiàn gěi<span class="tooltip">given to</span></span> <span class="highlight">shībài zhě<span class="tooltip">losers</span></span>?</div>
+                <div class="chinese">她看到<span class="highlight">鲜花<span class="tooltip">flowers</span></span>，非常<span class="highlight">感动<span class="tooltip">moved</span></span>，<span class="highlight">流出了<span class="tooltip">shed</span></span><span class="highlight">眼泪<span class="tooltip">tears</span></span>。<span class="highlight">鲜花<span class="tooltip">flowers</span></span>，是<span class="highlight">献给<span class="tooltip">for</span></span>成功者的，<span class="highlight">难道<span class="tooltip">can it be that</span></span>也能<span class="highlight">献给<span class="tooltip">given to</span></span><span class="highlight">失败者<span class="tooltip">losers</span></span>？</div>
+                <div class="spanish">Al ver las flores, se conmovió profundamente y derramó lágrimas. Las flores son para los exitosos, ¿pueden también darse a los perdedores?</div>
+            </div>
+        </div>
+        
+        </div>
+        <!-- 正文 Tab 结束 -->
+        
+        <!-- 练习题 Tab -->
+        <div id="quiz-tab" class="story-tab-content">
+            <div class="quiz-container">
+                <!-- 选择题区块 -->
+                <section class="quiz-section">
+                    <h2>选择题</h2>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">1.</div>
+                        <div class="question-text">故事中的主角是什么身份？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q1" value="A">
+                                <span>A. 运动员</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q1" value="B">
+                                <span>B. 记者</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q1" value="C">
+                                <span>C. 机场服务员</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>A. 运动员
+                                <span class="correct-answer-value">A</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">2.</div>
+                        <div class="question-text">主角在比赛中发生了什么事？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q2" value="A">
+                                <span>A. 获得了金牌</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q2" value="B">
+                                <span>B. 从平衡木上掉下来，没有得到金牌</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q2" value="C">
+                                <span>C. 没有參加比赛</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>B. 从平衡木上掉下来，没有得到金牌
+                                <span class="correct-answer-value">B</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">3.</div>
+                        <div class="question-text">主角为什么害怕见到机场的人们？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q3" value="A">
+                                <span>A. 因为她失败了，觉得不好意思</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q3" value="B">
+                                <span>B. 因为她不认识他们</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q3" value="C">
+                                <span>C. 因为她太累了</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>A. 因为她失败了，觉得不好意思
+                                <span class="correct-answer-value">A</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">4.</div>
+                        <div class="question-text">两年前主角第一次出国比赛时，为什么能成功？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q4" value="A">
+                                <span>A. 因为人们没有注意她，她心里没有负担</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q4" value="B">
+                                <span>B. 因为她练习了很久</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q4" value="C">
+                                <span>C. 因为对手比较弱</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>A. 因为人们没有注意她，她心里没有负担
+                                <span class="correct-answer-value">A</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">5.</div>
+                        <div class="question-text">机场女服务员对主角说了什么重要的话？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q5" value="A">
+                                <span>A. 失败和成功对于你都很重要，让失败属于过去，成功才属于未来</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q5" value="B">
+                                <span>B. 你应该更努力练习</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q5" value="C">
+                                <span>C. 下次一定会成功的</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>A. 失败和成功对于你都很重要，让失败属于过去，成功才属于未来
+                                <span class="correct-answer-value">A</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="multiple-choice">
+                        <div class="question-number">6.</div>
+                        <div class="question-text">故事最后，主角看到鲜花时有什么反应？</div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q6" value="A">
+                                <span>A. 非常感动，流出了眼泪</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q6" value="B">
+                                <span>B. 很生气</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="q6" value="C">
+                                <span>C. 没有反应</span>
+                            </label>
+                        </div>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>正确答案：</strong>A. 非常感动，流出了眼泪
+                                <span class="correct-answer-value">A</span>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong><span class="user-choice"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 问答题区块 -->
+                <section class="quiz-section">
+                    <h2>问答题</h2>
+                    
+                    <div class="question-item" data-type="open-ended">
+                        <div class="question-number">1.</div>
+                        <div class="question-text">为什么主角越成功就越怕失败？请根据故事内容说明。</div>
+                        <textarea 
+                            class="answer-input" 
+                            placeholder="请输入您的答案..."
+                            rows="4"
+                        ></textarea>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>参考答案：</strong>
+                                <p>主角越成功就越怕失败，因为她感到很大的压力。当她第一次出国比赛时，人们没有注意她，她心里没有负担，所以能成功。但随着她越来越成功，人们对她的期望也越来越高，她感到压力很大，心里很痛苦。这次比赛时，由于心情紧张，她失败了。</p>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong>
+                                <p class="user-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="open-ended">
+                        <div class="question-number">2.</div>
+                        <div class="question-text">机场女服务员为什么要送花给失败的主角？这说明了什么？</div>
+                        <textarea 
+                            class="answer-input" 
+                            placeholder="请输入您的答案..."
+                            rows="4"
+                        ></textarea>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>参考答案：</strong>
+                                <p>机场女服务员送花给失败的主角，是因为她相信失败和成功对于主角都很重要。她认为主角很努力，谁都不能永远成功，谁都有可能失败。她希望主角能让失败属于过去，成功才属于未来。这说明了真正的支持不仅仅是给成功者，也应该给失败者鼓励和关怀。</p>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong>
+                                <p class="user-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item" data-type="open-ended">
+                        <div class="question-number">3.</div>
+                        <div class="question-text">这个故事告诉我们什么道理？</div>
+                        <textarea 
+                            class="answer-input" 
+                            placeholder="请输入您的答案..."
+                            rows="4"
+                        ></textarea>
+                        <div class="answer-feedback" style="display: none;">
+                            <div class="correct-answer">
+                                <strong>参考答案：</strong>
+                                <p>这个故事告诉我们：1) 失败和成功都是人生的一部分，都很重要；2) 我们不应该只关注成功者，也应该给失败者鼓励和支持；3) 失败属于过去，我们应该向前看，让成功属于未来；4) 真正的支持者会在我们失败时仍然给予关怀和鼓励。</p>
+                            </div>
+                            <div class="user-answer">
+                                <strong>您的答案：</strong>
+                                <p class="user-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 控制按钮 -->
+                <div class="quiz-controls">
+                    <button class="btn-check-answers" onclick="checkAllAnswers()">
+                        ✓ 查看答案
+                    </button>
+                    <button class="btn-reset" onclick="resetQuiz()" style="display: none;">
+                        ↻ 重新作答
+                    </button>
+                </div>
+                
+                <!-- 得分统计 -->
+                <div class="score-summary" style="display: none;">
+                    <h3>测验结果</h3>
+                    <div class="score-details">
+                        <p>选择题：<span id="mc-score">0</span> / <span id="mc-total">0</span></p>
+                        <p>总分：<span id="total-score">0</span> / <span id="total-questions">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 练习题 Tab 结束 -->
+        
+        <footer>
+            <p>三语对照课件 - 中文、英文、西班牙文 | Trilingual Learning Material - Chinese, English, Spanish</p>
+        </footer>
+    </div>
+    
+    <script src="../../../assets/js/story-quiz.js"></script>
+</body>
+</html>

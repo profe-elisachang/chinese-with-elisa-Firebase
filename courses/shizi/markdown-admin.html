@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>識字課程 Markdown 管理後台</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <style>
+        /* ==================== CSS Variables (设计系统) ==================== */
+        :root {
+            /* 主色调 */
+            --primary-color: #0891b2;
+            --primary-light: #06b6d4;
+            --primary-dark: #0e7490;
+            
+            /* 辅助色 */
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            /* 中性色 */
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            /* 背景色 */
+            --bg-page: #f9fafb;
+            --bg-card: #ffffff;
+            --bg-hover: #f3f4f6;
+            --bg-light: #e5e7eb;
+            
+            /* 边框色 */
+            --border-light: #e5e7eb;
+            --border-medium: #d1d5db;
+            --border-dark: #9ca3af;
+        }
+        
+        /* ==================== 全局样式 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* ==================== 顶部导航栏 ==================== */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* ==================== 卡片样式 ==================== */
+        .card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        /* ==================== 课程选择器 ==================== */
+        .lesson-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .lesson-selector label {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        
+        .lesson-selector select {
+            padding: 10px 15px;
+            border: 2px solid var(--border-medium);
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        .lesson-selector select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        /* ==================== 按钮样式 ==================== */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(8, 145, 178, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        
+        .btn-accent {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-accent:hover:not(:disabled) {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        /* ==================== Markdown 输入区域 ==================== */
+        .markdown-editor {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            border: 2px solid var(--border-medium);
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fafafa;
+        }
+        
+        .markdown-editor:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+        }
+        
+        /* ==================== 处理结果显示 ==================== */
+        .status-panel {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .status-item.success {
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .status-item.error {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .status-item.info {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .status-icon {
+            font-size: 1.2em;
+        }
+        
+        /* ==================== 预览面板 ==================== */
+        .preview-panel {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .preview-panel.active {
+            display: block;
+        }
+        
+        .preview-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+        
+        .preview-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .preview-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .preview-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .preview-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .preview-table tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        /* ==================== 进度条 ==================== */
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .progress-container.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: var(--bg-light);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+        
+        /* ==================== 消息提示 ==================== */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+        
+        .message.success {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .message.error {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .message.info {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ==================== 响应式设计 ==================== */
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .lesson-selector {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <div class="header">
+            <h1>📚 識字課程 Firestore 後台管理</h1>
+            <p>將 AI 生成的 Markdown 文本解析並上傳到 Firestore 數據庫</p>
+        </div>
+        
+        <!-- 课程选择 -->
+        <div class="card">
+            <div class="lesson-selector">
+                <label for="lessonSelect">選擇課程：</label>
+                <select id="lessonSelect">
+                    <option value="">請選擇課程</option>
+                    <option value="11">識字 11</option>
+                    <option value="12">識字 12</option>
+                    <option value="13">識字 13</option>
+                    <option value="14">識字 14</option>
+                    <option value="15">識字 15</option>
+                    <option value="16">識字 16</option>
+                    <option value="17">識字 17</option>
+                    <option value="18">識字 18</option>
+                    <option value="19">識字 19</option>
+                    <option value="20">識字 20</option>
+                    <option value="21">識字 21</option>
+                    <option value="22">識字 22</option>
+                    <option value="23">識字 23</option>
+                    <option value="24">識字 24</option>
+                    <option value="25">識字 25</option>
+                </select>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="button-group">
+                <button class="btn btn-primary" id="parseBtn">
+                    📥 解析 Markdown
+                </button>
+                <button class="btn btn-secondary" id="previewBtn" disabled>
+                    👁️ 預覽數據
+                </button>
+                <button class="btn btn-accent" id="uploadBtn" disabled>
+                    💾 上傳到 Firestore
+                </button>
+                <button class="btn btn-secondary" id="exportBtn" disabled>
+                    📤 導出 Markdown
+                </button>
+            </div>
+            
+            <!-- Markdown 输入区域 -->
+            <h2>Markdown 輸入區域</h2>
+            <textarea 
+                id="markdownInput" 
+                class="markdown-editor" 
+                placeholder="請在此處粘貼 AI 生成的 Markdown 文本...
+
+範例格式：
+## 识字11 - 字表
+
+| # | 字 | 拼音 | 英文 | literacy_sentence |
+|----|----|----|----|----|
+| 1 | 通 | tōng | open; notify; connect | 例句... |
+
+## 识字11 - 词组
+
+| 词组 | 拼音 | 英文 |
+|----|----|---|
+| 通过 | tōngguò | by; pass through |
+
+## 识字11 - 语法
+
+**规则1** (中文说明)
+| 英文翻译
+
+## 识字11 - 练习
+
+**填空题**
+1. 题目_A__B__C__D_？| 答案：B | 词：词语
+
+**选择题**
+1. 题目？| 答案：D | A.选|B.选|C.选|D.选
+
+**对话**
+1. 问：句子 | 答：句子"
+            ></textarea>
+        </div>
+        
+        <!-- 处理结果显示 -->
+        <div class="card">
+            <h2>處理結果</h2>
+            <div id="statusPanel" class="status-panel">
+                <div class="status-item info">
+                    <span class="status-icon">ℹ️</span>
+                    <span>等待解析 Markdown 文本...</span>
+                </div>
+            </div>
+            
+            <!-- 进度条 -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%">0%</div>
+                </div>
+                <div id="progressText" class="progress-text">準備中...</div>
+            </div>
+        </div>
+        
+        <!-- 预览面板 -->
+        <div id="previewPanel" class="card preview-panel">
+            <h2>數據預覽</h2>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== Firebase 配置 ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMDTDwDP0mEXwgJdwsXVMB2IFi9Q5zfyU",
+            authDomain: "shizi-with-elisa.firebaseapp.com",
+            projectId: "shizi-with-elisa",
+            storageBucket: "shizi-with-elisa.firebasestorage.app",
+            messagingSenderId: "46368268308",
+            appId: "1:46368268308:web:5847aeb7b239b16d624701"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        auth.signInAnonymously();
+        
+        // ==================== 全局变量 ====================
+        let parsedData = {
+            vocabulary: [],
+            phrases: [],
+            grammar: [],
+            exercises: []
+        };
+        
+        let currentLessonId = null;
+        
+        // ==================== DOM 元素 ====================
+        const lessonSelect = document.getElementById('lessonSelect');
+        const markdownInput = document.getElementById('markdownInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const previewBtn = document.getElementById('previewBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const statusPanel = document.getElementById('statusPanel');
+        const previewPanel = document.getElementById('previewPanel');
+        const previewContent = document.getElementById('previewContent');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // ==================== 事件监听 ====================
+        lessonSelect.addEventListener('change', (e) => {
+            currentLessonId = e.target.value;
+            if (currentLessonId) {
+                loadLessonData(currentLessonId);
+            }
+        });
+        
+        parseBtn.addEventListener('click', handleParse);
+        previewBtn.addEventListener('click', handlePreview);
+        uploadBtn.addEventListener('click', handleUpload);
+        exportBtn.addEventListener('click', handleExport);
+        
+        // ==================== Markdown 解析函数 ====================
+        function parseMarkdown(markdown) {
+            const result = {
+                vocabulary: [],
+                phrases: [],
+                grammar: [],
+                exercises: []
+            };
+            
+            // 解析字表（支持多種標題格式）
+            const vocabMatch = markdown.match(/##\s*识字\d+\s*-\s*字表\s*\n([\s\S]*?)(?=##|$)/i) || 
+                              markdown.match(/##\s*字表\s*\n([\s\S]*?)(?=##|$)/i);
+            if (vocabMatch) {
+                result.vocabulary = parseVocabularyTable(vocabMatch[1]);
+            }
+            
+            // 解析词组（支持多種標題格式）
+            const phrasesMatch = markdown.match(/##\s*识字\d+\s*-\s*词组\s*\n([\s\S]*?)(?=##|$)/i) || 
+                                markdown.match(/##\s*词组\s*\n([\s\S]*?)(?=##|$)/i);
+            if (phrasesMatch) {
+                result.phrases = parsePhrasesTable(phrasesMatch[1]);
+            }
+            
+            // 解析语法（支持多種標題格式）
+            const grammarMatch = markdown.match(/##\s*识字\d+\s*-\s*语法\s*\n([\s\S]*?)(?=##|$)/i) || 
+                                markdown.match(/##\s*语法\s*\n([\s\S]*?)(?=##|$)/i);
+            if (grammarMatch) {
+                result.grammar = parseGrammar(grammarMatch[1]);
+            }
+            
+            // 解析练习（支持多種標題格式）
+            const exercisesMatch = markdown.match(/##\s*识字\d+\s*-\s*练习\s*\n([\s\S]*?)(?=##|$)/i) || 
+                                   markdown.match(/##\s*练习\s*\n([\s\S]*?)(?=##|$)/i);
+            
+            if (exercisesMatch && exercisesMatch[1]) {
+                // 有完整的練習標題和內容
+                result.exercises = parseExercises(exercisesMatch[1]);
+            } else if (markdown.match(/(?:^|\n)###\s*(?:选择题|填空题|对话)/i)) {
+                // 如果沒有完整的標題，但檢測到練習子標題（可能是只貼了練習部分）
+                // 直接解析整個 markdown
+                result.exercises = parseExercises(markdown);
+            }
+            
+            return result;
+        }
+        
+        // 解析字表
+        function parseVocabularyTable(text) {
+            const vocab = [];
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            for (const line of lines) {
+                if (!line.includes('|') || line.startsWith('|----')) continue;
+                
+                const cells = line.split('|').map(c => c.trim()).filter(c => c);
+                if (cells.length >= 4) {
+                    vocab.push({
+                        character: cells[1] || '',
+                        meaning: `${cells[2] || ''}|${cells[3] || ''}`, // pinyin|english
+                        literacy_sentence: cells[4] || ''
+                    });
+                }
+            }
+            
+            return vocab;
+        }
+        
+        // 解析词组
+        function parsePhrasesTable(text) {
+            const phrases = [];
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            for (const line of lines) {
+                if (!line.includes('|') || line.startsWith('|----')) continue;
+                
+                const cells = line.split('|').map(c => c.trim()).filter(c => c);
+                if (cells.length >= 3) {
+                    phrases.push({
+                        content: cells[0] || '',
+                        pinyin: cells[1] || '',
+                        meaning: cells[2] || ''
+                    });
+                }
+            }
+            
+            return phrases;
+        }
+        
+        // 解析语法
+        function parseGrammar(text) {
+            const grammar = [];
+            const lessonId = currentLessonId || '';
+            
+            // 匹配 **规则X** (中文) | 英文 格式
+            const ruleRegex = /\*\*规则(\d+)\*\*\s*\(([^)]+)\)\s*\|\s*(.+)/g;
+            let match;
+            
+            while ((match = ruleRegex.exec(text)) !== null) {
+                grammar.push({
+                    lesson_id: lessonId,
+                    subtype: 'rule',
+                    chinese: match[2].trim(),
+                    english: match[3].trim()
+                });
+            }
+            
+            // 也支持 **规则X** (中文)\n| 英文 格式（換行分隔）
+            const lines = text.split('\n');
+            let currentRule = null;
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                const ruleMatch = line.match(/\*\*规则(\d+)\*\*\s*\(([^)]+)\)/);
+                if (ruleMatch) {
+                    if (currentRule) {
+                        grammar.push(currentRule);
+                    }
+                    currentRule = {
+                        lesson_id: lessonId,
+                        subtype: 'rule',
+                        chinese: ruleMatch[2].trim(),
+                        english: ''
+                    };
+                } else if (currentRule && line.startsWith('|')) {
+                    currentRule.english = line.replace(/^\|\s*/, '').trim();
+                    grammar.push(currentRule);
+                    currentRule = null;
+                }
+            }
+            if (currentRule) {
+                grammar.push(currentRule);
+            }
+            
+            return grammar;
+        }
+        
+        // 解析练习
+        function parseExercises(text) {
+            const exercises = [];
+            let currentSubtype = null;
+            
+            // 按行處理，保留空行以便檢測題目結束
+            const lines = text.split('\n');
+            let currentExercise = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // 检测子类型（支持兩種格式：### 填空题 或 **填空题**）
+                if (line.match(/^###\s*填空题/i) || line.match(/^\*\*填空题\*\*/i)) {
+                    // 保存上一個練習
+                    if (currentExercise) {
+                        exercises.push(currentExercise);
+                        currentExercise = null;
+                    }
+                    currentSubtype = 'fill_blank';
+                    continue;
+                } else if (line.match(/^###\s*选择题/i) || line.match(/^\*\*选择题\*\*/i)) {
+                    // 保存上一個練習
+                    if (currentExercise) {
+                        exercises.push(currentExercise);
+                        currentExercise = null;
+                    }
+                    currentSubtype = 'multiple_choice';
+                    continue;
+                } else if (line.match(/^###\s*对话/i) || line.match(/^\*\*对话\*\*/i)) {
+                    // 保存上一個練習
+                    if (currentExercise) {
+                        exercises.push(currentExercise);
+                        currentExercise = null;
+                    }
+                    currentSubtype = 'dialogue';
+                    continue;
+                }
+                
+                // 跳過空行（但保留當前練習狀態）
+                if (!line) {
+                    continue;
+                }
+                
+                // 檢測新格式：**题目1**: 或 **题目1**:
+                // 支持中文冒號和英文冒號
+                const newFormatMatch = line.match(/\*\*题目\s*(\d+)\s*\*\*\s*[：:]\s*(.+)/);
+                if (newFormatMatch) {
+                    // 如果有未完成的練習，先保存
+                    if (currentExercise) {
+                        exercises.push(currentExercise);
+                    }
+                    // 開始新練習
+                    currentExercise = {
+                        subtype: currentSubtype || 'fill_blank',
+                        content: newFormatMatch[2].trim(),
+                        answer: '',
+                        options: ''
+                    };
+                    continue;
+                }
+                
+                // 檢測舊格式：1. 題目|答案|選項
+                const oldFormatMatch = line.match(/^\d+\.\s*(.+)/);
+                if (oldFormatMatch) {
+                    // 如果有未完成的練習，先保存
+                    if (currentExercise) {
+                        exercises.push(currentExercise);
+                    }
+                    
+                    const parts = line.split('|').map(p => p.trim());
+                    let content = oldFormatMatch[1];
+                    let answer = '';
+                    let options = '';
+                    
+                    if (currentSubtype === 'fill_blank' || currentSubtype === 'multiple_choice') {
+                        // 從管道符分隔的格式中提取
+                        if (parts.length >= 2) {
+                            content = parts[0].replace(/^\d+\.\s*/, '');
+                            answer = parts[1].replace(/答案[：:位置]*\s*/, '') || '';
+                        }
+                        if (parts.length >= 3) {
+                            if (currentSubtype === 'multiple_choice') {
+                                // 选择题：选项可能是 A.选|B.选|C.选|D.选 格式
+                                options = parts.slice(2).join('|');
+                            } else {
+                                // 填空题：可能是 词：词语 或 填空词：词语 格式
+                                options = parts[2].replace(/(词|填空词)[：:]\s*/, '');
+                            }
+                        }
+                    } else if (currentSubtype === 'dialogue') {
+                        const question = parts[1] ? parts[1].replace(/问[：:]\s*/, '') : '';
+                        const response = parts[2] ? parts[2].replace(/答[：:]\s*/, '') : '';
+                        content = `${question}|${response}`;
+                    }
+                    
+                    currentExercise = {
+                        subtype: currentSubtype || 'fill_blank',
+                        content: content,
+                        answer: answer,
+                        options: options
+                    };
+                    continue;
+                }
+                
+                // 處理新格式的答案信息（列表格式）
+                // 只有在有當前練習時才處理
+                if (currentExercise) {
+                    // 答案位置：C 或 答案：D（支持中文和英文冒號）
+                    const answerMatch = line.match(/^-\s*答案(位置)?\s*[：:]\s*(.+)/);
+                    if (answerMatch) {
+                        currentExercise.answer = answerMatch[2].trim();
+                        continue;
+                    }
+                    
+                    // 填空词：被 或 词：词语（支持中文和英文冒號）
+                    const wordMatch = line.match(/^-\s*(填空)?词\s*[：:]\s*(.+)/);
+                    if (wordMatch) {
+                        currentExercise.options = wordMatch[2].trim();
+                        continue;
+                    }
+                    
+                    // 选项：A.能|B.可以|C.想|D.会（支持中文和英文冒號）
+                    const optionsMatch = line.match(/^-\s*选项\s*[：:]\s*(.+)/);
+                    if (optionsMatch) {
+                        currentExercise.options = optionsMatch[1].trim();
+                        continue;
+                    }
+                }
+            }
+            
+            // 保存最後一個練習
+            if (currentExercise) {
+                exercises.push(currentExercise);
+            }
+            
+            return exercises;
+        }
+        
+        // ==================== 处理函数 ====================
+        function handleParse() {
+            const markdown = markdownInput.value.trim();
+            
+            if (!markdown) {
+                showMessage('請輸入 Markdown 文本', 'error');
+                return;
+            }
+            
+            if (!currentLessonId) {
+                showMessage('請先選擇課程', 'error');
+                return;
+            }
+            
+            try {
+                parsedData = parseMarkdown(markdown);
+                
+                // 更新状态显示
+                updateStatusPanel(parsedData);
+                
+                // 启用按钮
+                previewBtn.disabled = false;
+                uploadBtn.disabled = false;
+                exportBtn.disabled = false;
+                
+                showMessage('✅ Markdown 解析成功！', 'success');
+            } catch (error) {
+                showMessage('❌ 解析失敗：' + error.message, 'error');
+                console.error(error);
+            }
+        }
+        
+        function handlePreview() {
+            if (parsedData.vocabulary.length === 0 && 
+                parsedData.phrases.length === 0 && 
+                parsedData.grammar.length === 0 && 
+                parsedData.exercises.length === 0) {
+                showMessage('沒有數據可預覽', 'error');
+                return;
+            }
+            
+            let html = '';
+            
+            // 字表预览
+            if (parsedData.vocabulary.length > 0) {
+                html += '<div class="preview-section">';
+                html += '<h3>📝 字表 (' + parsedData.vocabulary.length + ' 項)</h3>';
+                html += '<table class="preview-table">';
+                html += '<tr><th>#</th><th>字</th><th>拼音</th><th>英文</th><th>例句</th></tr>';
+                parsedData.vocabulary.forEach((item, idx) => {
+                    const [pinyin, english] = item.meaning.split('|');
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${item.character}</td>
+                        <td>${pinyin || ''}</td>
+                        <td>${english || ''}</td>
+                        <td>${item.literacy_sentence || ''}</td>
+                    </tr>`;
+                });
+                html += '</table></div>';
+            }
+            
+            // 词组预览
+            if (parsedData.phrases.length > 0) {
+                html += '<div class="preview-section">';
+                html += '<h3>📚 詞組 (' + parsedData.phrases.length + ' 項)</h3>';
+                html += '<table class="preview-table">';
+                html += '<tr><th>#</th><th>詞組</th><th>拼音</th><th>英文</th></tr>';
+                parsedData.phrases.forEach((item, idx) => {
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${item.content}</td>
+                        <td>${item.pinyin}</td>
+                        <td>${item.meaning}</td>
+                    </tr>`;
+                });
+                html += '</table></div>';
+            }
+            
+            // 语法预览
+            if (parsedData.grammar.length > 0) {
+                html += '<div class="preview-section">';
+                html += '<h3>📖 語法 (' + parsedData.grammar.length + ' 項)</h3>';
+                html += '<table class="preview-table">';
+                html += '<tr><th>#</th><th>中文</th><th>英文</th></tr>';
+                parsedData.grammar.forEach((item, idx) => {
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${item.chinese}</td>
+                        <td>${item.english}</td>
+                    </tr>`;
+                });
+                html += '</table></div>';
+            }
+            
+            // 练习预览
+            if (parsedData.exercises.length > 0) {
+                html += '<div class="preview-section">';
+                html += '<h3>✏️ 練習 (' + parsedData.exercises.length + ' 項)</h3>';
+                html += '<table class="preview-table">';
+                html += '<tr><th>#</th><th>類型</th><th>題目</th><th>答案</th><th>選項</th></tr>';
+                parsedData.exercises.forEach((item, idx) => {
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${getExerciseTypeName(item.subtype)}</td>
+                        <td>${item.content}</td>
+                        <td>${item.answer}</td>
+                        <td>${item.options || ''}</td>
+                    </tr>`;
+                });
+                html += '</table></div>';
+            }
+            
+            previewContent.innerHTML = html;
+            previewPanel.classList.add('active');
+        }
+        
+        function getExerciseTypeName(subtype) {
+            const names = {
+                'fill_blank': '填空',
+                'multiple_choice': '選擇',
+                'dialogue': '對話'
+            };
+            return names[subtype] || subtype;
+        }
+        
+        async function handleUpload() {
+            if (!currentLessonId) {
+                showMessage('請先選擇課程', 'error');
+                return;
+            }
+            
+            // 檢查哪些部分有數據
+            const hasVocabulary = parsedData.vocabulary.length > 0;
+            const hasPhrases = parsedData.phrases.length > 0;
+            const hasGrammar = parsedData.grammar.length > 0;
+            const hasExercises = parsedData.exercises.length > 0;
+            
+            if (!hasVocabulary && !hasPhrases && !hasGrammar && !hasExercises) {
+                showMessage('沒有數據可上傳', 'error');
+                return;
+            }
+            
+            // 構建更新列表
+            const updateList = [];
+            if (hasVocabulary) updateList.push(`字表 (${parsedData.vocabulary.length} 項)`);
+            if (hasPhrases) updateList.push(`詞組 (${parsedData.phrases.length} 項)`);
+            if (hasGrammar) updateList.push(`語法 (${parsedData.grammar.length} 項)`);
+            if (hasExercises) updateList.push(`練習 (${parsedData.exercises.length} 項)`);
+            
+            // 確認對話框
+            const confirmMsg = `確定要更新識字 ${currentLessonId} 的以下數據？\n\n將更新：\n${updateList.join('\n')}\n\n⚠️ 注意：其他未更新的數據將保持不變`;
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            uploadBtn.disabled = true;
+            progressContainer.classList.add('active');
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+            progressText.textContent = '正在讀取現有數據...';
+            
+            try {
+                const lessonDocId = `lesson${currentLessonId}`;
+                
+                // 先讀取現有數據
+                const docRef = db.collection('lessons').doc(lessonDocId);
+                const doc = await docRef.get();
+                
+                // 獲取現有數據（如果存在）
+                let existingData = {};
+                if (doc.exists) {
+                    existingData = doc.data();
+                }
+                
+                progressText.textContent = '正在合併數據...';
+                progressFill.style.width = '50%';
+                progressFill.textContent = '50%';
+                
+                // 構建更新數據（只包含有內容的部分）
+                const dataToUpload = {};
+                
+                // 獲取最終的數據（新數據優先，否則保留現有數據）
+                const finalVocabulary = hasVocabulary ? parsedData.vocabulary : (existingData.vocabulary || []);
+                const finalPhrases = hasPhrases ? parsedData.phrases : (existingData.phrases || []);
+                const finalGrammar = hasGrammar ? parsedData.grammar : (existingData.grammar || []);
+                const finalExercises = hasExercises ? parsedData.exercises : (existingData.exercises || []);
+                
+                // 只更新有數據的部分（使用 merge: true 時，不包含的字段會保留）
+                // 注意：vocabulary, phrases, grammar, exercises 應該在根級別，不是 components 對象內
+                // 同時需要轉換數據格式以匹配 lesson.html 的期望格式
+                
+                if (hasVocabulary) {
+                    // 轉換 vocabulary 格式：從 {character, meaning: "pinyin|english", literacy_sentence}
+                    // 轉換為 {content: "字|pinyin|english", notes: "literacy_sentence"}
+                    dataToUpload.vocabulary = parsedData.vocabulary.map(item => {
+                        // 解析 meaning 字段（格式：pinyin|english）
+                        const meaningParts = (item.meaning || '').split('|').map(s => s.trim());
+                        const pinyin = meaningParts[0] || '';
+                        const english = meaningParts[1] || '';
+                        
+                        // 構建 content 字段（格式：字|pinyin|english）
+                        const content = `${item.character || ''}|${pinyin}|${english}`;
+                        
+                        return {
+                            content: content,
+                            notes: item.literacy_sentence || ''
+                        };
+                    });
+                }
+                
+                if (hasPhrases) {
+                    // 轉換 phrases 格式：從 {content: "詞組", pinyin: "pinyin", meaning: "english"}
+                    // 轉換為 {content: "詞組|pinyin|english", subtype: "phrase"}
+                    dataToUpload.phrases = parsedData.phrases.map(item => {
+                        const content = `${item.content || ''}|${item.pinyin || ''}|${item.meaning || ''}`;
+                        return {
+                            content: content,
+                            subtype: 'phrase'  // 添加 subtype 字段，讓 renderPhrases 能正確過濾
+                        };
+                    });
+                }
+                
+                if (hasGrammar) {
+                    // 轉換 grammar 格式：從 {chinese: "中文", english: "英文"}
+                    // 轉換為 {content: "中文|英文", subtype: "rule"}
+                    dataToUpload.grammar = parsedData.grammar.map(item => {
+                        const content = `${item.chinese || ''}|${item.english || ''}`;
+                        return {
+                            content: content,
+                            subtype: item.subtype || 'rule'
+                        };
+                    });
+                }
+                
+                if (hasExercises) {
+                    // exercises 格式已經正確，直接使用
+                    dataToUpload.exercises = parsedData.exercises;
+                }
+                
+                // 確保 components 是數組類型（字符部件，不是對象容器）
+                // 如果現有數據有 components 數組，保留它；如果沒有或格式錯誤，設為空數組
+                if (existingData.components && Array.isArray(existingData.components)) {
+                    // 保留現有的字符部件數組
+                    dataToUpload.components = existingData.components;
+                } else {
+                    // 如果不存在或是錯誤的對象格式，設為空數組（避免 components.map 錯誤）
+                    // 這樣可以清理之前錯誤上傳的 components 對象
+                    dataToUpload.components = [];
+                }
+                
+                // 更新 meta 數據（總是更新，因為計數可能改變）
+                dataToUpload.meta = {
+                    component_count: finalVocabulary.length + finalPhrases.length + finalGrammar.length,
+                    exercises_count: finalExercises.length,
+                    vocabulary_count: finalVocabulary.length,
+                    phrases_count: finalPhrases.length,
+                    grammar_count: finalGrammar.length,
+                    last_updated: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                progressText.textContent = '正在上傳到 Firestore...';
+                progressFill.style.width = '75%';
+                progressFill.textContent = '75%';
+                
+                // 上傳到 Firestore（使用 merge: true 確保只更新指定字段）
+                await docRef.set(dataToUpload, { merge: true });
+                
+                progressFill.style.width = '100%';
+                progressFill.textContent = '100%';
+                progressText.textContent = '✅ 上傳成功！';
+                
+                // 構建成功消息
+                const successMsg = `🎉 成功更新識字 ${currentLessonId}！\n\n已更新：${updateList.join('、')}`;
+                showMessage(successMsg, 'success');
+                
+                // 更新狀態面板
+                updateStatusPanel(parsedData, true);
+                
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                    uploadBtn.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                showMessage('❌ 上傳失敗：' + error.message, 'error');
+                console.error(error);
+                uploadBtn.disabled = false;
+                progressContainer.classList.remove('active');
+            }
+        }
+        
+        function handleExport() {
+            if (parsedData.vocabulary.length === 0 && 
+                parsedData.phrases.length === 0 && 
+                parsedData.grammar.length === 0 && 
+                parsedData.exercises.length === 0) {
+                showMessage('沒有數據可導出', 'error');
+                return;
+            }
+            
+            let markdown = `## 识字${currentLessonId || 'X'} - 字表\n\n`;
+            markdown += '| # | 字 | 拼音 | 英文 | literacy_sentence |\n';
+            markdown += '|----|----|----|----|----|\n';
+            
+            parsedData.vocabulary.forEach((item, idx) => {
+                const [pinyin, english] = item.meaning.split('|');
+                markdown += `| ${idx + 1} | ${item.character} | ${pinyin || ''} | ${english || ''} | ${item.literacy_sentence || ''} |\n`;
+            });
+            
+            markdown += `\n## 识字${currentLessonId || 'X'} - 词组\n\n`;
+            markdown += '| 词组 | 拼音 | 英文 |\n';
+            markdown += '|----|----|---|\n';
+            
+            parsedData.phrases.forEach(item => {
+                markdown += `| ${item.content} | ${item.pinyin} | ${item.meaning} |\n`;
+            });
+            
+            markdown += `\n## 识字${currentLessonId || 'X'} - 语法\n\n`;
+            parsedData.grammar.forEach((item, idx) => {
+                markdown += `**规则${idx + 1}** (${item.chinese})\n`;
+                markdown += `| ${item.english}\n\n`;
+            });
+            
+            markdown += `\n## 识字${currentLessonId || 'X'} - 练习\n\n`;
+            
+            // 按类型分组练习
+            const fillBlank = parsedData.exercises.filter(e => e.subtype === 'fill_blank');
+            const multipleChoice = parsedData.exercises.filter(e => e.subtype === 'multiple_choice');
+            const dialogue = parsedData.exercises.filter(e => e.subtype === 'dialogue');
+            
+            if (fillBlank.length > 0) {
+                markdown += '**填空题**\n';
+                fillBlank.forEach((item, idx) => {
+                    markdown += `${idx + 1}. ${item.content}| 答案：${item.answer} | 词：${item.options}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            if (multipleChoice.length > 0) {
+                markdown += '**选择题**\n';
+                multipleChoice.forEach((item, idx) => {
+                    markdown += `${idx + 1}. ${item.content}| 答案：${item.answer} | ${item.options}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            if (dialogue.length > 0) {
+                markdown += '**对话**\n';
+                dialogue.forEach((item, idx) => {
+                    const [question, response] = item.content.split('|');
+                    markdown += `${idx + 1}. 问：${question || ''} | 答：${response || ''}\n`;
+                });
+            }
+            
+            // 创建下载链接
+            const blob = new Blob([markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `识字${currentLessonId || 'X'}_export.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('✅ Markdown 導出成功！', 'success');
+        }
+        
+        // ==================== 辅助函数 ====================
+        function updateStatusPanel(data, uploaded = false) {
+            let html = '';
+            
+            if (uploaded) {
+                html += '<div class="status-item success">';
+                html += '<span class="status-icon">✅</span>';
+                html += '<span>數據已成功上傳到 Firestore</span>';
+                html += '</div>';
+            }
+            
+            html += '<div class="status-item success">';
+            html += `<span class="status-icon">✅</span>`;
+            html += `<span>字表解析成功 (${data.vocabulary.length} 項)</span>`;
+            html += '</div>';
+            
+            html += '<div class="status-item success">';
+            html += `<span class="status-icon">✅</span>`;
+            html += `<span>詞組解析成功 (${data.phrases.length} 項)</span>`;
+            html += '</div>';
+            
+            html += '<div class="status-item success">';
+            html += `<span class="status-icon">✅</span>`;
+            html += `<span>語法解析成功 (${data.grammar.length} 項)</span>`;
+            html += '</div>';
+            
+            html += '<div class="status-item success">';
+            html += `<span class="status-icon">✅</span>`;
+            html += `<span>練習解析成功 (${data.exercises.length} 項)</span>`;
+            html += '</div>';
+            
+            statusPanel.innerHTML = html;
+        }
+        
+        function showMessage(text, type = 'info') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.animation = 'slideIn 0.3s reverse';
+                setTimeout(() => message.remove(), 300);
+            }, 3000);
+        }
+        
+        // ==================== 加载课程数据 ====================
+        async function loadLessonData(lessonId) {
+            try {
+                const lessonDocId = `lesson${lessonId}`;
+                const doc = await db.collection('lessons').doc(lessonDocId).get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.components) {
+                        // 如果有现有数据，可以显示提示
+                        showMessage(`已找到識字 ${lessonId} 的現有數據`, 'info');
+                    }
+                }
+            } catch (error) {
+                console.error('載入課程數據失敗：', error);
+            }
+        }
+    </script>
+</body>
+</html>
+

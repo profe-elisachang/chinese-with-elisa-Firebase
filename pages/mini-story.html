@@ -42,6 +42,10 @@
             border-radius: 24px;
             box-shadow: 0 10px 40px var(--shadow);
             padding: 60px 40px;
+        }
+
+        .container > h1,
+        .container > .message {
             text-align: center;
         }
 
@@ -79,6 +83,76 @@
             background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(8, 145, 178, 0.3);
+        }
+
+        /* ==================== Dynamic List Styles ==================== */
+        #dynamic-list-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .list-item-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .list-item-button:hover {
+            border-color: var(--primary);
+            background: var(--bg-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .list-item-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .list-item-title {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .list-item-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .list-item-arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-left: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .list-item-button:hover .list-item-arrow {
+            transform: translateX(5px);
+        }
+
+        .empty-message,
+        .error-message {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .error-message {
+            color: #dc2626;
         }
 
         /* ==================== Responsive ==================== */
@@ -174,14 +248,17 @@
 
     <!-- Main Content -->
     <div class="container">
-        <div class="icon">🎯</div>
-        <h1>Nothing Here Yet</h1>
+        <h1>Mini Story</h1>
         <p class="message">
-            Content will appear here once they are added.
+            选择一个故事开始阅读。
         </p>
+        <div id="dynamic-list-container">
+            <!-- Dynamic list will be loaded here by list-loader.js -->
+        </div>
         <a href="../index.html" class="back-link">← Back to Home</a>
     </div>
 
     <script src="../assets/js/nav-global.js"></script>
+    <script src="../assets/js/list-loader.js"></script>
 </body>
 </html>

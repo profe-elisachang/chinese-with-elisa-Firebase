@@ -1,0 +1,247 @@
+/* ==================== Mini Story 統一樣式 ==================== */
+
+/* 基礎重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 容器樣式 */
+.mini-story-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    line-height: 1.8;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* 標題樣式 */
+.mini-story-container h1 {
+    font-size: 2rem;
+    color: #1f2937;
+    margin-bottom: 30px;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 中文段落 */
+.cn {
+    font-size: 1.2rem;
+    color: #1f2937;
+    margin-bottom: 8px;
+    line-height: 1.8;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+/* 英文段落 - 預設顯示 */
+.en {
+    font-size: 1rem;
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding: 10px 15px 10px 30px;
+    border-left: 3px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 0 8px 8px 0;
+    transition: opacity 0.3s ease;
+}
+
+/* 隱藏英文功能 */
+body.hide-en .en {
+    display: none;
+}
+
+/* 高亮詞彙（HSK2+） */
+.vocab {
+    background-color: #fff9c4;
+    padding: 2px 4px;
+    border-radius: 4px;
+    cursor: help;
+    position: relative;
+    transition: background-color 0.2s, transform 0.2s;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.vocab:hover {
+    background-color: #ffeb3b;
+    transform: translateY(-1px);
+}
+
+/* 懸浮提示（Tooltip） */
+.vocab::before {
+    content: attr(data-en);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-style: normal;
+    font-weight: normal;
+}
+
+.vocab::after {
+    content: "";
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+}
+
+.vocab:hover::before,
+.vocab:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 不同 HSK 等級的顏色標記 */
+.vocab[data-hsk="2"] {
+    background-color: #dbeafe; /* 淺藍 */
+}
+
+.vocab[data-hsk="2"]:hover {
+    background-color: #93c5fd;
+}
+
+.vocab[data-hsk="3"] {
+    background-color: #fff9c4; /* 淺黃 */
+}
+
+.vocab[data-hsk="3"]:hover {
+    background-color: #ffeb3b;
+}
+
+.vocab[data-hsk="4"] {
+    background-color: #fce7f3; /* 淺粉 */
+}
+
+.vocab[data-hsk="4"]:hover {
+    background-color: #f9a8d4;
+}
+
+.vocab[data-hsk="5"] {
+    background-color: #fef3c7; /* 淺橙 */
+}
+
+.vocab[data-hsk="5"]:hover {
+    background-color: #fcd34d;
+}
+
+.vocab[data-hsk="6"] {
+    background-color: #e0e7ff; /* 淺紫 */
+}
+
+.vocab[data-hsk="6"]:hover {
+    background-color: #c7d2fe;
+}
+
+/* 切換按鈕 */
+.toggle-en-btn {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    padding: 12px 24px;
+    background: #0891b2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3);
+    transition: all 0.3s;
+    z-index: 100;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+.toggle-en-btn:hover {
+    background: #0e7490;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4);
+}
+
+.toggle-en-btn:active {
+    transform: translateY(0);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .mini-story-container {
+        padding: 20px 15px;
+    }
+    
+    .mini-story-container h1 {
+        font-size: 1.6rem;
+        padding: 15px;
+    }
+    
+    .cn {
+        font-size: 1.1rem;
+        padding: 10px 12px;
+    }
+    
+    .en {
+        font-size: 0.95rem;
+        padding: 8px 12px 8px 25px;
+    }
+    
+    .toggle-en-btn {
+        top: 60px;
+        right: 10px;
+        padding: 10px 18px;
+        font-size: 0.85rem;
+    }
+    
+    .vocab::before {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mini-story-container {
+        padding: 15px 10px;
+    }
+    
+    .cn {
+        font-size: 1rem;
+    }
+    
+    .en {
+        font-size: 0.9rem;
+    }
+    
+    .toggle-en-btn {
+        top: 50px;
+        right: 5px;
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+}
+

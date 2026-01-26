@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三枚硬币 - 中文学习故事</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            max-width: 1900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        .section {
+            margin-bottom: 35px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .pinyin {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+        .chinese {
+            font-size: 1.15em;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .spanish {
+            color: #444;
+            font-style: italic;
+            margin-bottom: 15px;
+            border-left: 3px solid #3498db;
+            padding-left: 12px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        .highlight:hover {
+            background-color: #ffeb8e;
+        }
+        .highlight:hover::after {
+            content: attr(data-translation);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 10;
+            font-size: 0.85em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .questions {
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 12px;
+        }
+        h1 {
+            text-align: center;
+            color: #2980b9;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .vocab-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .vocab-item {
+            padding: 10px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+        .part-title {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 25px 0 15px 0;
+            font-weight: bold;
+        }
+        .reading-break {
+            text-align: center;
+            margin: 25px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .pinyin-highlight {
+            background-color: #e1f5fe;
+            padding: 1px 3px;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        .pinyin-highlight:hover::after {
+            content: attr(data-translation);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 10;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <h1>三枚硬币</h1>
+    <div class="section warning">
+    <div class="chinese" style="color: #e74c3c; font-weight: bold; background-color: #fdeaea; padding: 15px; border-radius: 5px; border-left: 4px solid #e74c3c;">
+        ⚠️ 学习提示：这篇故事的综合难度大约在 HSK4 级到 HSK5 级之间，对于 HSK3 的学生来说属于"挑战级"材料。
+    </div>
+    <div class="spanish" style="color: #c0392b; font-style: normal; padding: 10px 15px; background-color: #f9f9f9; border-radius: 0 0 5px 5px;">
+        ⚠️ Advertencia: La dificultad general de esta historia está entre HSK4 y HSK5. Para estudiantes de HSK3, este material es de nivel "Desafiante".
+    </div>
+</div>
+ <div class="section">
+  <h2>阅读指南 | Reading Guide | Guía de Lectura</h2>
+    <div class="pinyin">Yí gè <span class="pinyin-highlight" data-translation="thief">xiǎotōu</span> <span class="pinyin-highlight" data-translation="pocket">kǒudài</span> lǐ zhǐyǒu sān méi <span class="pinyin-highlight" data-translation="coin">yìngbì</span>, láidào <span class="pinyin-highlight" data-translation="residential area">zhùzhái xiǎoqū</span> tōu qián. Yí gè <span class="pinyin-highlight" data-translation="little girl">xiǎo nǚhái</span> bǎ xiǎotōu dàngchéng fùmǔ de péngyou, qǐng tā jìn <span class="pinyin-highlight" data-translation="room">wū</span>, xiàng duìdài kèrén yīyàng duìdài tā.</div>
+    <div class="chinese">一个<span class="highlight" data-translation="thief">小偷</span><span class="highlight" data-translation="pocket">口袋</span>里只有三枚<span class="highlight" data-translation="coin">硬币</span>，来到<span class="highlight" data-translation="residential area">住宅小区</span>偷钱。一个<span class="highlight" data-translation="little girl">小女孩</span>把小偷当成父母的朋友，请他进<span class="highlight" data-translation="room">屋</span>，像对待客人一样对待他。</div>
+    <div class="spanish">Un <span class="highlight" data-translation="thief">ladrón</span> que solo tiene tres <span class="highlight" data-translation="coin">monedas</span> en el <span class="highlight" data-translation="pocket">bolsillo</span> va a una <span class="highlight" data-translation="residential area">zona residencial</span> para robar dinero. Una <span class="highlight" data-translation="little girl">niña pequeña</span> confunde al ladrón con un amigo de sus padres y lo invita a su casa, tratándolo como un invitado.</div>
+    
+    <div class="pinyin">Zài yǔ tiānzhēn wúxié de <span class="pinyin-highlight" data-translation="little girl">xiǎo nǚhái</span> liáotiān hòu, xiǎotōu hòuhuǐ zìjǐ de xíngwéi. Dāng <span class="pinyin-highlight" data-translation="little girl">xiǎo nǚhái</span> qù zhǎo māma shí, tā méiyǒu názǒu tā zhīdào zài <span class="pinyin-highlight" data-translation="drawer">chōutì</span> lǐ de qián jiù líkāi le fángzi.</div>
+    <div class="chinese">在与天真无邪的<span class="highlight" data-translation="little girl">小女孩</span>聊天后，小偷后悔自己的行为。当<span class="highlight" data-translation="little girl">小女孩</span>去找妈妈时，他没有拿走他知道在<span class="highlight" data-translation="drawer">抽屉</span>里的钱就离开了房子。</div>
+    <div class="spanish">Después de charlar con la inocente <span class="highlight" data-translation="little girl">niña</span>, el ladrón se arrepiente de lo que ha hecho. Sale de la casa cuando la <span class="highlight" data-translation="little girl">niña</span> va a buscar a su madre sin tomar el dinero que sabe está en un <span class="highlight" data-translation="drawer">cajón</span>.</div>
+    
+    <div class="pinyin">Zhè ge gùshi jiǎngshùle yí gè <span class="pinyin-highlight" data-translation="little girl">xiǎo nǚhái</span> de tiānzhēn huànxǐngle yí gè <span class="pinyin-highlight" data-translation="thief">xiǎotōu</span> de liángzhī.</div>
+    <div class="chinese">这个故事讲述了一个<span class="highlight" data-translation="little girl">小女孩</span>的天真唤醒了一个<span class="highlight" data-translation="thief">小偷</span>的良知。</div>
+    <div class="spanish">Esta historia trata sobre una <span class="highlight" data-translation="little girl">niña</span> cuya inocencia despierta la conciencia de un <span class="highlight" data-translation="thief">ladrón</span>.</div>
+</div>
+
+    <div class="section">
+        <h2>词汇</h2>
+        <div class="vocab-list">
+            <div class="vocab-item">
+                <div class="chinese">小偷</div>
+                <div class="pinyin">xiǎotōu</div>
+                <div class="spanish">thief</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">口袋</div>
+                <div class="pinyin">kǒudài</div>
+                <div class="spanish">pocket</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">警察</div>
+                <div class="pinyin">jǐngchá</div>
+                <div class="spanish">policeman</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">住宅小区</div>
+                <div class="pinyin">zhùzhái xiǎoqū</div>
+                <div class="spanish">residential area</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">锁</div>
+                <div class="pinyin">suǒ</div>
+                <div class="spanish">lock</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">窗户</div>
+                <div class="pinyin">chuānghu</div>
+                <div class="spanish">window</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">窗台</div>
+                <div class="pinyin">chuāngtái</div>
+                <div class="spanish">window sill</div>
+            </div>
+            <div class="vocab-item">
+                <div class="chinese">香</div>
+                <div class="pinyin">xiāng</div>
+                <div class="spanish">fragrant, scented</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>故事正文</h2>
+        
+        <div class="part-title">第一部分：小偷来到住宅小区</div>
+        
+        <div class="pinyin">Tā shì yí gè <span class="pinyin-highlight" data-translation="thief">xiǎotōu</span>.</div>
+        <div class="chinese">他是一个<span class="highlight" data-translation="thief">小偷</span>。</div>
+        <div class="spanish">Él es un ladrón.</div>
+        
+        <div class="pinyin">Tā de <span class="pinyin-highlight" data-translation="pocket">kǒudài</span> lǐ zhǐyǒu sān méi <span class="pinyin-highlight" data-translation="coin">yìngbì</span> le.</div>
+        <div class="chinese">他的<span class="highlight" data-translation="pocket">口袋</span>里只有三枚<span class="highlight" data-translation="coin">硬币</span>了。</div>
+        <div class="spanish">Solo tiene tres monedas en su bolsillo.</div>
+        
+        <div class="pinyin">Zhè liǎng tiān, <span class="pinyin-highlight" data-translation="everywhere">dàochù</span> dōu shì <span class="pinyin-highlight" data-translation="policeman">jǐngchá</span>, tā méiyǒu jīhuì tōudào qián.</div>
+        <div class="chinese">这两天，<span class="highlight" data-translation="everywhere">到处</span>都是<span class="highlight" data-translation="policeman">警察</span>，他没有机会偷到钱。</div>
+        <div class="spanish">Estos dos días, hay policías por todas partes, no tiene oportunidad de robar dinero.</div>
+        
+        <div class="pinyin">Tā xiǎng, tā yīnggāi dào <span class="pinyin-highlight" data-translation="residential area">zhùzhái xiǎoqū</span> qù kànkàn.</div>
+        <div class="chinese">他想，他应该到<span class="highlight" data-translation="residential area">住宅小区</span>去看看。</div>
+        <div class="spanish">Piensa que debería ir a la zona residencial a echar un vistazo.</div>
+        
+        <div class="pinyin">Tā láidào <span class="pinyin-highlight" data-translation="residential area">zhùzhái xiǎoqū</span>, láidào yì jiā ménqián, mén <span class="pinyin-highlight" data-translation="lock">suǒ</span>zhe, jìn bu qù.</div>
+        <div class="chinese">他来到<span class="highlight" data-translation="residential area">住宅小区</span>，来到一家门前，门<span class="highlight" data-translation="lock">锁</span>着，进不去。</div>
+        <div class="spanish">Llega a la zona residencial, llega frente a una puerta, la puerta está cerrada con llave, no puede entrar.</div>
+        
+        <div class="pinyin">Tā cóng <span class="pinyin-highlight" data-translation="window">chuānghu</span> wǎng lǐ kàn, <span class="pinyin-highlight" data-translation="window sill">chuāngtái</span> shang de huā hěn piàoliang, yě hěn <span class="pinyin-highlight" data-translation="fragrant">xiāng</span>!</div>
+        <div class="chinese">他从<span class="highlight" data-translation="window">窗户</span>往里看，<span class="highlight" data-translation="window sill">窗台</span>上的花很漂亮，也很<span class="highlight" data-translation="fragrant">香</span>！</div>
+        <div class="spanish">Mira hacia adentro a través de la ventana, las flores en el alféizar son muy bonitas, ¡y también muy fragantes!</div>
+        
+        <div class="pinyin">Tūrán, tā tīngdào yí gè <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span> de shēngyīn: "Shūshu, nǐ zhǎo shéi ya?......"</div>
+        <div class="chinese">突然，他听到一个<span class="highlight" data-translation="little girl">小姑娘</span>的声音："叔叔，你找谁呀？......"</div>
+        <div class="spanish">De repente, escucha la voz de una niña pequeña: "Tío, ¿a quién buscas?......"</div>
+        
+        <div class="pinyin">Tā kàndào yí gè chuānzhe <span class="pinyin-highlight" data-translation="dress">liányīqún</span> de <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span> zhàn zài ménkǒu, <span class="pinyin-highlight" data-translation="neck">bózi</span> shang guàzhe yì bǎ <span class="pinyin-highlight" data-translation="key">yàoshi</span>.</div>
+        <div class="chinese">他看到一个穿着<span class="highlight" data-translation="dress">连衣裙</span>的<span class="highlight" data-translation="little girl">小姑娘</span>站在门口，<span class="highlight" data-translation="neck">脖子</span>上<span class="highlight" data-translation="hang">挂</span>着一把<span class="highlight" data-translation="key">钥匙</span>。</div>
+        <div class="spanish">Ve a una niña pequeña con vestido parada en la puerta, con una llave colgada del cuello.</div>
+        
+        <div class="pinyin">Kěnéng yǒu wǔ-liù suì.</div>
+        <div class="chinese">可能有五六岁。</div>
+        <div class="spanish">Probablemente tiene cinco o seis años.</div>
+        
+        <div class="reading-break">--- 休息一下 / Take a break ---</div>
+        
+        <div class="part-title">第二部分：小偷进入小姑娘的家</div>
+        
+        <div class="pinyin">"Wǒ... zhǎo... zhǎo nǐ bà." Tā shuō.</div>
+        <div class="chinese">"我...找...找你爸。"他说。</div>
+        <div class="spanish">"Yo... busco... busco a tu papá." Dice él.</div>
+        
+        <div class="pinyin">"Wǒ bà shàngbān qù le." <span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> huídá.</div>
+        <div class="chinese">"我爸上班去了。"<span class="highlight" data-translation="little girl">小姑娘</span>回答。</div>
+        <div class="spanish">"Mi papá se fue a trabajar." Responde la niña.</div>
+        
+        <div class="pinyin">"Nǐ mā ne?" Tā yòu wèn.</div>
+        <div class="chinese">"你妈呢？"他又问。</div>
+        <div class="spanish">"¿Y tu mamá?" Pregunta él de nuevo.</div>
+        
+        <div class="pinyin">"Wǒ māma gěi xuéshēngmen <span class="pinyin-highlight" data-translation="give a lesson">shàng kè</span> qù le, shūshu, qǐng jìn <span class="pinyin-highlight" data-translation="room">wū</span> ba."</div>
+        <div class="chinese">"我妈妈给学生们<span class="highlight" data-translation="give a lesson">上课</span>去了，叔叔，请进<span class="highlight" data-translation="room">屋</span>吧。"</div>
+        <div class="spanish">"Mi mamá fue a dar clase a los estudiantes, tío, por favor entra a la casa."</div>
+        
+        <div class="pinyin"><span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> yòng <span class="pinyin-highlight" data-translation="key">yàoshi</span> kāi mén, mén kāi le.</div>
+        <div class="chinese"><span class="highlight" data-translation="little girl">小姑娘</span>用<span class="highlight" data-translation="key">钥匙</span>开门，门开了。</div>
+        <div class="spanish">La niña abre la puerta con la llave, la puerta se abre.</div>
+        
+        <div class="pinyin"><span class="pinyin-highlight" data-translation="thief">Xiǎotōu</span> xīnlǐ xiǎng, zhège <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span> yǒudiǎn <span class="pinyin-highlight" data-translation="foolish, stupid">shǎ</span> ba.</div>
+        <div class="chinese"><span class="highlight" data-translation="thief">小偷</span>心里想，这个<span class="highlight" data-translation="little girl">小姑娘</span>有点儿<span class="highlight" data-translation="foolish, stupid">傻</span>吧。</div>
+        <div class="spanish">El ladrón piensa para sí mismo, esta niña es un poco tonta.</div>
+        
+        <div class="pinyin">Tā gēnzhe <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span> jìnle <span class="pinyin-highlight" data-translation="room">wū</span>, zuò zài <span class="pinyin-highlight" data-translation="sofa">shāfā</span> shang.</div>
+        <div class="chinese">他跟着<span class="highlight" data-translation="little girl">小姑娘</span>进了<span class="highlight" data-translation="room">屋</span>，坐在<span class="highlight" data-translation="sofa">沙发</span>上。</div>
+        <div class="spanish">Sigue a la niña a la habitación, se sienta en el sofá.</div>
+        
+        <div class="pinyin">"Shūshu, nǐ hē shuǐ ma?" <span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> gěi tā dào chá.</div>
+        <div class="chinese">"叔叔，你喝水吗？"<span class="highlight" data-translation="little girl">小姑娘</span>给他倒茶。</div>
+        <div class="spanish">"Tío, ¿quieres beber agua?" La niña le sirve té.</div>
+        
+        <div class="pinyin">Tā juéde hěn kě, tā hēle sān dà kǒu cháshuǐ.</div>
+        <div class="chinese">他觉得很渴，他喝了三大口茶水。</div>
+        <div class="spanish">Se siente muy sediento, bebe tres grandes sorbos de té.</div>
+        
+        <div class="pinyin">"Shūshu, qǐng chōu yān." <span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> bǎ yì zhī <span class="pinyin-highlight" data-translation="cigarette">xiāngyān</span> sòng dào tā shǒu lǐ.</div>
+        <div class="chinese">"叔叔，请抽烟。"<span class="highlight" data-translation="little girl">小姑娘</span>把一支<span class="highlight" data-translation="cigarette">香烟</span>送到他手里。</div>
+        <div class="spanish">"Tío, por favor fuma." La niña le entrega un cigarrillo.</div>
+        
+        <div class="pinyin">Tā fēicháng <span class="pinyin-highlight" data-translation="comfortable">shūfu</span> de chōule yì kǒu yān.</div>
+        <div class="chinese">他非常<span class="highlight" data-translation="comfortable">舒服</span>地抽了一口烟。</div>
+        <div class="spanish">Fuma un cigarrillo muy cómodamente.</div>
+        
+        <div class="pinyin">"Shūshu, nǐ chī táng ma?" <span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> cóng <span class="pinyin-highlight" data-translation="drawer">chōutì</span> lǐ náchū yí gè piàoliang de <span class="pinyin-highlight" data-translation="candy">tángguǒ</span> hé, náchū yí kuài táng gěi tā.</div>
+        <div class="chinese">"叔叔，你吃糖吗？"<span class="highlight" data-translation="little girl">小姑娘</span>从<span class="highlight" data-translation="drawer">抽屉</span>里拿出一个漂亮的<span class="highlight" data-translation="candy">糖果</span>盒，拿出一块糖给他。</div>
+        <div class="spanish">"Tío, ¿comes dulces?" La niña saca una bonita caja de dulces del cajón, le da un caramelo.</div>
+        
+        <div class="pinyin">Tā jiēguò táng, fàng dào zuǐ lǐ, hǎo tián a.</div>
+        <div class="chinese">他接过糖，放到嘴里，好甜啊。</div>
+        <div class="spanish">Toma el caramelo, lo pone en su boca, qué dulce.</div>
+        
+        <div class="reading-break">--- 休息一下 / Take a break ---</div>
+        
+        <div class="part-title">第三部分：小偷的心理变化</div>
+        
+        <div class="pinyin"><span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> zài guān <span class="pinyin-highlight" data-translation="drawer">chōutì</span> shí, tā tūrán kànjiànle yí yàng dōngxi — qián!</div>
+        <div class="chinese"><span class="highlight" data-translation="little girl">小姑娘</span>在关<span class="highlight" data-translation="drawer">抽屉</span>时，他突然看见了一样东西——钱！</div>
+        <div class="spanish">Cuando la niña cierra el cajón, de repente ve algo — ¡dinero!</div>
+        
+        <div class="pinyin">Zhè zhèng shì tā xiǎng yào de.</div>
+        <div class="chinese">这正是他想要的。</div>
+        <div class="spanish">Esto es exactamente lo que quiere.</div>
+        
+        <div class="pinyin">Tā yǎnjīng kànzhe qián, xīnlǐ xiǎng tā kěyǐ ná zhèxiē qián mǎi <span class="pinyin-highlight" data-translation="beer">píjiǔ</span>, <span class="pinyin-highlight" data-translation="sausage">xiāngcháng</span>, <span class="pinyin-highlight" data-translation="roast chicken">shāo jī</span>...</div>
+        <div class="chinese">他眼睛看着钱，心里想他可以拿这些钱买<span class="highlight" data-translation="beer">啤酒</span>、<span class="highlight" data-translation="sausage">香肠</span>、<span class="highlight" data-translation="roast chicken">烧鸡</span>......</div>
+        <div class="spanish">Mira el dinero con los ojos, piensa que puede tomar este dinero para comprar cerveza, salchichas, pollo asado...</div>
+        
+        <div class="pinyin">Tā xiǎngqǐle nàme duō hǎochī de dōngxi.</div>
+        <div class="chinese">他想起了那么多好吃的东西。</div>
+        <div class="spanish">Recuerda tantas cosas deliciosas.</div>
+        
+        <div class="pinyin">"Shūshu nǐ zuòzhe, wǒ qù zhǎo māma.</div>
+        <div class="chinese">"叔叔你坐着，我去找妈妈。</div>
+        <div class="spanish">"Tío, quédate sentado, voy a buscar a mamá.</div>
+        
+        <div class="pinyin">Zhè shì yì běn <span class="pinyin-highlight" data-translation="The Stories of Lei Feng">Léi Fēng Shūshu de Gùshi</span>, nǐ kànshū ba." Tā shuō.</div>
+        <div class="chinese">这是一本<span class="highlight" data-translation="The Stories of Lei Feng">《雷锋叔叔的故事》</span>，你看书吧。"她说。</div>
+        <div class="spanish">Este es un libro de 'Las historias del tío Lei Feng', lee el libro." Dice ella.</div>
+        
+        <div class="pinyin">"Nǐ xiāngxìn wǒ ma?" Tā wèn <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span>.</div>
+        <div class="chinese">"你相信我吗？"他问<span class="highlight" data-translation="little girl">小姑娘</span>。</div>
+        <div class="spanish">"¿Confías en mí?" Le pregunta a la niña.</div>
+        
+        <div class="pinyin">"Wèi shénme bù xiāngxìn nǐ ne?"</div>
+        <div class="chinese">"为什么不相信你呢？"</div>
+        <div class="spanish">"¿Por qué no confiar en ti?"</div>
+        
+        <div class="pinyin"><span class="pinyin-highlight" data-translation="little girl">Xiǎogūniang</span> shuōwán, chàngzhe tiàozhe, pǎole chūqù...</div>
+        <div class="chinese"><span class="highlight" data-translation="little girl">小姑娘</span>说完，唱着跳着，跑了出去......</div>
+        <div class="spanish">La niña termina de hablar, cantando y saltando, sale corriendo...</div>
+        
+        <div class="pinyin">Tā zhàn qǐlái zǒu dào <span class="pinyin-highlight" data-translation="drawer">chōutì</span> qiánmiàn.</div>
+        <div class="chinese">他站起来，走到<span class="highlight" data-translation="drawer">抽屉</span>前面。</div>
+        <div class="spanish">Se levanta y camina hacia el cajón.</div>
+        
+        <div class="pinyin">Hěnduō cì tā liǎn bù hóng xīn bú tiào, jiù bǎ biéren de qián fàng jìn zìjǐ de <span class="pinyin-highlight" data-translation="pocket">kǒudài</span> lǐ,</div>
+        <div class="chinese">很多次他脸不红心不跳，就把别人的钱放进自己的<span class="highlight" data-translation="pocket">口袋</span>里，</div>
+        <div class="spanish">Muchas veces su rostro no se sonrojaba y su corazón no latía rápido, simplemente ponía el dinero de otros en su propio bolsillo,</div>
+        
+        <div class="pinyin">kěshì jīntiān tā liǎn hóngle, xīn tiàole, shǒu dǒule...</div>
+        <div class="chinese">可是今天他脸红了，心跳了，手抖了......</div>
+        <div class="spanish">pero hoy su rostro se sonroja, su corazón late rápido, su mano tiembla...</div>
+        
+        <div class="pinyin">Tā xiǎng zìjǐ yě yǒu guò <span class="pinyin-highlight" data-translation="beautiful">měihǎo</span> de <span class="pinyin-highlight" data-translation="childhood">tóngnián</span>, dàizhe <span class="pinyin-highlight" data-translation="red scarf">hóng lǐngjīn</span>, zhàn zài <span class="pinyin-highlight" data-translation="Young Pioneer's flag">duìqí</span> xià...</div>
+        <div class="chinese">他想自己也有过<span class="highlight" data-translation="beautiful">美好</span>的<span class="highlight" data-translation="childhood">童年</span>，戴着<span class="highlight" data-translation="red scarf">红领巾</span>，站在<span class="highlight" data-translation="Young Pioneer's flag">队旗</span>下......</div>
+        <div class="spanish">Piensa que él también tuvo una infancia hermosa, usando pañuelo rojo, parado bajo la bandera de los Jóvenes Pioneros...</div>
+        
+        <div class="pinyin">Tā <span class="pinyin-highlight" data-translation="heart warmed">xīntóu yí rè</span>, tā hǎoxiàng dì-yī cì dǒngdéle rén de <span class="pinyin-highlight" data-translation="value">jiàzhí</span> hé <span class="pinyin-highlight" data-translation="dignity">zūnyán</span>.</div>
+        <div class="chinese">他<span class="highlight" data-translation="heart warmed">心头一热</span>，他好像第一次懂得了人的<span class="highlight" data-translation="value">价值</span>和<span class="highlight" data-translation="dignity">尊严</span>。</div>
+        <div class="spanish">Su corazón se calienta, parece que por primera vez comprende el valor y la dignidad humana.</div>
+        
+        <div class="pinyin">Tā yòu zuò huí <span class="pinyin-highlight" data-translation="sofa">shāfā</span> shang. Gǎndào hěn lèi.</div>
+        <div class="chinese">他又坐回<span class="highlight" data-translation="sofa">沙发</span>上。感到很累。</div>
+        <div class="spanish">Vuelve a sentarse en el sofá. Se siente muy cansado.</div>
+        
+        <div class="pinyin">Tā <span class="pinyin-highlight" data-translation="never">cónglái méiyǒu</span>  gǎndào zhèyàng lèi guò.</div>
+        <div class="chinese">他<span class="highlight" data-translation="never">从来没有</span>感到这样累过。</div>
+        <div class="spanish">Nunca se había sentido tan cansado.</div>
+        
+        <div class="pinyin">Jīntiān tā dǒngdéle hěnduō shìqíng, tā dǒngdéle zěnyàng zuò rén, zhè shì qián <span class="pinyin-highlight" data-translation="cannot be bought">mǎi bu lái</span> de,</div>
+        <div class="chinese">今天他懂得了很多事情，他懂得了怎样做人，这是钱<span class="highlight" data-translation="cannot be bought">买不来</span>的，</div>
+        <div class="spanish">Hoy comprende muchas cosas, comprende cómo ser una buena persona, esto no se puede comprar con dinero,</div>
+        
+        <div class="pinyin">yě shì tā <span class="pinyin-highlight" data-translation="forever">yǒngyuǎn</span> wàng buliǎo de.</div>
+        <div class="chinese">也是他<span class="highlight" data-translation="forever">永远</span>忘不了的。</div>
+        <div class="spanish">y es algo que nunca podrá olvidar.</div>
+        
+        <div class="reading-break">--- 休息一下 / Take a break ---</div>
+        
+        <div class="part-title">第四部分：小偷的决定</div>
+        
+        <div class="pinyin">Tā méiyǒu dǎkāi <span class="pinyin-highlight" data-translation="drawer">chōutì</span>, méiyǒu ná <span class="pinyin-highlight" data-translation="drawer">chōutì</span> lǐmiàn de qián.</div>
+        <div class="chinese">他没有打开<span class="highlight" data-translation="drawer">抽屉</span>，没有拿<span class="highlight" data-translation="drawer">抽屉</span>里面的钱。</div>
+        <div class="spanish">No abre el cajón, no toma el dinero dentro del cajón.</div>
+        
+        <div class="pinyin">Tā xiǎng, wǒ bù yīnggāi ná biéren de qián.</div>
+        <div class="chinese">他想，我不应该拿别人的钱。</div>
+        <div class="spanish">Piensa, no debería tomar el dinero de otros.</div>
+        
+        <div class="pinyin">Wǒ hēle sān kǒu cháshuǐ, chōule yì zhī <span class="pinyin-highlight" data-translation="cigarette">xiāngyān</span>, chīle yí kuài táng.</div>
+        <div class="chinese">我喝了三口茶水，抽了一支<span class="highlight" data-translation="cigarette">香烟</span>，吃了一块糖。</div>
+        <div class="spanish">Bebí tres sorbos de té, fumé un cigarrillo, comí un caramelo.</div>
+        
+        <div class="pinyin">"Wǒ yīnggāi gěi <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span> qián." Kěshì tā <span class="pinyin-highlight" data-translation="pocket">kǒudài</span> lǐ zhǐyǒu sān méi <span class="pinyin-highlight" data-translation="coin">yìngbì</span>, liǎng gè wǔ fēn de <span class="pinyin-highlight" data-translation="coin">yìngbì</span> hé yí gè yī fēn de <span class="pinyin-highlight" data-translation="coin">yìngbì</span>, yīgòng yī jiǎo yī fēn qián.</div>
+        <div class="chinese">"我应该给<span class="highlight" data-translation="little girl">小姑娘</span>钱。"可是他<span class="highlight" data-translation="pocket">口袋</span>里只有三枚<span class="highlight" data-translation="coin">硬币</span>，两个5分的<span class="highlight" data-translation="coin">硬币</span>和一个1分的<span class="highlight" data-translation="coin">硬币</span>，一共1角1分钱。</div>
+        <div class="spanish">"Debería darle dinero a la niña." Pero en su bolsillo solo tiene tres monedas, dos monedas de 5 centavos y una moneda de 1 centavo, en total 11 centavos.</div>
+        
+        <div class="pinyin">Tā de qián tài shǎo le, dànshì tā juéde yīnggāi bǎ zhè sān méi <span class="pinyin-highlight" data-translation="coin">yìngbì</span> gěi zhège <span class="pinyin-highlight" data-translation="little girl">xiǎogūniang</span>.</div>
+        <div class="chinese">他的钱太少了，但是他觉得应该把这三枚<span class="highlight" data-translation="coin">硬币</span>给这个<span class="highlight" data-translation="little girl">小姑娘</span>。</div>
+        <div class="spanish">Su dinero es muy poco, pero siente que debería dar estas tres monedas a esta niña.</div>
+        
+        <div class="pinyin">Tā cóng <span class="pinyin-highlight" data-translation="pocket">kǒudài</span> lǐ náchū sān méi <span class="pinyin-highlight" data-translation="coin">yìngbì</span> fàng zài zhuōzi shang.</div>
+        <div class="chinese">他从<span class="highlight" data-translation="pocket">口袋</span>里拿出三枚<span class="highlight" data-translation="coin">硬币</span>放在桌子上。</div>
+        <div class="spanish">Saca tres monedas de su bolsillo y las coloca sobre la mesa.</div>
+        
+        <div class="pinyin">Ránhòu, tā zǒu chūle <span class="pinyin-highlight" data-translation="room">fángjiān</span>, guānshàngle mén...</div>
+        <div class="chinese">然后，他走出了<span class="highlight" data-translation="room">房间</span>，关上了门......</div>
+        <div class="spanish">Luego, sale de la habitación, cierra la puerta...</div>
+    </div>
+
+
+
+    <div class="section note">
+        <p>这个故事根据王胜山的微型小说《三枚硬币》简化，选自《微型小说选》，呼和浩特晚报报社编辑，内蒙古人民出版社，呼和浩特，1984年。</p>
+        <p>This story has been simplified according to Wang Sheng-shan's mini-story, "Three Coins (三枚硬币)", published in the Mini-story Selection (微型小说选), edited by the General Office of the Hohhot Evening Newspaper (呼和浩特晚报报社), Inner Mongolia People's Publishing House (内蒙古人民出版社), Hohhot, 1984.</p>
+    </div>
+</body>
+</html>
