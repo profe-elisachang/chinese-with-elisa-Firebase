@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多 + Adjective</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --light: #ecf0f1;
+            --dark: #7f8c8d;
+            --english: #2980b9;
+            --spanish: #27ae60;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--primary);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+        }
+        
+        h1, h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 8px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 5px;
+        }
+        
+        .example {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: white;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .pinyin {
+            color: var(--dark);
+            font-style: italic;
+        }
+        
+        .translation.en {
+            color: var(--english);
+            font-weight: 500;
+        }
+        
+        .translation.es {
+            color: var(--spanish);
+            font-weight: 500;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .product-card {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .answer {
+            display: none;
+            padding: 15px;
+            margin-top: 10px;
+            background: white;
+            border: 1px dashed var(--secondary);
+            border-radius: 5px;
+        }
+        
+        .toggle-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .category-hint {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h2>语法点</h2>
+        <p>
+            <strong>“多 + 形容词”结构：</strong><br>
+            “多”放在形容词前用来询问程度，如长度、高度、年龄等。例如：<br>
+            <span class="translation en">"多" is placed before an adjective to ask about the degree of something (such as length, height, age, etc.). For example:</span><br>
+            <em>你家离学校有多远？</em><br>
+            <span class="pinyin">Nǐ jiā lí xuéxiào yǒu duō yuǎn?</span><br>
+            <span class="translation en">How far is your home from the school?</span>
+        </p>
+        <p>
+            <strong>常见问法：</strong><br> 
+            <span class="translation en">Common questions:</span><br>   
+            多大 (how big/how old), 多长 (how long), 多高 (how tall/high), 多重zhòng (how heavy), 多宽kuān (how wide), 多远 (how far)        
+        </p>
+        <ul>
+            <li>他(有)多高？<br>
+                <span class="pinyin">Tā duō gāo?</span><br>
+                <span class="translation en">How tall is he?</span>
+            </li>
+            <li>这里的楼有多高？<br>
+                <span class="pinyin">Zhèlǐ de lóu yǒu duō gāo?</span><br>
+                <span class="translation en">How tall are the buildings here?</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>例句</h2>
+        
+        <div class="example">
+            <strong>"有" + quantitative structure (+length, width, height, weight, distance)</strong><br>
+            <ol>
+                <table style="width:100%; background:#f9f9f9; border-collapse:collapse; margin:10px 0;">
+                  <thead>
+                    <tr style="background:#e0ecfa;">
+                      <th style="padding:8px; border:1px solid #ccc;">问句</th>
+                      <th style="padding:8px; border:1px solid #ccc;">答句</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        你的孩子今年（多）大？<br>
+                        <span class="pinyin">Nǐ de háizi jīnnián yǒu duōdà?</span><br>
+                        <span class="translation en">How old is your child this year?</span>
+                      </td>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        他今年五岁。<br>
+                        <span class="pinyin">Tā jīnnián wǔ suì.</span><br>
+                        <span class="translation en">He is five years old this year.</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这条河(多)长？<br>
+                        <span class="pinyin">Zhè tiáo hé (duō) cháng?</span><br>
+                        <span class="translation en">How long is this river?</span>
+                      </td>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这条河(有)三百（多）公里长。<br>
+                        <span class="pinyin">Zhè tiáo hé (yǒu) sānbǎi (duō) kǒnglǐ cháng.</span><br>
+                        <span class="translation en">This river is 300 kilometers long.</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这座楼(多)高？<br>
+                        <span class="pinyin">Zhè zuò lóu (duō) gāo?</span><br>
+                        <span class="translation en">How tall is this building?</span>
+                      </td>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这座楼(有)五十米(多)高。<br>
+                        <span class="pinyin">Zhè zuò lóu (yǒu) wǔshí mǐ (duō) gāo.</span><br>
+                        <span class="translation en">This building is 50 meters tall.</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这个箱子(多)重？<br>
+                        <span class="pinyin">Zhè ge xiāngzi (duō) zhòng?</span><br>
+                        <span class="translation en">How heavy is this box?</span>
+                      </td>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        这个箱子(有)十公斤(多)重。<br>
+                        <span class="pinyin">Zhè ge xiāngzi (yǒu) shí gōngjīn (duō) zhòng.</span><br>
+                        <span class="translation en">This box is ten kilograms.</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        机场离这里(多)远？<br>
+                        <span class="pinyin">Jīchǎng lí zhèlǐ (duō) yuǎn?</span><br>
+                        <span class="translation en">How far is the airport?</span>
+                      </td>
+                      <td style="padding:8px; border:1px solid #ccc;">
+                        机场离这里二十公里远。<br>
+                        <span class="pinyin">Jīchǎng lí zhèlǐ èrshí gōnglǐ yuǎn.</span><br>
+                        <span class="translation en">The airport is 20 kilometers away.</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+        
+
+    
+</html>
