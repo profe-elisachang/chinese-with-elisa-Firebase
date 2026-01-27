@@ -411,6 +411,12 @@
             transform: scale(0.98);
             border-color: var(--primary-dark);
             box-shadow: 0 0 0 2px var(--primary-dark);
+            transition: none !important;  /* 拖拽時禁用過渡動畫 */
+        }
+
+        /* 其他卡片平滑讓位 */
+        .form-item-card:not(.dragging) {
+            transition: transform 0.2s ease-out;
         }
 
         .form-item-card.collapsed .form-item-content {
@@ -1152,6 +1158,10 @@
         let lastClickTime = 0;
         let isDragging = false;
         let dragHandlersInitialized = false;
+        let dragOffsetY = 0;  // 滑鼠在卡片內的 Y 偏移
+        let dragInitialRect = null;  // 初始卡片位置信息
+        let currentPlaceholder = null;  // 當前 placeholder 元素
+        let lastAfterElement = null;  // 上次插入位置，避免重複計算
 
         // ==================== 工具函數 ====================
         function showMessage(text, type = 'info') {
@@ -1923,21 +1933,51 @@
             
             const mouseY = e.clientY;
             
-            // 找到應該插入的位置
+            // 讓卡片在 Y 軸跟隨滑鼠
+            if (dragInitialRect) {
+                draggedElement.style.position = 'fixed';
+                draggedElement.style.left = dragInitialRect.left + 'px';
+                draggedElement.style.top = (mouseY - dragOffsetY) + 'px';
+                draggedElement.style.width = dragInitialRect.width + 'px';
+                draggedElement.style.zIndex = '9999';
+                draggedElement.style.pointerEvents = 'none';
+            }
+            
+            // 找到應該插入的位置（基於滑鼠 Y 位置）
             const afterElement = getDragAfterElement(container, mouseY);
-            const dragging = document.querySelector('.dragging');
             
-            if (!dragging) return;
+            // 如果插入位置沒有改變，不需要更新
+            if (afterElement === lastAfterElement) return;
+            lastAfterElement = afterElement;
             
-            if (afterElement == null) {
-                // 移動到最後
-                const lastChild = container.lastElementChild;
-                if (dragging !== lastChild) {
-                    container.appendChild(dragging);
+            // 移除舊的 placeholder
+            if (currentPlaceholder) {
+                currentPlaceholder.remove();
+                currentPlaceholder = null;
+            }
+            
+            // 重置所有卡片的 transform
+            container.querySelectorAll('.form-item-card:not(.dragging)').forEach(card => {
+                card.style.transform = '';
+            });
+            
+            // 創建新的 placeholder
+            if (dragInitialRect) {
+                currentPlaceholder = document.createElement('div');
+                currentPlaceholder.style.height = dragInitialRect.height + 'px';
+                currentPlaceholder.style.marginBottom = 'var(--spacing-md)';
+                currentPlaceholder.className = 'drag-placeholder';
+                currentPlaceholder.style.opacity = '0.3';
+                currentPlaceholder.style.border = '2px dashed var(--primary-color)';
+                currentPlaceholder.style.borderRadius = 'var(--radius-lg)';
+                
+                if (afterElement == null) {
+                    // 移動到最後
+                    container.appendChild(currentPlaceholder);
+                } else {
+                    // 插入到指定位置
+                    container.insertBefore(currentPlaceholder, afterElement);
                 }
-            } else if (dragging !== afterElement) {
-                // 插入到指定位置
-                container.insertBefore(dragging, afterElement);
             }
         }
         
@@ -1952,33 +1992,57 @@
             const container = document.getElementById('editPanelContent');
             if (!container) return;
             
+            // 恢復卡片的正常定位
+            draggedElement.style.position = '';
+            draggedElement.style.left = '';
+            draggedElement.style.top = '';
+            draggedElement.style.width = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.pointerEvents = '';
+            
+            // 重置其他卡片的 transform
+            container.querySelectorAll('.form-item-card:not(.dragging)').forEach(card => {
+                card.style.transform = '';
+            });
+            
+            // 如果有 placeholder，將卡片插入到 placeholder 的位置
+            if (currentPlaceholder) {
+                const placeholderIndex = Array.from(container.children).indexOf(currentPlaceholder);
+                container.insertBefore(draggedElement, currentPlaceholder);
+                currentPlaceholder.remove();
+                currentPlaceholder = null;
+                
+                // 計算新位置
+                const newIndex = Array.from(container.children).indexOf(draggedElement);
+                const oldIndex = parseInt(draggedElement.dataset.index);
+                
+                console.log('位置變化:', { oldIndex, newIndex });
+                
+                if (oldIndex !== newIndex && newIndex >= 0) {
+                    // 更新資料順序
+                    const [movedItem] = currentData.splice(oldIndex, 1);
+                    currentData.splice(newIndex, 0, movedItem);
+                    
+                    // 更新 order
+                    currentData.forEach((item, i) => {
+                        item.order = i;
+                    });
+                    
+                    debounceSave();
+                    renderEditPanel();
+                    renderPreviewPanel(currentPreviewIndex >= 0 ? currentPreviewIndex : 0);
+                }
+            }
+            
             // 移除拖拽樣式
             draggedElement.classList.remove('dragging');
-            
-            // 計算新位置
-            const newIndex = Array.from(container.children).indexOf(draggedElement);
-            const oldIndex = parseInt(draggedElement.dataset.index);
-            
-            console.log('位置變化:', { oldIndex, newIndex });
-            
-            if (oldIndex !== newIndex && newIndex >= 0) {
-                // 更新資料順序
-                const [movedItem] = currentData.splice(oldIndex, 1);
-                currentData.splice(newIndex, 0, movedItem);
-                
-                // 更新 order
-                currentData.forEach((item, i) => {
-                    item.order = i;
-                });
-                
-                debounceSave();
-                renderEditPanel();
-                renderPreviewPanel(currentPreviewIndex >= 0 ? currentPreviewIndex : 0);
-            }
             
             // 重置狀態
             isDragging = false;
             draggedElement = null;
+            dragOffsetY = 0;
+            dragInitialRect = null;
+            lastAfterElement = null;
             document.body.style.userSelect = '';
             document.body.style.cursor = '';
         }
@@ -2013,6 +2077,16 @@
                     isDragging = true;
                     draggedElement = card;
                     
+                    // 記錄初始位置和偏移
+                    const cardRect = card.getBoundingClientRect();
+                    dragInitialRect = {
+                        left: cardRect.left,
+                        top: cardRect.top,
+                        width: cardRect.width,
+                        height: cardRect.height
+                    };
+                    dragOffsetY = e.clientY - cardRect.top;
+                    
                     // 添加拖拽樣式
                     card.classList.add('dragging');
                     
@@ -2045,6 +2119,15 @@
                     isDragging = true;
                     draggedElement = card;
                     
+                    // 記錄初始位置和偏移
+                    dragInitialRect = {
+                        left: cardRect.left,
+                        top: cardRect.top,
+                        width: cardRect.width,
+                        height: cardRect.height
+                    };
+                    dragOffsetY = e.clientY - cardRect.top;
+                    
                     // 添加拖拽樣式
                     card.classList.add('dragging');
                     
@@ -2056,6 +2139,7 @@
         }
 
         function getDragAfterElement(container, mouseY) {
+            // 排除拖拽中的卡片和 placeholder
             const draggableElements = [...container.querySelectorAll('.form-item-card:not(.dragging)')];
             
             return draggableElements.reduce((closest, child) => {
