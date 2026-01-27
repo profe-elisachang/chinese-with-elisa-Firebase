@@ -1926,7 +1926,7 @@ function createAdminCharacterCard(char, index) {
             
             return `
                 <div class="exercise-item" id="exercise-${index}">
-                    <div class="exercise-header">${qNum}. 填空题 - 选择正确的位置</div>
+                    <div class="exercise-header">${qNum}. 填空题 - 选择正确的位置（可多选）</div>
                     <div class="exercise-question">${question}</div>
                     <div style="margin-bottom: var(--spacing-md);">
                         <strong>填入：</strong><span style="color: var(--primary-color); font-size: var(--text-xl); margin-left: var(--spacing-sm);">${exercise.options || ''}</span>
@@ -1968,72 +1968,130 @@ function createAdminCharacterCard(char, index) {
         const selectedBlanks = {};
         
         function selectBlank(exerciseIndex, position, element) {
-            selectedBlanks[exerciseIndex] = position;
+            // 初始化為數組（如果還沒有）
+            if (!selectedBlanks[exerciseIndex]) {
+                selectedBlanks[exerciseIndex] = [];
+            }
             
-            // Clear previous selections
-            const parent = element.parentElement;
-            parent.querySelectorAll('.blank-position').forEach(el => {
-                el.classList.remove('selected');
-            });
+            // 切換選擇（如果已選中則取消，未選中則添加）
+            const index = selectedBlanks[exerciseIndex].indexOf(position);
+            if (index > -1) {
+                // 取消選擇
+                selectedBlanks[exerciseIndex].splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                // 添加選擇
+                selectedBlanks[exerciseIndex].push(position);
+                element.classList.add('selected');
+            }
             
-            // Mark current selection
-            element.classList.add('selected');
+            // 排序選中的答案位置（保持一致性）
+            selectedBlanks[exerciseIndex].sort();
         }
         
         function checkBlankAnswer(exerciseIndex, correctAnswer) {
             const resultDiv = document.getElementById(`result-${exerciseIndex}`);
             const selected = selectedBlanks[exerciseIndex];
             
-            if (!selected) {
+            if (!selected || (Array.isArray(selected) && selected.length === 0)) {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box warning';
-                resultDiv.textContent = '⚠️ 请先选择一个位置';
+                resultDiv.textContent = '⚠️ 请先选择至少一个位置';
                 return;
             }
             
-            if (selected === correctAnswer) {
+            // 將正確答案轉換為數組（支持單選 "C" 和多選 "C|D" 格式）
+            const correctAnswers = correctAnswer.includes('|') 
+                ? correctAnswer.split('|').map(a => a.trim()).sort()
+                : [correctAnswer.trim()];
+            
+            // 將選中的答案位置轉換為排序後的數組
+            const selectedAnswersArray = Array.isArray(selected) 
+                ? [...selected].sort() 
+                : [selected].sort();
+            
+            // 比較兩個數組是否相同
+            const isCorrect = correctAnswers.length === selectedAnswersArray.length &&
+                correctAnswers.every((val, idx) => val === selectedAnswersArray[idx]);
+            
+            if (isCorrect) {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box correct';
-                resultDiv.textContent = `✅ 正确！答案是 ${correctAnswer}`;
+                const answerText = correctAnswers.length > 1 
+                    ? correctAnswers.join('、') 
+                    : correctAnswers[0];
+                resultDiv.textContent = `✅ 正确！答案是 ${answerText}`;
             } else {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box incorrect';
-                resultDiv.textContent = `❌ 错误！正确答案是 ${correctAnswer}`;
+                const answerText = correctAnswers.length > 1 
+                    ? correctAnswers.join('、') 
+                    : correctAnswers[0];
+                resultDiv.textContent = `❌ 错误！正确答案是 ${answerText}`;
             }
         }
         
         function selectOption(exerciseIndex, choice, element) {
-            selectedAnswers[exerciseIndex] = choice;
+            // 初始化為數組（如果還沒有）
+            if (!selectedAnswers[exerciseIndex]) {
+                selectedAnswers[exerciseIndex] = [];
+            }
             
-            // Clear all selections
-            const parent = element.parentElement;
-            parent.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            // 切換選擇（如果已選中則取消，未選中則添加）
+            const index = selectedAnswers[exerciseIndex].indexOf(choice);
+            if (index > -1) {
+                // 取消選擇
+                selectedAnswers[exerciseIndex].splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                // 添加選擇
+                selectedAnswers[exerciseIndex].push(choice);
+                element.classList.add('selected');
+            }
             
-            // Mark current selection
-            element.classList.add('selected');
+            // 排序選中的答案（保持一致性）
+            selectedAnswers[exerciseIndex].sort();
         }
         
         function checkMultipleChoice(exerciseIndex, correctAnswer) {
             const resultDiv = document.getElementById(`result-${exerciseIndex}`);
             const selected = selectedAnswers[exerciseIndex];
             
-            if (!selected) {
+            if (!selected || (Array.isArray(selected) && selected.length === 0)) {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box warning';
-                resultDiv.textContent = '⚠️ 请先选择一个答案';
+                resultDiv.textContent = '⚠️ 请先选择至少一个答案';
                 return;
             }
             
-            if (selected === correctAnswer) {
+            // 將正確答案轉換為數組（支持單選 "B" 和多選 "B|C" 格式）
+            const correctAnswers = correctAnswer.includes('|') 
+                ? correctAnswer.split('|').map(a => a.trim()).sort()
+                : [correctAnswer.trim()];
+            
+            // 將選中的答案轉換為排序後的數組
+            const selectedAnswersArray = Array.isArray(selected) 
+                ? [...selected].sort() 
+                : [selected].sort();
+            
+            // 比較兩個數組是否相同
+            const isCorrect = correctAnswers.length === selectedAnswersArray.length &&
+                correctAnswers.every((val, idx) => val === selectedAnswersArray[idx]);
+            
+            if (isCorrect) {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box correct';
-                resultDiv.textContent = `✅ 正确！答案是 ${correctAnswer}`;
+                const answerText = correctAnswers.length > 1 
+                    ? correctAnswers.join('、') 
+                    : correctAnswers[0];
+                resultDiv.textContent = `✅ 正确！答案是 ${answerText}`;
             } else {
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result-box incorrect';
-                resultDiv.textContent = `❌ 错误！正确答案是 ${correctAnswer}`;
+                const answerText = correctAnswers.length > 1 
+                    ? correctAnswers.join('、') 
+                    : correctAnswers[0];
+                resultDiv.textContent = `❌ 错误！正确答案是 ${answerText}`;
             }
         }
         

@@ -1,60 +1,64 @@
-# Cursor 指令：识字课程 Firestore 后台管理页面
+# 识字课程 Firestore 后台管理页面 - Markdown 格式规范
 
-## 📌 项目需求概述
+## 📌 项目概述
 
-构建一个 **Firestore 后台管理页面**，用于管理"识字课程"数据库。用户可以直接粘贴 AI 生成的 Markdown 文本，系统自动解析并更新 Firestore 数据库。
+这是一个 **Firestore 后台管理页面**（`markdown-admin.html`），用于管理"识字课程"数据库。用户可以直接粘贴 AI 生成的 Markdown 文本，系统自动解析并更新 Firestore 数据库。
+
+**重要**：本文档描述的是 **AI 生成 Markdown 时应使用的格式规范**，确保生成的格式能被系统正确解析。
 
 ---
 
-## 🏗️ 技术栈
+## 🏗️ 技术实现
 
-- **前端框架**：React + TypeScript
+- **前端**：纯 HTML + JavaScript（非 React）
 - **数据库**：Firebase Firestore
-- **UI 库**：Tailwind CSS（或 Shadcn/ui）
-- **富文本编辑**：可选（Monaco Editor 或简单 Textarea）
-- **部署**：Firebase Hosting
+- **样式**：内联 CSS（设计系统）
+- **功能**：Markdown 解析、数据格式转换、Firestore 上传
 
 ---
 
 ## 📊 Firestore 数据库结构
 
+**注意**：`components` 是字符部件数组（用于显示汉字部件），**不是**包含 vocabulary/phrases 的对象容器。
+
 ```
 /lessons/{lesson_id}
-├── components
-│   ├── vocabulary: [
-│       {
-│           character: "字",
-│           meaning: "pīnyīn|english",
-│           literacy_sentence: "例句..."
-│       }
-│   ]
-│   ├── phrases: [
-│       {
-│           content: "词组",
-│           pinyin: "pīnyīn",
-│           meaning: "english"
-│       }
-│   ]
-│   ├── exercises: [
-│       {
-│           subtype: "fill_blank" | "multiple_choice" | "dialogue",
-│           content: "题目",
-│           answer: "答案",
-│           options: "A.选|B.选|C.选|D.选"
-│       }
-│   ]
-│   ├── grammar: [
-│       {
-│           lesson_id: "14",
-│           subtype: "rule",
-│           chinese: "中文说明",
-│           english: "English translation"
-│       }
-│   ]
-├── meta: {
-│    component_count: 0,
-│    exercises_count: 0
-│}
+├── components: []              // 字符部件数组（来自 studio.html/admin.html）
+├── vocabulary: [              // 根级别数组（来自 Markdown）
+│   {
+│       content: "字|pinyin|english",
+│       notes: "例句..."
+│   }
+│]
+├── phrases: [                  // 根级别数组（来自 Markdown）
+│   {
+│       content: "词组|pinyin|english",
+│       subtype: "phrase"
+│   }
+│]
+├── grammar: [                  // 根级别数组（来自 Markdown）
+│   {
+│       content: "中文|英文",
+│       subtype: "rule"
+│   }
+│]
+├── exercises: [                // 根级别数组（来自 Markdown）
+│   {
+│       subtype: "fill_blank" | "multiple_choice" | "dialogue",
+│       content: "题目",
+│       answer: "答案",
+│       options: "选项或填空词"
+│   }
+│]
+├── target_characters: []       // 目标字符数组（来自 studio.html/admin.html）
+└── meta: {
+    component_count: 0,
+    exercises_count: 0,
+    vocabulary_count: 0,
+    phrases_count: 0,
+    grammar_count: 0,
+    last_updated: timestamp
+}
 ```
 
 ---
@@ -141,186 +145,303 @@ async function updateComponent(
 
 ---
 
-## 📝 Markdown 输入格式
+## 📝 Markdown 输入格式规范
 
-用户粘贴的文本格式（由 AI 生成）：
+**AI 生成 Markdown 时必须遵循以下格式**，系统才能正确解析。
 
+### 格式要求总览
+
+1. **支持两种标题格式**：
+   - 完整格式：`## 识字X - 字表`（推荐）
+   - 简化格式：`## 字表`（也支持）
+
+2. **课程编号范围**：识字 1 到 识字 25
+
+3. **各部分可以单独提供**，不需要全部都有
+
+---
+
+### 1. 字表（Vocabulary）格式
+
+**标题格式**（二选一）：
+- `## 识字X - 字表`
+- `## 字表`
+
+**表格格式**：
 ```markdown
-## 识字11 - 字表
+## 识字15 - 字表
 
-| # | 字 | 拼音 | 英文 | literacy_sentence |
+| # | 字 | 拼音 | 英文 | notes|
 |----|----|----|----|----|
-| 1 | 通 | tōng | open; notify; connect | 例句... |
-| 2 | 过 | guò | pass; fault | 例句... |
+| 1 | 通 | tōng | open; notify; connect | 詞組... |
+| 2 | 过 | guò | pass; fault | 詞組... |
+literacy_sentence 
+```
 
-## 识字11 - 词组
+**字段说明**：
+- `#`：序号（可选，系统自动编号）
+- `字`：汉字
+- `拼音`：拼音（必填）
+- `英文`：英文释义（必填）
+- `notes`：生字词组范例或备注（可选）
+- `literacy_sentence`：例句/重点句（必填）
+
+---
+
+### 2. 词组（Phrases）格式
+
+**标题格式**（二选一）：
+- `## 识字X - 词组`
+- `## 词组`
+
+**表格格式**：
+```markdown
+## 识字15 - 词组
 
 | 词组 | 拼音 | 英文 |
 |----|----|---|
 | 通过 | tōngguò | by; pass through |
+| 一般 | yībān | generally; usually |
+```
 
-## 识字11 - 语法
+**字段说明**：
+- `词组`：中文词组
+- `拼音`：拼音（必填）
+- `英文`：英文释义（必填）
 
-**规则1** (中文说明)
-| 英文翻译
+---
 
-## 识字11 - 练习
+### 3. 语法（Grammar）格式
+
+**标题格式**（二选一）：
+- `## 识字X - 语法`
+- `## 语法`
+
+**格式一**（推荐，同一行）：
+```markdown
+## 识字15 - 语法
+
+**规则1** (能愿动词"会"的用法举例) | Can-wish verb "会" usage examples
+**规则2** (被动语态"被"的用法) | Passive voice "被" usage
+```
+
+**格式二**（换行格式，也支持）：
+```markdown
+## 识字15 - 语法
+
+**规则1** (能愿动词"会"的用法举例)
+| Can-wish verb "会" usage examples
+
+**规则2** (被动语态"被"的用法)
+| Passive voice "被" usage
+```
+
+**字段说明**：
+- `**规则X**`：规则编号（X 为数字）
+- `(中文说明)`：中文语法说明（必填）
+- `| 英文翻译`：英文翻译（必填，可用 `|` 分隔或换行）
+
+---
+
+### 4. 练习（Exercises）格式
+
+**标题格式**（三选一）：
+- `## 识字X - 练习`（完整格式）
+- `## 练习`（简化格式）
+- 直接以 `### 选择题` 开始（仅练习部分）
+
+#### 4.1 填空题格式
+
+**新格式**（推荐，更易读）：
+```markdown
+## 识字15 - 练习
+
+### 填空题
+
+**题目1**: 他_A_说，昨天_B_他_C_他的同学_D_打了。
+- 答案位置：C
+- 填空词：被
+
+**题目2**: 张老师_A_我_B_去商店_C_买_D_两个本子。
+- 答案位置：A
+- 填空词：让
+```
+
+**旧格式**（也支持）：
+```markdown
+## 识字15 - 练习
 
 **填空题**
-1. 题目_A__B__C__D_？| 答案：B | 词：词语
+1. 他_A_说，昨天_B_他_C_他的同学_D_打了。| 答案位置：C | 填空词：被
+2. 张老师_A_我_B_去商店_C_买_D_两个本子。| 答案位置：A | 填空词：让
+```
 
+#### 4.2 选择题格式
+
+**新格式**（推荐，更易读）：
+```markdown
+### 选择题
+
+**题目1**: 她___开汽车，不过，开得不太好。
+- 答案：D
+- 选项：A.能|B.可以|C.想|D.会
+
+**题目2**: 如果我们不懂，老师___我们问她。
+- 答案：B
+- 选项：A.被|B.让|C.叫|D.说
+```
+
+**旧格式**（也支持）：
+```markdown
 **选择题**
-1. 题目？| 答案：D | A.选|B.选|C.选|D.选
+1. 她___开汽车，不过，开得不太好。| 答案：D | A.能|B.可以|C.想|D.会
+2. 如果我们不懂，老师___我们问她。| 答案：B | A.被|B.让|C.叫|D.说
+```
 
-**对话**
-1. 问：句子 | 答：句子
+#### 4.3 对话格式
+
+```markdown
+### 对话
+
+**题目1**: 问：你好吗？| 答：我很好，谢谢。
+**题目2**: 问：今天天气怎么样？| 答：今天天气很好。
+```
+
+**字段说明**：
+- `### 填空题` / `### 选择题` / `### 对话`：子类型标题（必填）
+- `**题目X**:`：题目编号和内容（必填）
+- `- 答案位置：X` 或 `- 答案：X`：答案位置或答案（必填）
+- `- 填空词：词语`：填空题的填空词（填空题必填）
+- `- 选项：A.选|B.选|C.选|D.选`：选择题的选项（选择题必填，用 `|` 分隔）
+
+---
+
+### 完整示例
+
+```markdown
+## 识字15 - 字表
+
+| # | 字 | 拼音 | 英文 |  notes|
+|----|----|----|----|----|
+| 1 | 通 | tōng | open; notify; connect | 通过 |
+| 2 | 过 | guò | pass; fault |  |
+literacy_sentence
+
+## 识字15 - 词组
+
+| 词组 | 拼音 | 英文 |
+|----|----|---|
+| 通过 | tōngguò | by; pass through |
+| 一般 | yībān | generally; usually |
+
+## 识字15 - 语法
+
+**规则1** (能愿动词"会"的用法举例) | Can-wish verb "会" usage examples
+**规则2** (被动语态"被"的用法) | Passive voice "被" usage
+
+## 识字15 - 练习
+
+### 填空题
+
+**题目1**: 他_A_说，昨天_B_他_C_他的同学_D_打了。
+- 答案位置：C
+- 填空词：被
+
+**题目2**: 张老师_A_我_B_去商店_C_买_D_两个本子。
+- 答案位置：A
+- 填空词：让
+
+### 选择题
+
+**题目1**: 她___开汽车，不过，开得不太好。
+- 答案：D
+- 选项：A.能|B.可以|C.想|D.会
+
+**题目2**: 如果我们不懂，老师___我们问她。
+- 答案：B
+- 选项：A.被|B.让|C.叫|D.说
 ```
 
 ---
 
-## 🚀 实现步骤（给 Cursor 的顺序）
+## 🎯 给 AI 的指令模板
 
-### Phase 1: 项目初始化
-```
-1. 创建 React + TypeScript 项目
-2. 配置 Firebase SDK
-3. 设置 Tailwind CSS
-4. 创建文件夹结构：
-   ├── components/
-   ├── hooks/
-   ├── services/
-   ├── types/
-   └── utils/
-```
+当需要 AI 生成 Markdown 格式的课程数据时，使用以下指令：
 
-### Phase 2: 核心解析逻辑
 ```
-1. 实现 Markdown 表格解析器
-2. 实现字表解析函数
-3. 实现词组解析函数
-4. 实现语法解析函数
-5. 实现练习题解析函数
-6. 创建 ParsedData TypeScript 接口
-```
+请根据以下格式规范，为"识字X"课程生成 Markdown 格式的数据。
 
-### Phase 3: Firestore 集成
-```
-1. 初始化 Firebase 认证
-2. 实现数据上传函数
-3. 实现数据获取函数
-4. 实现错误处理
-5. 添加加载状态管理
-```
+课程编号：识字X（X 为 1-25 之间的数字）
 
-### Phase 4: UI 开发
-```
-1. 创建主页面布局
-2. 实现课程选择器
-3. 实现 Markdown 输入框
-4. 实现预览面板
-5. 实现上传按钮
-6. 实现状态消息显示
-7. 添加成功/失败提示
-```
+必须包含的部分：
+1. 字表（Vocabulary）
+2. 词组（Phrases）
+3. 识字句 literacy_sentence
+4. 语法（Grammar）
+5. 练习（Exercises）
 
-### Phase 5: 测试 & 优化
-```
-1. 测试 Markdown 解析准确性
-2. 测试 Firestore 数据保存
-3. 测试错误处理
-4. 优化性能
-5. 美化 UI
+格式要求：
+- 使用本文档中定义的格式规范
+- 标题使用完整格式：## 识字X - 字表
+- 练习使用新格式（推荐）：### 选择题 + **题目X**: + 列表格式答案
+- 确保所有必填字段都有值
+- 表格格式要正确（包含表头分隔线）
+
+请生成完整的 Markdown 文本，可以直接粘贴到管理页面使用。
 ```
 
 ---
 
-## 📋 给 Cursor 的代码生成清单
+## ⚠️ 重要注意事项
 
-### 文件清单
-```
-src/
-├── types/
-│   ├── firestore.ts          // Firestore 类型定义
-│   ├── parsed-data.ts        // 解析数据类型
-│   └── components.ts         // UI 组件类型
-├── utils/
-│   ├── markdown-parser.ts    // Markdown 解析器
-│   ├── table-parser.ts       // 表格解析器
-│   └── validators.ts         // 数据验证
-├── services/
-│   ├── firestore.ts          // Firestore 操作
-│   └── firebase-config.ts    // Firebase 初始化
-├── hooks/
-│   ├── useLesson.ts          // 课程数据 hook
-│   └── useMarkdownParse.ts   // Markdown 解析 hook
-├── components/
-│   ├── LessonSelector.tsx    // 课程选择器
-│   ├── MarkdownEditor.tsx    // Markdown 编辑器
-│   ├── PreviewPanel.tsx      // 预览面板
-│   ├── UploadButton.tsx      // 上传按钮
-│   └── StatusMessage.tsx     // 状态消息
-├── pages/
-│   └── Dashboard.tsx         // 主页面
-└── App.tsx
-```
+### 1. 数据格式转换
+
+系统会自动将 Markdown 格式转换为 Firestore 格式：
+- **字表**：`{character, meaning, literacy_sentence}` → `{content: "字|pinyin|english", notes: "literacy_sentence"}`
+- **词组**：`{content, pinyin, meaning}` → `{content: "词组|pinyin|english", subtype: "phrase"}`
+- **语法**：`{chinese, english}` → `{content: "中文|英文", subtype: "rule"}`
+- **练习**：格式保持不变
+
+### 2. 部分更新功能
+
+- 可以只上传部分数据（例如只上传词组）
+- 系统会智能合并，不会覆盖其他未更新的数据
+- 例如：只上传词组时，字表、语法、练习数据保持不变
+
+### 3. 课程选择范围
+
+- 支持识字 1 到识字 25
+- 下拉菜单包含所有课程选项
+
+### 4. 格式兼容性
+
+- 支持新旧两种格式（新格式更易读，推荐使用）
+- 标题格式灵活：支持 `## 识字X - 字表` 或 `## 字表`
+- 练习可以单独提供（不需要 `## 识字X - 练习` 标题）
 
 ---
 
-## 🔐 Firebase 配置（告诉 Cursor）
+## 📚 使用流程
 
-```typescript
-// 需要你提供的环境变量
-REACT_APP_FIREBASE_API_KEY=xxx
-REACT_APP_FIREBASE_AUTH_DOMAIN=xxx
-REACT_APP_FIREBASE_PROJECT_ID=xxx
-REACT_APP_FIREBASE_STORAGE_BUCKET=xxx
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=xxx
-REACT_APP_FIREBASE_APP_ID=xxx
-```
+1. **选择课程**：从下拉菜单选择识字 1-25
+2. **粘贴 Markdown**：将 AI 生成的 Markdown 文本粘贴到输入框
+3. **解析数据**：点击"解析 Markdown"按钮
+4. **预览数据**：点击"预览数据"查看解析结果（可选）
+5. **上传数据**：点击"上传到 Firestore"保存数据
+6. **验证结果**：在前台页面（lesson.html）查看显示效果
 
 ---
 
-## ✅ 成功标准
+## ✅ 验证清单
 
-页面完成时应该能：
+生成 Markdown 后，请检查：
 
-- ✅ 从下拉菜单选择课程（识字11、12、13...）
-- ✅ 粘贴 Markdown 格式的课程数据
-- ✅ 实时预览解析结果
-- ✅ 一键上传到 Firestore（保存或更新）
-- ✅ 显示上传结果（成功/失败）
-- ✅ 支持导出当前课程数据为 Markdown
-- ✅ 错误处理（数据验证、网络错误等）
-
----
-
-## 💡 可选增强功能
-
-- 批量导入多个课程
-- 数据备份与恢复
-- Markdown 模板生成
-- 数据验证规则自定义
-- 版本历史记录
-- 权限管理（角色控制）
-- 数据搜索与筛选
-
----
-
-## 🎯 给 Cursor 的最终指令
-
-```
-请根据以上需求，为我构建一个 Firestore 后台管理页面。
-
-关键要求：
-1. React + TypeScript + Tailwind CSS
-2. Firebase Firestore 数据库
-3. Markdown 表格解析器
-4. 粘贴 Markdown → 自动上传 Firestore
-5. 友好的 UI 和错误提示
-6. 完整的类型定义（TypeScript）
-
-从 Phase 1 开始，逐步实现。
-```
+- [ ] 标题格式正确（`## 识字X - 字表` 或简化格式）
+- [ ] 表格格式正确（包含表头分隔线 `|----|----|----|`）
+- [ ] 所有必填字段都有值（拼音、英文等）
+- [ ] 练习格式正确（新格式或旧格式都可以）
+- [ ] 语法规则格式正确（`**规则X** (中文) | 英文`）
+- [ ] 没有多余的空白行或格式错误
 
 ---
 

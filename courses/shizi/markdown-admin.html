@@ -525,7 +525,8 @@
             vocabulary: [],
             phrases: [],
             grammar: [],
-            exercises: []
+            exercises: [],
+            literacy_sentence: ''
         };
         
         let currentLessonId = null;
@@ -563,7 +564,8 @@
                 vocabulary: [],
                 phrases: [],
                 grammar: [],
-                exercises: []
+                exercises: [],
+                literacy_sentence: ''
             };
             
             // 解析字表（支持多種標題格式）
@@ -571,6 +573,13 @@
                               markdown.match(/##\s*字表\s*\n([\s\S]*?)(?=##|$)/i);
             if (vocabMatch) {
                 result.vocabulary = parseVocabularyTable(vocabMatch[1]);
+            }
+            
+            // 解析識字句（支持多種標題格式）
+            const literacyMatch = markdown.match(/##\s*识字\d+\s*-\s*识字句\s*\n([\s\S]*?)(?=##|$)/i) || 
+                                 markdown.match(/##\s*识字句\s*\n([\s\S]*?)(?=##|$)/i);
+            if (literacyMatch) {
+                result.literacy_sentence = parseLiteracySentence(literacyMatch[1]);
             }
             
             // 解析词组（支持多種標題格式）
@@ -611,12 +620,53 @@
             for (const line of lines) {
                 if (!line.includes('|') || line.startsWith('|----')) continue;
                 
-                const cells = line.split('|').map(c => c.trim()).filter(c => c);
-                if (cells.length >= 4) {
+                // 不要過濾空字符串，保留所有欄位以正確處理索引
+                const cells = line.split('|').map(c => c.trim());
+                
+                // 跳過表頭行（通常包含"字"、"拼音"等關鍵字）
+                if (cells.some(c => c === '字' || c === '拼音' || c === '英文' || c === 'notes' || c === '#' || c === 'literacy_sentence')) {
+                    continue;
+                }
+                
+                // 處理表格格式：| 字 | 拼音 | 英文 | notes |
+                // cells[0] = "" (開頭的 |)
+                // cells[1] = 字
+                // cells[2] = 拼音
+                // cells[3] = 英文
+                // cells[4] = notes
+                
+                // 或者沒有開頭 | 的格式：字 | 拼音 | 英文 | notes
+                // cells[0] = 字
+                // cells[1] = 拼音
+                // cells[2] = 英文
+                // cells[3] = notes
+                
+                let character = '';
+                let pinyin = '';
+                let english = '';
+                let notes = '';
+                
+                // 判斷是否有開頭的 |
+                if (cells[0] === '' && cells.length >= 5) {
+                    // 格式：| 字 | 拼音 | 英文 | notes |
+                    character = cells[1] || '';
+                    pinyin = cells[2] || '';
+                    english = cells[3] || '';
+                    notes = cells[4] || '';
+                } else if (cells.length >= 3) {
+                    // 格式：字 | 拼音 | 英文 | notes（沒有開頭的 |）
+                    character = cells[0] || '';
+                    pinyin = cells[1] || '';
+                    english = cells[2] || '';
+                    notes = cells[3] || '';
+                }
+                
+                // 至少要有字、拼音、英文才能添加
+                if (character && pinyin && english) {
                     vocab.push({
-                        character: cells[1] || '',
-                        meaning: `${cells[2] || ''}|${cells[3] || ''}`, // pinyin|english
-                        literacy_sentence: cells[4] || ''
+                        character: character,
+                        meaning: `${pinyin}|${english}`, // pinyin|english
+                        literacy_sentence: notes // notes 欄位存到 literacy_sentence（向後兼容）
                     });
                 }
             }
@@ -632,17 +682,65 @@
             for (const line of lines) {
                 if (!line.includes('|') || line.startsWith('|----')) continue;
                 
-                const cells = line.split('|').map(c => c.trim()).filter(c => c);
-                if (cells.length >= 3) {
+                // 不要過濾空字符串，保留所有欄位以正確處理索引
+                const cells = line.split('|').map(c => c.trim());
+                
+                // 跳過表頭行
+                if (cells.some(c => c === '词组' || c === '拼音' || c === '英文')) {
+                    continue;
+                }
+                
+                // 處理表格格式：| 词组 | 拼音 | 英文 |
+                // cells[0] = "" (開頭的 |)
+                // cells[1] = 词组
+                // cells[2] = 拼音
+                // cells[3] = 英文
+                
+                // 或者沒有開頭 | 的格式：词组 | 拼音 | 英文
+                // cells[0] = 词组
+                // cells[1] = 拼音
+                // cells[2] = 英文
+                
+                let content = '';
+                let pinyin = '';
+                let meaning = '';
+                
+                // 判斷是否有開頭的 |
+                if (cells[0] === '' && cells.length >= 4) {
+                    // 格式：| 词组 | 拼音 | 英文 |
+                    content = cells[1] || '';
+                    pinyin = cells[2] || '';
+                    meaning = cells[3] || '';
+                } else if (cells.length >= 3) {
+                    // 格式：词组 | 拼音 | 英文（沒有開頭的 |）
+                    content = cells[0] || '';
+                    pinyin = cells[1] || '';
+                    meaning = cells[2] || '';
+                }
+                
+                // 至少要有詞組、拼音、英文才能添加
+                if (content && pinyin && meaning) {
                     phrases.push({
-                        content: cells[0] || '',
-                        pinyin: cells[1] || '',
-                        meaning: cells[2] || ''
+                        content: content,
+                        pinyin: pinyin,
+                        meaning: meaning
                     });
                 }
             }
             
             return phrases;
+        }
+        
+        // 解析識字句
+        function parseLiteracySentence(text) {
+            // 識字句是純文本段落，去除標題和空行
+            const lines = text.split('\n')
+                .map(line => line.trim())
+                .filter(line => line && !line.startsWith('##') && !line.startsWith('#'))
+                .join(' ')
+                .trim();
+            
+            return lines;
         }
         
         // 解析语法
@@ -867,12 +965,21 @@
             if (parsedData.vocabulary.length === 0 && 
                 parsedData.phrases.length === 0 && 
                 parsedData.grammar.length === 0 && 
-                parsedData.exercises.length === 0) {
+                parsedData.exercises.length === 0 &&
+                !parsedData.literacy_sentence) {
                 showMessage('沒有數據可預覽', 'error');
                 return;
             }
             
             let html = '';
+            
+            // 識字句預覽
+            if (parsedData.literacy_sentence && parsedData.literacy_sentence.trim()) {
+                html += '<div class="preview-section">';
+                html += '<h3>📖 識字句</h3>';
+                html += `<div style="padding: 15px; background: white; border-radius: 6px; line-height: 1.8; font-size: 1.1em;">${parsedData.literacy_sentence}</div>`;
+                html += '</div>';
+            }
             
             // 字表预览
             if (parsedData.vocabulary.length > 0) {
@@ -968,8 +1075,9 @@
             const hasPhrases = parsedData.phrases.length > 0;
             const hasGrammar = parsedData.grammar.length > 0;
             const hasExercises = parsedData.exercises.length > 0;
+            const hasLiteracySentence = parsedData.literacy_sentence && parsedData.literacy_sentence.trim().length > 0;
             
-            if (!hasVocabulary && !hasPhrases && !hasGrammar && !hasExercises) {
+            if (!hasVocabulary && !hasPhrases && !hasGrammar && !hasExercises && !hasLiteracySentence) {
                 showMessage('沒有數據可上傳', 'error');
                 return;
             }
@@ -977,6 +1085,7 @@
             // 構建更新列表
             const updateList = [];
             if (hasVocabulary) updateList.push(`字表 (${parsedData.vocabulary.length} 項)`);
+            if (hasLiteracySentence) updateList.push(`識字句`);
             if (hasPhrases) updateList.push(`詞組 (${parsedData.phrases.length} 項)`);
             if (hasGrammar) updateList.push(`語法 (${parsedData.grammar.length} 項)`);
             if (hasExercises) updateList.push(`練習 (${parsedData.exercises.length} 項)`);
@@ -1072,6 +1181,11 @@
                     dataToUpload.exercises = parsedData.exercises;
                 }
                 
+                // 上傳識字句（根級別字段）
+                if (hasLiteracySentence) {
+                    dataToUpload.literacy_sentence = parsedData.literacy_sentence.trim();
+                }
+                
                 // 確保 components 是數組類型（字符部件，不是對象容器）
                 // 如果現有數據有 components 數組，保留它；如果沒有或格式錯誤，設為空數組
                 if (existingData.components && Array.isArray(existingData.components)) {
@@ -1141,6 +1255,12 @@
                 const [pinyin, english] = item.meaning.split('|');
                 markdown += `| ${idx + 1} | ${item.character} | ${pinyin || ''} | ${english || ''} | ${item.literacy_sentence || ''} |\n`;
             });
+            
+            // 識字句
+            if (parsedData.literacy_sentence && parsedData.literacy_sentence.trim()) {
+                markdown += `\n## 识字${currentLessonId || 'X'} - 识字句\n\n`;
+                markdown += parsedData.literacy_sentence + '\n';
+            }
             
             markdown += `\n## 识字${currentLessonId || 'X'} - 词组\n\n`;
             markdown += '| 词组 | 拼音 | 英文 |\n';
@@ -1216,6 +1336,13 @@
             html += `<span class="status-icon">✅</span>`;
             html += `<span>字表解析成功 (${data.vocabulary.length} 項)</span>`;
             html += '</div>';
+            
+            if (data.literacy_sentence && data.literacy_sentence.trim()) {
+                html += '<div class="status-item success">';
+                html += `<span class="status-icon">✅</span>`;
+                html += `<span>識字句解析成功</span>`;
+                html += '</div>';
+            }
             
             html += '<div class="status-item success">';
             html += `<span class="status-icon">✅</span>`;
