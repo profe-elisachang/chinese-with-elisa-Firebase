@@ -36,13 +36,82 @@
 
         /* ==================== Container ==================== */
         .container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 60px auto;
             background: var(--bg-card);
             border-radius: 24px;
             box-shadow: 0 10px 40px var(--shadow);
             padding: 60px 40px;
             text-align: center;
+        }
+
+        /* ==================== Resource Cards ==================== */
+        .resource-grid {
+            display: grid;
+            gap: 25px;
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.2);
+        }
+
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .resource-icon {
+            font-size: 2.5rem;
+        }
+
+        .resource-title {
+            color: var(--primary-dark);
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .resource-subtitle {
+            color: var(--text-secondary);
+            margin: 5px 0 0 0;
+            font-size: 0.95rem;
+        }
+
+        .resource-description {
+            color: var(--text-primary);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .resource-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(8, 145, 178, 0.3);
         }
 
         .icon {
@@ -98,6 +167,28 @@
 
             .message {
                 font-size: 1rem;
+            }
+
+            .resource-grid {
+                gap: 20px;
+            }
+
+            .resource-card {
+                padding: 20px;
+            }
+
+            .resource-title {
+                font-size: 1.3rem;
+            }
+
+            .resource-icon {
+                font-size: 2rem;
+            }
+
+            .resource-link {
+                width: 100%;
+                text-align: center;
+                padding: 14px 30px;
             }
         }
     </style>
@@ -174,12 +265,34 @@
 
     <!-- Main Content -->
     <div class="container">
-        <div class="icon">🎯</div>
-        <h1>Nothing Here Yet</h1>
-        <p class="message">
-            Content will appear here once they are added.
+        <h1>📚 额外学习资源</h1>
+        <p class="message" style="margin-bottom: 20px;">
+            Supplementary Materials & Practice Resources
         </p>
- 
+        <p class="message" style="font-size: 1rem; margin-bottom: 40px;">
+            补充教材与练习材料
+        </p>
+
+        <!-- Resource Cards -->
+        <div class="resource-grid">
+            <!-- 识字第十课对话练习 -->
+            <div class="resource-card">
+                <div class="resource-header">
+                    <div class="resource-icon">💬</div>
+                    <div>
+                        <h2 class="resource-title">识字第十课 - 对话练习</h2>
+                        <p class="resource-subtitle">Literacy Lesson 10 - Conversation Practice</p>
+                    </div>
+                </div>
+                <p class="resource-description">
+                    <strong>中文：</strong>补充识字第十课的对话练习，包含完整的中文对话、拼音、翻译及语言文化注解。主题涵盖理发与家庭计划等日常生活话题。<br><br>
+                    <strong>English:</strong> Supplementary conversation practice for Literacy Lesson 10, including complete Chinese dialogues, pinyin, translations, and language & cultural notes. Topics cover daily life conversations such as haircuts and family plans.
+                </p>
+                <a href="识字10.html" class="resource-link">
+                    📖 开始学习 / Start Learning →
+                </a>
+            </div>
+        </div>
     </div>
 
     <script src="../assets/js/nav-global.js"></script>
