@@ -40,6 +40,10 @@
             --border-medium: #d1d5db;
             --border-dark: #9ca3af;
             
+            /* 双语颜色 */
+            --english-color: #0891b2;
+            --spanish-color: #f59e0b;
+            
             /* 字体 */
             --font-primary: 'Microsoft JhengHei', 'Noto Sans TC', 'PingFang TC', sans-serif;
             --text-base: 1rem;
@@ -701,6 +705,71 @@
                 height: 50%;
             }
         }
+
+        /* ==================== Reading Text Styles ==================== */
+        .reading-preview-content {
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .reading-text-preview {
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        /* 中文文字樣式 */
+        .reading-text-preview .chinese-text,
+        .reading-preview-content .chinese-text {
+            color: var(--text-primary);
+            font-size: 1.1em;
+        }
+
+        /* 英文文字樣式 */
+        .reading-text-preview .english-text,
+        .reading-preview-content .english-text {
+            color: var(--english-color);
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        /* 折疊區塊樣式 */
+        .reading-text-preview details,
+        .reading-preview-content details {
+            margin: var(--spacing-md) 0;
+            padding: var(--spacing-md);
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .reading-text-preview details summary,
+        .reading-preview-content details summary {
+            cursor: pointer;
+            font-weight: var(--font-semibold);
+            color: var(--primary-color);
+            padding: var(--spacing-sm);
+            user-select: none;
+            font-size: 0.9em;
+        }
+
+        .reading-text-preview details summary:hover,
+        .reading-preview-content details summary:hover {
+            background: var(--bg-hover);
+            border-radius: var(--radius-sm);
+        }
+
+        .reading-text-preview details[open] summary,
+        .reading-preview-content details[open] summary {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .reading-text-preview details .english-text,
+        .reading-preview-content details .english-text {
+            display: block;
+            padding: var(--spacing-sm);
+        }
     </style>
 </head>
 <body>
@@ -763,6 +832,7 @@
                     <button class="type-tab" id="tabGrammar" data-type="grammar" disabled>📖 語法</button>
                     <button class="type-tab" id="tabExercises" data-type="exercises" disabled>✏️ 練習</button>
                     <button class="type-tab" id="tabLiteracySentence" data-type="literacy_sentence" disabled>📄 識字句</button>
+                    <button class="type-tab" id="tabReading" data-type="reading_text" disabled>📖 閱讀短文</button>
                 </div>
             </div>
             <!-- 保存按钮 -->
@@ -1010,6 +1080,8 @@
                     return data.exercises || [];
                 case 'literacy_sentence':
                     return data.literacy_sentence ? [{ content: data.literacy_sentence }] : [];
+                case 'reading_text':
+                    return data.reading_text ? [{ content: data.reading_text }] : [];
                 default:
                     return [];
             }
@@ -1025,7 +1097,6 @@
             }
 
             emptyEditState.style.display = 'none';
-            btnAdd.style.display = 'block';
             
             const typeNames = {
                 vocabulary: '字表',
@@ -1033,8 +1104,31 @@
                 dialogues: '對話',
                 grammar: '語法',
                 exercises: '練習',
-                literacy_sentence: '識字句'
+                literacy_sentence: '識字句',
+                reading_text: '閱讀短文'
             };
+            
+            // reading_text 是單一文字區域，不需要卡片列表和新增按鈕
+            if (currentType === 'reading_text') {
+                btnAdd.style.display = 'none';
+                editPanelTitle.textContent = typeNames[currentType];
+                const content = currentData.length > 0 ? currentData[0].content : '';
+                editPanelContent.innerHTML = `
+                    <div class="form-field required">
+                        <label>閱讀短文內容（支援 Markdown 和 HTML）</label>
+                        <textarea id="reading-text-content" style="min-height: 400px; font-family: monospace; font-size: 0.9em; width: 100%;" onchange="updateReadingText(this.value)">${content}</textarea>
+                        <div style="margin-top: var(--spacing-sm); color: var(--text-secondary); font-size: 0.85em; line-height: 1.6; padding: var(--spacing-md); background: var(--bg-light); border-radius: var(--radius-md);">
+                            💡 <strong>使用提示：</strong><br>
+                            1. 中文段落：使用 <code>&lt;span class="chinese-text"&gt;中文內容&lt;/span&gt;</code><br>
+                            2. 英文翻譯（折疊）：使用 <code>&lt;details&gt;&lt;summary&gt;English Translation&lt;/summary&gt;&lt;span class="english-text"&gt;英文翻譯&lt;/span&gt;&lt;/details&gt;</code><br>
+                            3. 英文翻譯（直接顯示）：使用 <code>&lt;span class="english-text"&gt;英文翻譯&lt;/span&gt;</code>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            btnAdd.style.display = 'block';
             
             editPanelTitle.textContent = `${typeNames[currentType]} (${currentData.length} 項)`;
 
@@ -1089,6 +1183,8 @@
                     return `${item.content || ''} (${item.subtype === 'fill_blank' ? '填空' : '選擇'})`;
                 case 'literacy_sentence':
                     return item.content || '';
+                case 'reading_text':
+                    return item.content ? item.content.substring(0, 100) + '...' : '';
                 default:
                     return '';
             }
@@ -1195,6 +1291,16 @@
                 default:
                     return '<div>未知類型</div>';
             }
+        }
+
+        function updateReadingText(value) {
+            if (currentData.length === 0) {
+                currentData.push({ content: value });
+            } else {
+                currentData[0].content = value;
+            }
+            renderPreviewPanel();
+            debounceSave();
         }
 
         function updateItemField(index, field, value) {
@@ -1324,6 +1430,11 @@
 
         // ==================== 新增/編輯/刪除 ====================
         function handleAdd() {
+            // reading_text 不需要新增功能，因為它是單一文字區域
+            if (currentType === 'reading_text') {
+                showMessage('閱讀短文是單一文字區域，請直接在編輯區中修改', 'info');
+                return;
+            }
             editingIndex = -1;
             showEditModal();
         }
@@ -1414,6 +1525,8 @@
                     return { content: '', answer: '', options: '', subtype: 'fill_blank' };
                 case 'literacy_sentence':
                     return { content: '' };
+                case 'reading_text':
+                    return { content: '' };
                 default:
                     return {};
             }
@@ -1426,7 +1539,8 @@
                 dialogues: '對話',
                 grammar: '語法',
                 exercises: '練習',
-                literacy_sentence: '識字句'
+                literacy_sentence: '識字句',
+                reading_text: '閱讀短文'
             };
             return names[currentType] || '';
         }
@@ -1650,8 +1764,19 @@
                 dialogues: '對話',
                 grammar: '語法',
                 exercises: '練習',
-                literacy_sentence: '識字句'
+                literacy_sentence: '識字句',
+                reading_text: '閱讀短文'
             };
+
+            // reading_text 需要特殊處理，顯示完整的 Markdown 渲染結果
+            if (currentType === 'reading_text') {
+                let html = `<div class="preview-section">
+                    <h3>${typeNames[currentType]} 預覽</h3>
+                    <div class="reading-preview-content">${currentData.length > 0 ? formatPreviewItem(currentData[0], currentType) : '<p style="color: var(--text-muted);">暫無內容</p>'}</div>
+                </div>`;
+                previewPanelContent.innerHTML = html;
+                return;
+            }
 
             let html = `<div class="preview-section">
                 <h3>${typeNames[currentType]} 預覽 (${currentData.length} 項)</h3>`;
@@ -1708,6 +1833,9 @@
                     `;
                 case 'literacy_sentence':
                     return `<div style="font-size: 1.1em; line-height: 1.8;">${item.content || ''}</div>`;
+                case 'reading_text':
+                    // 直接返回 HTML，因為內容可能包含 HTML 標籤
+                    return `<div class="reading-text-preview">${item.content || ''}</div>`;
                 default:
                     return '';
             }
@@ -1789,6 +1917,9 @@
                     break;
                 case 'literacy_sentence':
                     updateData.literacy_sentence = data[0]?.content || '';
+                    break;
+                case 'reading_text':
+                    updateData.reading_text = data[0]?.content || '';
                     break;
             }
             

@@ -889,6 +889,52 @@
             max-width: 800px;
         }
         
+        /* ==================== Reading Text Styles ==================== */
+        /* 中文文字樣式 */
+        .markdown-content .chinese-text {
+            color: var(--text-primary);
+            font-size: 1.1em;
+        }
+
+        /* 英文文字樣式 */
+        .markdown-content .english-text {
+            color: var(--english-color);
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        /* 折疊區塊樣式 */
+        .markdown-content details {
+            margin: var(--spacing-md) 0;
+            padding: var(--spacing-md);
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .markdown-content details summary {
+            cursor: pointer;
+            font-weight: var(--font-semibold);
+            color: var(--primary-color);
+            padding: var(--spacing-sm);
+            user-select: none;
+            font-size: 0.9em;
+        }
+
+        .markdown-content details summary:hover {
+            background: var(--bg-hover);
+            border-radius: var(--radius-sm);
+        }
+
+        .markdown-content details[open] summary {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .markdown-content details .english-text {
+            display: block;
+            padding: var(--spacing-sm);
+        }
+        
         /* ==================== Responsive Design ==================== */
         @media (max-width: 768px) {
             .header h1 {
