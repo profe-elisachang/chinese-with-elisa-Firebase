@@ -1315,6 +1315,8 @@
         let currentReviewIndex = 0;
         let isCardFlipped = false;
         let reviewDirection = 'forward'; // 'forward' (中文→英文) or 'reverse' (英文→中文)
+        let saveProgressTimeout = null; // 防抖計時器
+        let pendingSave = false; // 標記是否有待保存的更改
         
         // ==================== Initialization ====================
         window.addEventListener('DOMContentLoaded', async () => {
@@ -1356,6 +1358,29 @@
                 });
             } catch (error) {
                 showMessage('初始化失败: ' + error.message, 'error');
+            }
+        });
+        
+        // ==================== Save on Page Unload ====================
+        // 確保在頁面關閉時保存所有待保存的進度
+        window.addEventListener('beforeunload', async (e) => {
+            if (pendingSave && currentUser) {
+                // 使用同步方式保存（不等待完成，因為頁面即將關閉）
+                // 但至少嘗試發送保存請求
+                if (saveProgressTimeout) {
+                    clearTimeout(saveProgressTimeout);
+                }
+                // 使用 sendBeacon 或直接保存（不等待）
+                try {
+                    await db.collection('user_progress').doc(currentUser.uid).set({
+                        characterProgress: userProgress,
+                        lastReview: new Date().toISOString(),
+                        deviceCode: deviceCode,
+                        studentName: studentName
+                    }, { merge: true });
+                } catch (error) {
+                    console.error('Error saving on unload:', error);
+                }
             }
         });
         
@@ -2030,8 +2055,20 @@ for (let i = 1; i <= 25; i++) {
                 lastReviewed: new Date().toISOString()
             };
             
-            // Save to Firebase
-            await saveUserProgress();
+            // 標記有待保存的更改
+            pendingSave = true;
+            
+            // 使用防抖機制：只在3秒內沒有新操作時才保存
+            // 這樣可以大幅減少Firebase寫入次數
+            if (saveProgressTimeout) {
+                clearTimeout(saveProgressTimeout);
+            }
+            saveProgressTimeout = setTimeout(() => {
+                if (pendingSave) {
+                    saveUserProgress();
+                    pendingSave = false;
+                }
+            }, 3000); // 3秒防抖延遲
             
             // Next card
             currentReviewIndex++;
@@ -2050,7 +2087,16 @@ for (let i = 1; i <= 25; i++) {
         }
         
         // ==================== Show Completion ====================
-        function showCompletion() {
+        async function showCompletion() {
+            // 確保在完成時保存所有待保存的進度
+            if (saveProgressTimeout) {
+                clearTimeout(saveProgressTimeout);
+            }
+            if (pendingSave) {
+                await saveUserProgress();
+                pendingSave = false;
+            }
+            
             document.getElementById('reviewArea').classList.add('hidden');
             const msg = document.getElementById('completionMessage');
             
@@ -2136,15 +2182,21 @@ for (let i = 1; i <= 25; i++) {
         }
         
         async function saveUserProgress() {
+            if (!currentUser) {
+                console.warn('Cannot save progress: user not authenticated');
+                return;
+            }
+            
             try {
                 await db.collection('user_progress').doc(currentUser.uid).set({
                     characterProgress: userProgress,
                     lastReview: new Date().toISOString(),
                     deviceCode: deviceCode,
                     studentName: studentName
-                });
+                }, { merge: true }); // 使用 merge 可以減少寫入成本
+                console.log('✅ Progress saved to Firebase');
             } catch (error) {
-                console.error('Error saving progress:', error);
+                console.error('❌ Error saving progress:', error);
             }
         }
         

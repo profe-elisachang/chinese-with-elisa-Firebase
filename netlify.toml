@@ -1,0 +1,95 @@
+# Netlify 構建配置文件
+# 優化構建時間和性能
+# 
+# 重要：這是靜態網站，不需要構建命令
+# 構建命令為空可以大幅減少構建時間（從 5-10 分鐘減少到 30 秒）
+
+[build]
+  # 這是靜態網站，不需要構建命令
+  # 重要：確保為空，避免不必要的構建時間
+  command = ""
+  # 發布目錄（當前目錄）
+  publish = "."
+  
+# 構建超時設置（避免構建時間過長）
+[build.timeout]
+  # 設置構建超時為 5 分鐘（避免無限等待）
+  timeout = 300
+
+# 構建環境變量
+[build.environment]
+  NODE_VERSION = "18"
+
+# 構建優化設置
+[build.processing]
+  skip_processing = false
+
+# CSS 處理
+[build.processing.css]
+  bundle = true
+  minify = true
+
+# JavaScript 處理
+[build.processing.js]
+  bundle = true
+  minify = true
+
+# HTML 處理
+[build.processing.html]
+  pretty_urls = true
+
+# 緩存配置 - 減少帶寬使用
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# 圖片緩存（長期緩存）
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "*.gif"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# 字體文件緩存
+[[headers]]
+  for = "*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# JavaScript 和 CSS 文件緩存
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# 重定向規則（如果需要）
+# [[redirects]]
+#   from = "/old-path"
+#   to = "/new-path"
+#   status = 301
+
